@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">EasyPan</string>
+    <string name="auth_title">Master Your Craft</string>
+    <string name="auth_description">Elevate your culinary skills with expert guidance and personalized learning paths.</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="google_icon_description">google_icon_description</string>
+    <string name="terms_and_conditions">By continuing, you agree to our Terms of Service and Privacy Policy</string>
+    <string name="default_web_client_id">1</string>
 </resources>
