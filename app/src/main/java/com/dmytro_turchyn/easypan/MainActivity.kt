@@ -8,25 +8,38 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Accessibility
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.outlined.Accessibility
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.dmytro_turchyn.easypan.easypan.data.GoogleAuthUiClient
 import com.dmytro_turchyn.easypan.easypan.presentation.authentication.AuthenticationRoot
 import com.dmytro_turchyn.easypan.easypan.presentation.authentication.AuthenticationViewModel
+import com.dmytro_turchyn.easypan.easypan.presentation.favorite.FavoriteRoot
 import com.dmytro_turchyn.easypan.easypan.presentation.home.HomeRoot
-import com.dmytro_turchyn.easypan.easypan.presentation.home.HomeViewModel
+import com.dmytro_turchyn.easypan.easypan.presentation.profile.ProfileRoot
 import com.dmytro_turchyn.easypan.ui.theme.EasyPanTheme
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -37,84 +50,139 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    private val bottomNavItems = listOf(
+        BottomNavigationItem(
+            title = "Home",
+            unselectedIcon = Icons.Outlined.Home,
+            selectedIcon = Icons.Filled.Home,
+            route = AppGraph.Home
+        ),
+        BottomNavigationItem(
+            title = "Favorite",
+            unselectedIcon = Icons.Outlined.Favorite,
+            selectedIcon = Icons.Filled.Favorite,
+            route = AppGraph.Favorite
+        ),
+        BottomNavigationItem(
+            title = "Profile",
+            unselectedIcon = Icons.Outlined.Accessibility,
+            selectedIcon = Icons.Filled.Accessibility,
+            route = AppGraph.Profile
+        )
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             EasyPanTheme {
                 val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = Route.AppGraph
-                ){
-                   navigation<Route.AppGraph>(
-                       startDestination = if (googleAuthUiClient.getSignedInUser() != null ) Route.Home else Route.Authentication
-                   ) {
-                       composable<Route.Authentication> {
-                           val viewModel = koinViewModel<AuthenticationViewModel>()
-                           val state by viewModel.state.collectAsStateWithLifecycle()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
 
-                           val launcher = rememberLauncherForActivityResult(
-                               contract = ActivityResultContracts.StartIntentSenderForResult(),
-                               onResult = {result ->
-                                   if (result.resultCode == RESULT_OK){
-                                       lifecycleScope.launch{
-                                           val signInResult = googleAuthUiClient.signInWithIntent(result.data ?: return@launch)
-                                           viewModel.onLoginResult(signInResult)
-                                       }
-                                   }
-                               }
-                           )
+                // Show bottom bar only for main app screens
+                val showBottomBar = currentRoute in listOf(
+                    AppGraph.Home::class.qualifiedName,
+                    AppGraph.Favorite::class.qualifiedName,
+                    AppGraph.Profile::class.qualifiedName
+                )
 
-                           LaunchedEffect(Unit) {
-                               if(googleAuthUiClient.getSignedInUser() != null) {
-                                   navController.navigate("chat")
-                               }
-                           }
-                           LaunchedEffect(state.signInIntentSender) {
-                               launcher.launch(
-                                   IntentSenderRequest.Builder(
-                                       state.signInIntentSender ?: return@LaunchedEffect
-                                   ).build()
-                               )
-                           }
+                Scaffold(
+                    bottomBar = {
+                        if (showBottomBar) {
+                            NavigationBar {
+                                bottomNavItems.forEach { item ->
+                                    val isSelected = currentRoute == item.route::class.qualifiedName
+                                    NavigationBarItem(
+                                        selected = isSelected,
+                                        onClick = {
+                                            navController.navigate(item.route) {
+                                                popUpTo(AppGraph.Home) {
+                                                    saveState = true
+                                                }
+                                                launchSingleTop = true
+                                                restoreState = true
+                                            }
+                                        },
+                                        label = { Text(text = item.title) },
+                                        icon = {
+                                            Icon(
+                                                imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                                                contentDescription = "${item.title} icon",
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = if (googleAuthUiClient.getSignedInUser() == null) {
+                            AuthGraph.Authentication
+                        } else {
+                            AppGraph.Home
+                        },
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        // Authentication flow
+                        composable<AuthGraph.Authentication> {
+                            val viewModel = koinViewModel<AuthenticationViewModel>()
+                            val state by viewModel.state.collectAsStateWithLifecycle()
 
-                           LaunchedEffect(key1 = state.isSignInSuccessful) {
-                               if(state.isSignInSuccessful) {
-                                   Toast.makeText(
-                                       applicationContext,
-                                       "Sign in successful",
-                                       Toast.LENGTH_LONG
-                                   ).show()
+                            val launcher = rememberLauncherForActivityResult(
+                                contract = ActivityResultContracts.StartIntentSenderForResult(),
+                                onResult = { result ->
+                                    if (result.resultCode == RESULT_OK) {
+                                        lifecycleScope.launch {
+                                            val signInResult = googleAuthUiClient.signInWithIntent(
+                                                result.data ?: return@launch
+                                            )
+                                            viewModel.onLoginResult(signInResult)
+                                        }
+                                    }
+                                }
+                            )
 
-                                   navController.navigate("chat")
-                                   viewModel.resetState()
-                               }
-                           }
+                            LaunchedEffect(state.signInIntentSender) {
+                                state.signInIntentSender?.let { sender ->
+                                    launcher.launch(IntentSenderRequest.Builder(sender).build())
+                                }
+                            }
 
-                           AuthenticationRoot(
-                               viewModel = viewModel
-                           )
-                       }
-                       composable<Route.Home> {
-                           HomeRoot(
-                               viewModel = HomeViewModel()
-                           )
-                       }
-                   }
+                            LaunchedEffect(state.isSignInSuccessful) {
+                                if (state.isSignInSuccessful) {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Sign in successful",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    navController.navigate(AppGraph.Home) {
+                                        popUpTo(AuthGraph.Authentication) { inclusive = true }
+                                    }
+                                    viewModel.resetState()
+                                }
+                            }
+
+                            AuthenticationRoot(viewModel = viewModel)
+                        }
+
+                        // Main app screens
+                        composable<AppGraph.Home> {
+                            HomeRoot()
+                        }
+
+                        composable<AppGraph.Favorite> {
+                            FavoriteRoot()
+                        }
+
+                        composable<AppGraph.Profile> {
+                            ProfileRoot()
+                        }
+                    }
                 }
-
             }
         }
-    }
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    EasyPanTheme {
-
     }
 }
