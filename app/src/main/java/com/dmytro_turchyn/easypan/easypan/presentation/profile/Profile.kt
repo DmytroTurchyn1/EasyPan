@@ -3,17 +3,28 @@ package com.dmytro_turchyn.easypan.easypan.presentation.profile
 import ProfileAction
 import ProfileState
 import android.util.Log
+import android.widget.ToggleButton
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,7 +47,10 @@ import coil3.request.crossfade
 import com.dmytro_turchyn.easypan.R
 import com.dmytro_turchyn.easypan.easypan.domain.UserData
 import com.dmytro_turchyn.easypan.easypan.presentation.profile.components.InformationBox
+import com.dmytro_turchyn.easypan.easypan.presentation.profile.components.SettingsItem
 import com.dmytro_turchyn.easypan.ui.theme.EasyPanTheme
+
+
 
 @Composable
 fun ProfileRoot(
@@ -66,7 +81,7 @@ private fun ProfileScreen(
                     contentAlignment = Alignment.Center
                 ){
                     Text(
-                        text = "Profile",
+                        text = stringResource(R.string.Profile_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -76,7 +91,6 @@ private fun ProfileScreen(
 
             }
         ) { innerPadding ->
-            println("picture: ${userData?.profilePictureUrl}")
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -120,28 +134,63 @@ private fun ProfileScreen(
                 ){
                     InformationBox{
                         Text(
-                            text = 125.toString(),
+                            text = "${state.recipesCooked}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = "Recipes Cooked"
+                            text = stringResource(R.string.recipes_cooked)
                         )
                     }
                     InformationBox{
                         Text(
-                            text = 5.toString(),
+                            text = "${state.favoriteCuisines}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = "Favorite Cuisines"
+                            text = stringResource(R.string.favorite_cuisines)
                         )
                     }
                 }
+                Spacer(modifier = Modifier.padding(16.dp))
                 Text(
-                    text = "Settings"
+                    text = stringResource(R.string.settings_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp)
                 )
+                SettingsItem(
+                    text = "Notifications",
+                    icon = Icons.Outlined.Notifications,
+                    onClick = { onAction(ProfileAction.OnNotificationsToggle)},
+                ) {
+                    Switch(
+                        checked = state.notificationsEnabled,
+                        onCheckedChange = {onAction(ProfileAction.OnNotificationsToggle)}
+                    )
+                }
+                SettingsItem(
+                    text = "Help & Support",
+                    icon = Icons.AutoMirrored.Filled.HelpOutline,
+                    onClick = { onAction },
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "Navigate to help",
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(end = 6.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.padding(15.dp))
                 Button(
                     onClick = { onAction(ProfileAction.OnSignOut) }
                 ) {
-                    Text(text = "log out")
+                    Text(text = stringResource(R.string.logout_button))
                 }
             }
         }

@@ -21,6 +21,13 @@ class ProfileViewModel : ViewModel() {
                     )
                 }
             }
+            ProfileAction.OnNotificationsToggle -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        notificationsEnabled = !currentState.notificationsEnabled
+                    )
+                }
+            }
         }
     }
 }

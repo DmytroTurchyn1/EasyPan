@@ -17,8 +17,10 @@ import androidx.compose.material.icons.outlined.Accessibility
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -95,6 +97,15 @@ class MainActivity : ComponentActivity() {
                                 bottomNavItems.forEach { item ->
                                     val isSelected = currentRoute == item.route::class.qualifiedName
                                     NavigationBarItem(
+                                        colors = NavigationBarItemColors(
+                                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                                            unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                                            unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                            disabledIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                                            disabledTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                                            selectedIndicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                                        ),
                                         selected = isSelected,
                                         onClick = {
                                             navController.navigate(item.route) {
