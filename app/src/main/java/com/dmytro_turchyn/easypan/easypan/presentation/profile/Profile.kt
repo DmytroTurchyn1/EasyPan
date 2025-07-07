@@ -3,7 +3,6 @@ package com.dmytro_turchyn.easypan.easypan.presentation.profile
 import ProfileAction
 import ProfileState
 import android.util.Log
-import android.widget.ToggleButton
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +45,6 @@ import com.dmytro_turchyn.easypan.easypan.domain.UserData
 import com.dmytro_turchyn.easypan.easypan.presentation.profile.components.InformationBox
 import com.dmytro_turchyn.easypan.easypan.presentation.profile.components.SettingsItem
 import com.dmytro_turchyn.easypan.ui.theme.EasyPanTheme
-
 
 
 @Composable
