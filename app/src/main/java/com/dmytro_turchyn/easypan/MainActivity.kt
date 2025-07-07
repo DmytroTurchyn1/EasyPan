@@ -1,7 +1,5 @@
 package com.dmytro_turchyn.easypan
 
-import ProfileAction
-import ProfileState
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -41,7 +39,6 @@ import com.dmytro_turchyn.easypan.easypan.presentation.profile.ProfileRoot
 import com.dmytro_turchyn.easypan.easypan.presentation.profile.ProfileViewModel
 import com.dmytro_turchyn.easypan.ui.theme.EasyPanTheme
 import com.google.android.gms.auth.api.identity.Identity
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
