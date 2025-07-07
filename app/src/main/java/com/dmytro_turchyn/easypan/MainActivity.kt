@@ -182,11 +182,10 @@ class MainActivity : ComponentActivity() {
 
                         composable<AppGraph.Profile> {
                             val viewModel = ProfileViewModel()
-                            lifecycleScope.launch{
+                            lifecycleScope.launch {
                                 viewModel.state.collectLatest { event ->
-                                    when(event){
-                                        is ProfileAction.OnSignOut -> {
-                                            googleAuthUiClient.signOut()
+                                    when (event) {
+                                        ProfileAction.OnSignOut -> {
                                             navController.navigate(AuthGraph.Authentication) {
                                                 popUpTo(AppGraph.Home) { inclusive = true }
                                             }
@@ -194,12 +193,10 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             }
-
                             ProfileRoot(
                                 userData = googleAuthUiClient.getSignedInUser(),
                                 viewModel = viewModel
                             )
-
                         }
                     }
                 }

@@ -1,12 +1,11 @@
 package com.dmytro_turchyn.easypan.di
 
+
 import com.dmytro_turchyn.easypan.easypan.data.GoogleAuthUiClient
-
-
 import com.dmytro_turchyn.easypan.easypan.presentation.authentication.AuthenticationViewModel
 import com.google.android.gms.auth.api.identity.Identity
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.module.dsl.*
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val appModule = module{
