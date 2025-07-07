@@ -54,6 +54,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
 
     implementation(libs.bundles.firebase)
+    implementation(libs.bundles.ktor)
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coil)

@@ -1,6 +1,7 @@
 package com.dmytro_turchyn.easypan
 
 import ProfileAction
+import ProfileState
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -183,13 +184,11 @@ class MainActivity : ComponentActivity() {
                         composable<AppGraph.Profile> {
                             val viewModel = ProfileViewModel()
                             lifecycleScope.launch {
-                                viewModel.state.collectLatest { event ->
-                                    when (event) {
-                                        ProfileAction.OnSignOut -> {
+                                viewModel.state.collect{ event ->
+                                    if(event.isSignedOut){
                                             navController.navigate(AuthGraph.Authentication) {
                                                 popUpTo(AppGraph.Home) { inclusive = true }
                                             }
-                                        }
                                     }
                                 }
                             }
