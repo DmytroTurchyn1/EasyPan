@@ -1,14 +1,14 @@
 package com.dmytro_turchyn.easypan.easypan.data.dto
 
-import com.dmytro_turchyn.easypan.easypan.domain.StepType
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class StepDescriptionDto (
-    val step: String,
-    val imageUrl: String? = null,
-    val title: String,
-    val description: String,
-    val stepType: String,
-    val durationSec: Int? = null
+    @SerialName("step") val step: String = "",
+    @SerialName("imageUrl") val imageUrl: String? = null,
+    @SerialName("title") val title: String = "",
+    @SerialName("description") val description: String = "",
+    @SerialName("stepType") val stepType: String = "",
+    @SerialName("durationSec") val durationSec: Int? = null
 )

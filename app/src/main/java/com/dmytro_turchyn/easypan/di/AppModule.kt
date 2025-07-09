@@ -22,9 +22,7 @@ val appModule = module{
             oneTapClient = Identity.getSignInClient(androidContext())
         )
     }
-    single {
-        FirebaseFirestore.getInstance()
-    }
+
     singleOf(::FirestoreClient)
 
     singleOf(::DefaultRecipeRepository).bind<RecipeRepository>()

@@ -20,17 +20,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dmytro_turchyn.easypan.R
 import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeComplexity
 import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeList
 import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeListItem
 import com.dmytro_turchyn.easypan.ui.theme.EasyPanTheme
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun HomeRoot(
-    viewModel: HomeViewModel = viewModel<HomeViewModel>()
+    viewModel: HomeViewModel = koinViewModel<HomeViewModel>()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

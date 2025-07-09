@@ -1,7 +1,5 @@
 package com.dmytro_turchyn.easypan.easypan.data.database
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import com.dmytro_turchyn.easypan.easypan.data.dto.RecipeDto
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
