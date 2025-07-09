@@ -1,4 +1,4 @@
-package com.dmytro_turchyn.easypan.easypan.data
+package com.dmytro_turchyn.easypan.easypan.data.auth
 
 import android.content.Context
 import android.content.Intent
@@ -7,14 +7,12 @@ import com.dmytro_turchyn.easypan.R
 import com.dmytro_turchyn.easypan.easypan.domain.SignInResult
 import com.dmytro_turchyn.easypan.easypan.domain.UserData
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
-
 
 class GoogleAuthUiClient(
     private val context: Context,
@@ -82,9 +80,9 @@ class GoogleAuthUiClient(
     private fun buildSignInRequest(): BeginSignInRequest {
         return BeginSignInRequest.Builder()
             .setGoogleIdTokenRequestOptions(
-                GoogleIdTokenRequestOptions.builder()
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
-                    .setFilterByAuthorizedAccounts(false)
+                    .setFilterByAuthorizedAccounts(true)
                     .setServerClientId(context.getString(R.string.default_web_client_id))
                     .build()
             )

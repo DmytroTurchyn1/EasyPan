@@ -2,7 +2,7 @@ package com.dmytro_turchyn.easypan.easypan.presentation.authentication
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dmytro_turchyn.easypan.easypan.data.GoogleAuthUiClient
+import com.dmytro_turchyn.easypan.easypan.data.auth.GoogleAuthUiClient
 import com.dmytro_turchyn.easypan.easypan.domain.SignInResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

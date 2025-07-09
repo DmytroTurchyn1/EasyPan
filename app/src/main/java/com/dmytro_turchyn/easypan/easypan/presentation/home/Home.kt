@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -21,6 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dmytro_turchyn.easypan.R
+import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeComplexity
+import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeList
+import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeListItem
 import com.dmytro_turchyn.easypan.ui.theme.EasyPanTheme
 
 
@@ -41,7 +45,7 @@ private fun HomeScreen(
     state: HomeState,
     onAction: (HomeAction) -> Unit,
 ) {
-
+    val recipeListState = rememberLazyListState()
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -62,14 +66,18 @@ private fun HomeScreen(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
-                HorizontalDivider()
             }
 
         }
     ) { innerPAdding ->
-        Column(modifier = Modifier.padding(innerPAdding)) {
-
-        }
+        RecipeList(
+            modifier = Modifier.padding(innerPAdding),
+            recipes = state.recipes,
+            onRecipeClick = { recipe ->
+                onAction(HomeAction.OnRecipeClick(recipe))
+            },
+            scrollState = recipeListState
+        )
     }
 }
 

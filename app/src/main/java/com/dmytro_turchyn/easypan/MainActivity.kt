@@ -32,7 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.dmytro_turchyn.easypan.easypan.data.GoogleAuthUiClient
+import com.dmytro_turchyn.easypan.easypan.data.auth.GoogleAuthUiClient
 import com.dmytro_turchyn.easypan.easypan.presentation.authentication.AuthenticationRoot
 import com.dmytro_turchyn.easypan.easypan.presentation.authentication.AuthenticationViewModel
 import com.dmytro_turchyn.easypan.easypan.presentation.favorite.FavoriteRoot

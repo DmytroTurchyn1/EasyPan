@@ -43,6 +43,8 @@ firebase-analytics = {module = "com.google.firebase:firebase-analytics"}
 navigation-compose = {module = "androidx.navigation:navigation-compose", version.ref = "nav_version"}
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+firebase-firestore = { module= "com.google.firebase:firebase-firestore-ktx"}
+
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
@@ -52,7 +54,6 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", ver
 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
-
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
 coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
@@ -89,7 +90,8 @@ firebase = [
     "firebase-bom",
     "firebase-analytics",
     "firebase-auth",
-    "play-services-auth"
+    "play-services-auth",
+    "firebase-firestore"
 ]
 
 koin = [

@@ -12,4 +12,7 @@
     <string name="settings_title">Settings</string>
     <string name="logout_button">Log out</string>
     <string name="Profile_title">Profile</string>
+    <string name="favorite_title">Favorite</string>
+    <string name="no_favorite_recipes">You don\'t have any recepies saved</string>
+    <string name="dish_image_description">Image of dish</string>
 </resources>
