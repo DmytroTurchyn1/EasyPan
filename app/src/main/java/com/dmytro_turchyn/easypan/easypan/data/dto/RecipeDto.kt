@@ -1,6 +1,5 @@
 package com.dmytro_turchyn.easypan.easypan.data.dto
 
-import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeComplexity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

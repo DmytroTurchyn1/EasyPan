@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,9 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dmytro_turchyn.easypan.R
-import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeComplexity
 import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeList
-import com.dmytro_turchyn.easypan.easypan.presentation.home.components.RecipeListItem
 import com.dmytro_turchyn.easypan.ui.theme.EasyPanTheme
 import org.koin.androidx.compose.koinViewModel
 

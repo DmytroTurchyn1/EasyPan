@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.dmytro_turchyn.easypan.easypan.domain.Recipe
-import com.dmytro_turchyn.easypan.easypan.presentation.home.HomeAction
 
 @Composable
 fun RecipeList(

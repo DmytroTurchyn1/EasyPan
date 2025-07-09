@@ -8,7 +8,6 @@ import com.dmytro_turchyn.easypan.easypan.domain.RecipeRepository
 import com.dmytro_turchyn.easypan.easypan.presentation.authentication.AuthenticationViewModel
 import com.dmytro_turchyn.easypan.easypan.presentation.home.HomeViewModel
 import com.google.android.gms.auth.api.identity.Identity
-import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
