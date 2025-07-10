@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.dmytro_turchyn.easypan"
+    namespace = "com.cook.easypan"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.dmytro_turchyn.easypan"
+        applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 36
         versionCode = 1
@@ -24,6 +24,13 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
