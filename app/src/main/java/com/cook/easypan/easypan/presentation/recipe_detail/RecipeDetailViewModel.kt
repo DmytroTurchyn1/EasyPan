@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 class RecipeDetailViewModel : ViewModel() {
 
@@ -26,8 +27,17 @@ class RecipeDetailViewModel : ViewModel() {
         )
 
     fun onAction(action: RecipeDetailAction) {
+        println("recipe: onAction: $action")
         when (action) {
-            else -> TODO("Handle actions")
+           is RecipeDetailAction.OnRecipeChange -> {
+               println("recipe: onAction: OnRecipeChange: ${action.recipe}")
+               _state.update {
+                   it.copy(
+                       recipe = action.recipe
+                   )
+               }
+           }
+            else -> Unit
         }
     }
 

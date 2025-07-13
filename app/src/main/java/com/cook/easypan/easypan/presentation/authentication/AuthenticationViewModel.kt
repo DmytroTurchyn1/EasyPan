@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.presentation.authentication
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
@@ -36,10 +37,17 @@ class AuthenticationViewModel(
                     _state.update {
                         it.copy(signInIntentSender = signInIntentSender)
                     }
-                    println("button clicked, intent sender: $signInIntentSender")
                 }
             }
         }
     }
 
+    fun handleSignInResult(googleAuthUiClient: GoogleAuthUiClient, data: Intent?) {
+        viewModelScope.launch {
+            if (data != null){
+                val signInResult = googleAuthUiClient.signInWithIntent(data)
+                onLoginResult(signInResult)
+            }
+        }
+    }
 }

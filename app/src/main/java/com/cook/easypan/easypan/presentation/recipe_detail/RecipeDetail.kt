@@ -23,7 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeChip
@@ -33,13 +32,20 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun RecipeDetailRoot(
-    viewModel: RecipeDetailViewModel = viewModel()
+    viewModel: RecipeDetailViewModel,
+    onBackClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     RecipeDetailScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when(action){
+                is RecipeDetailAction.OnBackClick -> onBackClick()
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 }
 
@@ -48,6 +54,7 @@ private fun RecipeDetailScreen(
     state: RecipeDetailState,
     onAction: (RecipeDetailAction) -> Unit,
 ) {
+    println("recipe: ${state.recipe?.title}")
     Column(
         modifier = Modifier
             .fillMaxSize()

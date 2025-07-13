@@ -22,20 +22,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
+import com.cook.easypan.easypan.domain.Recipe
 import com.cook.easypan.easypan.presentation.home.components.RecipeList
 import com.cook.easypan.ui.theme.EasyPanTheme
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun HomeRoot(
-    viewModel: HomeViewModel = koinViewModel<HomeViewModel>()
+    viewModel: HomeViewModel,
+    onRecipeClick: (Recipe) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     HomeScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when(action){
+                is HomeAction.OnRecipeClick -> onRecipeClick(action.recipe)
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 }
 

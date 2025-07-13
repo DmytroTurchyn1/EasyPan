@@ -50,12 +50,19 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun ProfileRoot(
     viewModel: ProfileViewModel = viewModel<ProfileViewModel>(),
+    onSingOutButton: () -> Unit,
     userData: UserData?
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     ProfileScreen(
         state = state,
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action){
+                is ProfileAction.OnSignOut -> onSingOutButton()
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        },
         userData = userData
     )
 }
