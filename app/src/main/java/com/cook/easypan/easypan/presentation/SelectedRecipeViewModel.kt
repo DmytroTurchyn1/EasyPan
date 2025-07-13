@@ -10,7 +10,6 @@ class SelectedRecipeViewModel : ViewModel() {
     val selectedRecipe = _selectedRecipe.asStateFlow()
 
     fun onSelectRecipe(recipe: Recipe?){
-        println("recipe: onSelectRecipe: $recipe")
         _selectedRecipe.value = recipe
     }
 }

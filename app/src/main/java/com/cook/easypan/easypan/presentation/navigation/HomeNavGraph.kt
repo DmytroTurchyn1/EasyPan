@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
 import com.cook.easypan.easypan.presentation.SelectedRecipeViewModel
 import com.cook.easypan.easypan.presentation.favorite.FavoriteRoot
+import com.cook.easypan.easypan.presentation.favorite.FavoriteViewModel
 import com.cook.easypan.easypan.presentation.home.HomeRoot
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileRoot
@@ -37,6 +38,9 @@ import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailAction
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailRoot
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
+import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
+import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepRoot
+import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -101,7 +105,7 @@ fun HomeNavGraph(
             val viewModel = koinViewModel<HomeViewModel>()
             val selectedRecipeViewModel = it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
 
-           LaunchedEffect(true) {
+            LaunchedEffect(true) {
                 selectedRecipeViewModel.onSelectRecipe(null)
             }
 
@@ -129,10 +133,25 @@ fun HomeNavGraph(
                 viewModel = viewModel,
                 onBackClick = {
                     navController.navigateUp()
+                },
+                onStartClick = {
+                    navController.navigate(Route.RecipeStep)
                 }
             )
         }
-
+        composable<Route.RecipeStep> {
+            val viewModel = koinViewModel<RecipeStepViewModel>()
+            val selectedRecipeViewModel = it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            val selectedRecipe by  selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
+            LaunchedEffect(selectedRecipe) {
+                selectedRecipe?.let{
+                    viewModel.onAction(RecipeStepAction.OnRecipeChange(it))
+                }
+            }
+            RecipeStepRoot(
+                viewModel = viewModel
+            )
+        }
 
 
         composable<Route.Profile> {
@@ -154,9 +173,11 @@ fun HomeNavGraph(
             )
         }
         composable<Route.Favorite> {
-            FavoriteRoot()
+            val viewModel = FavoriteViewModel()
+            FavoriteRoot(
+                viewModel = viewModel
+            )
         }
-
     }
 }
 

@@ -26,4 +26,7 @@ sealed class Route{
 
     @Serializable
     data class RecipeDetail(val id: String) : Route()
+
+    @Serializable
+    data object RecipeStep: Route()
 }

@@ -43,7 +43,8 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun RecipeDetailRoot(
     viewModel: RecipeDetailViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onStartClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -52,6 +53,7 @@ fun RecipeDetailRoot(
         onAction = { action ->
             when(action){
                 is RecipeDetailAction.OnBackClick -> onBackClick()
+                is RecipeDetailAction.OnStartRecipeClick -> onStartClick()
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -74,7 +76,9 @@ private fun RecipeDetailScreen(
                     .padding(6.dp)
             ) {
                 Button(
-                    onClick = {}
+                    onClick = {
+                        onAction(RecipeDetailAction.OnStartRecipeClick)
+                    }
                 ) {
                     Text(
                         text = stringResource(R.string.start_cooking_button),

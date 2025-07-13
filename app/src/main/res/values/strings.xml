@@ -22,4 +22,5 @@
     <string name="ingredients_title">Ingredients</string>
     <string name="start_cooking_button">Start Cooking</string>
     <string name="go_back">go back button</string>
+    <string name="step">Step</string>
 </resources>

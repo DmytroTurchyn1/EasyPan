@@ -24,7 +24,7 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun FavoriteRoot(
-    viewModel: FavoriteViewModel = viewModel<FavoriteViewModel>()
+    viewModel: FavoriteViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

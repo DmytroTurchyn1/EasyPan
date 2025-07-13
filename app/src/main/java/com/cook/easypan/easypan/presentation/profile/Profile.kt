@@ -49,7 +49,7 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun ProfileRoot(
-    viewModel: ProfileViewModel = viewModel<ProfileViewModel>(),
+    viewModel: ProfileViewModel,
     onSingOutButton: () -> Unit,
     userData: UserData?
 ) {
