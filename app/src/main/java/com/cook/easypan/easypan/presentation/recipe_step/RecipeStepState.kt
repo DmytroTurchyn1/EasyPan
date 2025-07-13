@@ -6,5 +6,6 @@ data class RecipeStepState(
     val recipe: Recipe? = null,
     val step: Int = 0,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val progressBar: Float = 0f
 )

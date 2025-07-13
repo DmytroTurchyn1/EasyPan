@@ -1,4 +1,4 @@
-package com.cook.easypan.easypan.presentation.recipe_step.cpmponents
+package com.cook.easypan.easypan.presentation.recipe_step.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +17,8 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun BottomBarRecipeStep(
     modifier: Modifier = Modifier,
+    enabledPrevious: Boolean = false,
+    enabledNext: Boolean = true,
     onPreviousClick: () -> Unit,
     onNextClick: () -> Unit
 ) {
@@ -33,6 +35,7 @@ fun BottomBarRecipeStep(
         ) {
             Button(
                 onClick = { onPreviousClick() },
+                enabled = enabledPrevious
             ) {
                 Text(
                     text = "Previous",
@@ -40,6 +43,7 @@ fun BottomBarRecipeStep(
             }
             Button(
                 onClick = { onNextClick() },
+                enabled = enabledNext
             ) {
                 Text(
                     text = "Next",

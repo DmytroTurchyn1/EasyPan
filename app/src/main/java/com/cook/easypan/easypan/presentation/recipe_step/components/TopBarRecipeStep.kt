@@ -1,11 +1,10 @@
-package com.cook.easypan.easypan.presentation.recipe_step.cpmponents
+package com.cook.easypan.easypan.presentation.recipe_step.components
 
-import android.widget.ProgressBar
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -25,11 +24,11 @@ import androidx.compose.ui.unit.dp
 import com.cook.easypan.R
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
 import com.cook.easypan.ui.theme.EasyPanTheme
-import java.nio.file.WatchEvent
 
 @Composable
 fun TopBarRecipeStep(
-    step: String
+    step: String,
+    progress: Float
 ) {
     Column {
         Row (
@@ -46,7 +45,7 @@ fun TopBarRecipeStep(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.go_back),
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = Color.White
                 )
 
             }
@@ -54,14 +53,14 @@ fun TopBarRecipeStep(
                 text = "${stringResource(R.string.step)} $step",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         LinearProgressIndicator(
-            progress = { 0.5f },
+            progress = { progress },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(14.dp)
+                .height(10.dp),
             color = MaterialTheme.colorScheme.primary
         )
     }
@@ -75,6 +74,7 @@ private fun TopBarRecipeStepPreview() {
     EasyPanTheme {
         TopBarRecipeStep(
             step = "1",
+            progress = 0.2f
         )
     }
 
