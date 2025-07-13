@@ -5,5 +5,5 @@ import com.cook.easypan.easypan.domain.Recipe
 data class RecipeDetailState(
     val recipe: Recipe? = null,
     val isLoading: Boolean = true,
-    val onIngredientCheckClicked : Boolean = false,
+    val onIngredientCheckClicked : Set<Int> = emptySet(),
 )

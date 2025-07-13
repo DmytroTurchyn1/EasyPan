@@ -13,7 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun RecipeChip(
@@ -28,7 +31,7 @@ fun RecipeChip(
             .clip(
                 RoundedCornerShape(16.dp)
             )
-            .background(MaterialTheme.colorScheme.onSurface)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(
                 vertical = 8.dp,
                 horizontal = 12.dp
@@ -41,7 +44,19 @@ fun RecipeChip(
         ){
             Text(
                 text = text,
+                color = Color.White
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun RecipeChipPreview() {
+    EasyPanTheme {
+        RecipeChip(
+            text = "Vegetarian",
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }

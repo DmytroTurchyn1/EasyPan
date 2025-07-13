@@ -5,4 +5,6 @@ import com.cook.easypan.easypan.domain.Recipe
 sealed interface RecipeDetailAction {
     data class OnRecipeChange( val recipe: Recipe) : RecipeDetailAction
     data object OnBackClick: RecipeDetailAction
+
+    data class OnIngredientCheck(val ingredientIndex: Int): RecipeDetailAction
 }

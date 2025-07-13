@@ -72,7 +72,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Home,
         BottomBarScreen.Favorite,
-        BottomBarScreen.Profile,
+        BottomBarScreen.Profile
     )
     val bottomBarDestination = screens.any { it.route::class.qualifiedName == currentDestination?.route }
     if (bottomBarDestination) {
@@ -100,14 +100,15 @@ fun HomeNavGraph(
         composable<Route.Home> {
             val viewModel = koinViewModel<HomeViewModel>()
             val selectedRecipeViewModel = it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
-            LaunchedEffect(true) {
+
+           LaunchedEffect(true) {
                 selectedRecipeViewModel.onSelectRecipe(null)
             }
+
             HomeRoot(
                 viewModel = viewModel,
                 onRecipeClick = { recipe ->
                     selectedRecipeViewModel.onSelectRecipe(recipe)
-                    println("Selected recipe: ${recipe.id}")
                     navController.navigate(
                         Route.RecipeDetail(recipe.id)
                     )
@@ -115,6 +116,25 @@ fun HomeNavGraph(
                 }
             )
         }
+        composable<Route.RecipeDetail> {
+            val selectedRecipeViewModel = it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            val viewModel = koinViewModel<RecipeDetailViewModel>()
+            val selectedRecipe by  selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
+            LaunchedEffect(selectedRecipe) {
+                selectedRecipe?.let{
+                    viewModel.onAction(RecipeDetailAction.OnRecipeChange(it))
+                }
+            }
+            RecipeDetailRoot(
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+
+
         composable<Route.Profile> {
             val viewModel = remember { ProfileViewModel() }
             LaunchedEffect(Unit) {
@@ -136,24 +156,7 @@ fun HomeNavGraph(
         composable<Route.Favorite> {
             FavoriteRoot()
         }
-        composable<Route.RecipeDetail> {
-            val selectedRecipeViewModel = it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
-            val viewModel = koinViewModel<RecipeDetailViewModel>()
-            val selectedRecipe by  selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
-            println("recipe: Selected recipe mainActivity: ${selectedRecipe?.title}")
-            LaunchedEffect(selectedRecipe) {
-                println("recipe: Selected recipe changed: ${selectedRecipe?.title}")
-                selectedRecipe?.let{
-                    viewModel.onAction(RecipeDetailAction.OnRecipeChange(it))
-                }
-            }
-            RecipeDetailRoot(
-                viewModel = viewModel,
-                onBackClick = {
-                    navController.navigateUp()
-                }
-            )
-        }
+
     }
 }
 
@@ -194,9 +197,14 @@ fun RowScope.AddItem(
 private inline fun <reified T: ViewModel> NavBackStackEntry.sharedKoinViewModel(
     navController: NavController
 ): T {
-    val navGraphRoute = destination.parent?.route ?: return koinViewModel<T>()
+    // Use the Home route as the shared scope since it's your start destination
     val parentEntry = remember(this) {
-        navController.getBackStackEntry(navGraphRoute)
+        try {
+            navController.getBackStackEntry(Route.Home::class.qualifiedName!!)
+        } catch (e: IllegalArgumentException) {
+            // Fallback to current entry if Home isn't in back stack
+            navController.currentBackStackEntry!!
+        }
     }
     return koinViewModel(viewModelStoreOwner = parentEntry)
 }

@@ -1,6 +1,5 @@
 package com.cook.easypan.easypan.domain
 
-import com.cook.easypan.easypan.presentation.home.components.RecipeComplexity
 
 data class Recipe(
     val id: String,
@@ -9,7 +8,7 @@ data class Recipe(
     val preparationMinutes: Int,
     val cookMinutes: Int,
     val chips: List<String> = emptyList(),
-    val difficulty: RecipeComplexity,
+    val difficulty: String,
     val instructions: List<StepDescription>,
     val titleImg: String
 )

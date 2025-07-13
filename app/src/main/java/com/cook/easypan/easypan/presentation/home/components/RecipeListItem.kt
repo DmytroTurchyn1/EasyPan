@@ -30,22 +30,14 @@ import com.cook.easypan.easypan.domain.StepDescription
 import com.cook.easypan.easypan.domain.StepType
 import com.cook.easypan.ui.theme.EasyPanTheme
 
-enum class RecipeComplexity{
-    EASY,
-    MEDIUM,
-    HARD
-}
+
 
 @Composable
 fun RecipeListItem(
     recipe: Recipe,
     onClick: ()-> Unit
 ) {
-    val complexityText = when(recipe.difficulty){
-        RecipeComplexity.EASY -> "Easy"
-        RecipeComplexity.MEDIUM -> "Medium"
-        RecipeComplexity.HARD -> "Hard"
-    }
+
     Box(
         modifier = Modifier
             .height(120.dp)
@@ -73,7 +65,7 @@ fun RecipeListItem(
                     maxLines = 2
                 )
                 Text(
-                    text = "${recipe.cookMinutes} · $complexityText · ${recipe.instructions.size} steps",
+                    text = "${recipe.cookMinutes} · ${recipe.difficulty} · ${recipe.instructions.size} steps",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2
@@ -105,7 +97,7 @@ private fun RecipeListItemPreview() {
                 id = "1",
                 title = "Spicy Chicken Stir-Fry",
                 cookMinutes = 30,
-                difficulty = RecipeComplexity.MEDIUM,
+                difficulty = "Medium",
                 instructions = listOf(
                     StepDescription(
                         step = 1,

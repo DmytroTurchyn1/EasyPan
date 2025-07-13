@@ -13,8 +13,7 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun RecipeItem(
     title: String,
-    text: String,
-    modifier: Modifier = Modifier
+    text: String
 ) {
     Row (
         modifier = Modifier

@@ -5,7 +5,6 @@ import com.cook.easypan.easypan.data.dto.StepDescriptionDto
 import com.cook.easypan.easypan.domain.Recipe
 import com.cook.easypan.easypan.domain.StepDescription
 import com.cook.easypan.easypan.domain.StepType
-import com.cook.easypan.easypan.presentation.home.components.RecipeComplexity
 
 fun RecipeDto.toRecipe() : Recipe{
     return Recipe(
@@ -16,9 +15,9 @@ fun RecipeDto.toRecipe() : Recipe{
         cookMinutes = cookMinutes,
         chips = chips,
         difficulty = when(difficulty) {
-            1 -> RecipeComplexity.EASY
-            2 -> RecipeComplexity.MEDIUM
-            3 -> RecipeComplexity.HARD
+            1 -> "Easy"
+            2 -> "Medium"
+            3 -> "Hard"
             else -> throw IllegalArgumentException("Unknown difficulty level: $difficulty")
         },
         instructions = instructions.map { it.toStepDescription() },
