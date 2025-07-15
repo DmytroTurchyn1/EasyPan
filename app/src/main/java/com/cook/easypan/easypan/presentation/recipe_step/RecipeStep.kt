@@ -32,13 +32,20 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun RecipeStepRoot(
-    viewModel: RecipeStepViewModel
+    viewModel: RecipeStepViewModel,
+    onFinishClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     RecipeStepScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = {action ->
+            when(action){
+                is RecipeStepAction.OnFinishClick -> onFinishClick()
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 }
 
@@ -47,31 +54,39 @@ private fun RecipeStepScreen(
     state: RecipeStepState,
     onAction: (RecipeStepAction) -> Unit,
 ) {
-    if (state.recipe != null){
+    if (state.recipe != null) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 TopBarRecipeStep(
-                    step = "${state.step+1} / ${state.recipe.instructions.size}",
+                    step = "${state.step + 1} / ${state.recipe.instructions.size}",
                     progress = state.progressBar
                 )
             },
             bottomBar = {
                 BottomBarRecipeStep(
-                    onNextClick = {onAction(RecipeStepAction.OnNextClick)},
-                    onPreviousClick = {onAction(RecipeStepAction.OnPreviousClick)},
+                    onNextClick = {
+                        if (state.step < state.recipe.instructions.size - 1) {
+                            onAction(RecipeStepAction.OnNextClick)
+                        } else {
+                            onAction(RecipeStepAction.OnFinishClick)
+                        }
+                    },
+                    onPreviousClick = { onAction(RecipeStepAction.OnPreviousClick) },
                     enabledPrevious = state.step > 0,
-                    enabledNext = state.step < state.recipe.instructions.size -1
+                    nextButtonTitle = if (state.step < state.recipe.instructions.size - 1) stringResource(
+                        R.string.next_button
+                    ) else stringResource(R.string.finish_button)
                 )
             }
-        ){ innerPadding ->
+        ) { innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
             ) {
                 AsyncImage(
                     model = state.recipe.instructions[state.step].imageUrl,
-                    contentDescription = "Step Image",
+                    contentDescription = stringResource(R.string.step_image),
                     placeholder = painterResource(R.drawable.ic_launcher_background),
                     error = painterResource(R.drawable.auth_img),
                     contentScale = ContentScale.FillBounds,
@@ -81,40 +96,40 @@ private fun RecipeStepScreen(
                         .size(300.dp)
                 )
 
-                    if (state.recipe.instructions[state.step].stepType == StepType.TEXT){
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            ContentStepRecipe(
-                                title = state.recipe.instructions[state.step].title,
-                                description = state.recipe.instructions[state.step].description
-                            )
-                        }
-                    }else {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp)
-                                .verticalScroll(rememberScrollState()),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            ContentStepRecipe(
-                                    title = state.recipe.instructions[state.step].title,
-                                    description = state.recipe.instructions[state.step].description
-                                )
-                            TimerStepRecipe(
-                                totalSeconds = state.recipe.instructions[state.step].durationSec,
-                            )
-                        }
+                if (state.recipe.instructions[state.step].stepType == StepType.TEXT) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        ContentStepRecipe(
+                            title = state.recipe.instructions[state.step].title,
+                            description = state.recipe.instructions[state.step].description
+                        )
                     }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
+                            .verticalScroll(rememberScrollState()),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        ContentStepRecipe(
+                            title = state.recipe.instructions[state.step].title,
+                            description = state.recipe.instructions[state.step].description
+                        )
+                        TimerStepRecipe(
+                            totalSeconds = state.recipe.instructions[state.step].durationSec,
+                        )
+                    }
+                }
             }
         }
-    }else{
+    } else {
         Box(
             modifier = Modifier
                 .fillMaxSize(),

@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ContentStepRecipe(
-    modifier: Modifier = Modifier,
     title: String,
     description: String
 ) {

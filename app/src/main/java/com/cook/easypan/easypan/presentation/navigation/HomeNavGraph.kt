@@ -149,7 +149,10 @@ fun HomeNavGraph(
                 }
             }
             RecipeStepRoot(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onFinishClick = {
+
+                }
             )
         }
 

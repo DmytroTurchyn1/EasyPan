@@ -27,4 +27,8 @@
     <string name="seconds_timer">Seconds</string>
     <string name="stop_button_timer">Stop Timer</string>
     <string name="start_button_timer">Start Timer</string>
+    <string name="step_image">Step Image</string>
+    <string name="next_button">Next</string>
+    <string name="finish_button">Finish</string>
+    <string name="previous_button">Previous</string>
 </resources>

@@ -14,12 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun TimerCounterElement(
     title: String,
-    time : Int = 0,
+    time : Int,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -35,11 +36,13 @@ fun TimerCounterElement(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "$time"
+                text = "$time",
+                fontWeight = FontWeight.Bold
             )
         }
         Text(
-            text = title
+            text = title,
+            fontWeight = FontWeight.SemiBold
         )
 
     }

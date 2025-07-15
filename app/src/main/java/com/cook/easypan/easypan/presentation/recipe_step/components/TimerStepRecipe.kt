@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun TimerStepRecipe(
-    totalSeconds: Int? = 0
+    totalSeconds: Int?
 ) {
     Box(
         modifier = Modifier
@@ -97,6 +97,8 @@ fun TimerStepRecipe(
 @Composable
 private fun TimerStepRecipePreview() {
     EasyPanTheme {
-        TimerStepRecipe()
+        TimerStepRecipe(
+            totalSeconds = 1200
+        )
     }
 }

@@ -10,17 +10,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun BottomBarRecipeStep(
     modifier: Modifier = Modifier,
     enabledPrevious: Boolean = false,
-    enabledNext: Boolean = true,
     onPreviousClick: () -> Unit,
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    nextButtonTitle: String
 ) {
     Box(
         modifier = modifier
@@ -38,15 +40,14 @@ fun BottomBarRecipeStep(
                 enabled = enabledPrevious
             ) {
                 Text(
-                    text = "Previous",
+                    text = stringResource(R.string.previous_button),
                 )
             }
             Button(
                 onClick = { onNextClick() },
-                enabled = enabledNext
             ) {
                 Text(
-                    text = if (enabledNext) "Next" else "Finish",
+                    text = nextButtonTitle
                 )
             }
         }
@@ -60,7 +61,8 @@ private fun BottomBarRecipeStepPreview() {
     EasyPanTheme {
         BottomBarRecipeStep(
             onNextClick = {},
-            onPreviousClick = {}
+            onPreviousClick = {},
+            nextButtonTitle = "Next"
         )
     }
 }
