@@ -56,7 +56,7 @@ fun ProfileRoot(
     ProfileScreen(
         state = state,
         onAction = { action ->
-            when (action){
+            when (action) {
                 is ProfileAction.OnSignOut -> onSingOutButton()
                 else -> Unit
             }
@@ -75,12 +75,12 @@ private fun ProfileScreen(
     EasyPanTheme {
         Scaffold(
             topBar = {
-                Box (
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(24.dp),
                     contentAlignment = Alignment.Center
-                ){
+                ) {
                     Text(
                         text = stringResource(R.string.Profile_title),
                         style = MaterialTheme.typography.titleLarge,
@@ -130,10 +130,13 @@ private fun ProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.CenterHorizontally),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        16.dp,
+                        alignment = Alignment.CenterHorizontally
+                    ),
                     verticalAlignment = Alignment.CenterVertically
-                ){
-                    InformationBox{
+                ) {
+                    InformationBox {
                         Text(
                             text = "${state.recipesCooked}",
                             style = MaterialTheme.typography.bodyLarge,
@@ -143,7 +146,7 @@ private fun ProfileScreen(
                             text = stringResource(R.string.recipes_cooked)
                         )
                     }
-                    InformationBox{
+                    InformationBox {
                         Text(
                             text = "${state.favoriteCuisines}",
                             style = MaterialTheme.typography.bodyLarge,
@@ -167,11 +170,11 @@ private fun ProfileScreen(
                 SettingsItem(
                     text = "Notifications",
                     icon = Icons.Outlined.Notifications,
-                    onClick = { onAction(ProfileAction.OnNotificationsToggle)},
+                    onClick = { onAction(ProfileAction.OnNotificationsToggle) },
                 ) {
                     Switch(
                         checked = state.notificationsEnabled,
-                        onCheckedChange = {onAction(ProfileAction.OnNotificationsToggle)}
+                        onCheckedChange = { onAction(ProfileAction.OnNotificationsToggle) }
                     )
                 }
                 SettingsItem(

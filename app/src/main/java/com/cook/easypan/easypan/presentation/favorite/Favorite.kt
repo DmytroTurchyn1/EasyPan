@@ -40,12 +40,12 @@ private fun FavoriteScreen(
 ) {
     Scaffold(
         topBar = {
-            Box (
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Text(
                     text = stringResource(R.string.favorite_title),
                     style = MaterialTheme.typography.titleLarge,
@@ -55,27 +55,27 @@ private fun FavoriteScreen(
                 )
             }
         }
-    ){ innerPadding ->
-        if (state.favoriteRecipes.isEmpty()){
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ){
-                    Text(
-                        text = stringResource(R.string.no_favorite_recipes),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-        }else{
+    ) { innerPadding ->
+        if (state.favoriteRecipes.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.no_favorite_recipes),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        } else {
             LazyColumn(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
             ) {
-                items(state.favoriteRecipes.size){ index ->
+                items(state.favoriteRecipes.size) { index ->
                     TODO("Implement favorite recipe item view here")
                 }
             }

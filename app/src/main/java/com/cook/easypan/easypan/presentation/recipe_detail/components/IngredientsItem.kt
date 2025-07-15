@@ -15,17 +15,17 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun IngredientsItem(
     checked: Boolean = false,
-    onCheckClick : () -> Unit,
+    onCheckClick: () -> Unit,
     text: String
 ) {
-    Row (
+    Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
-    ){
+    ) {
         Checkbox(
             checked = checked,
-            onCheckedChange = {onCheckClick()},
+            onCheckedChange = { onCheckClick() },
         )
         Text(
             text = text,

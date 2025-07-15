@@ -27,17 +27,17 @@ fun SettingsItem(
     clickable: Boolean = true,
     actionElement: @Composable () -> Unit,
 ) {
-    Box (
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
             .clickable(enabled = clickable, onClick = onClick)
-    ){
-        Row (
+    ) {
+        Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(14.dp))

@@ -33,8 +33,9 @@ class RecipeStepViewModel : ViewModel() {
         )
 
     private val step = _state.value.recipe?.instructions?.size.let { size ->
-            1f/ (size?.toFloat() ?: 1f)
+        1f / (size?.toFloat() ?: 1f)
     }
+
     fun onAction(action: RecipeStepAction) {
         when (action) {
             is RecipeStepAction.OnNextClick -> {
@@ -45,8 +46,9 @@ class RecipeStepViewModel : ViewModel() {
                     )
                 }
             }
+
             is RecipeStepAction.OnPreviousClick -> {
-                if (_state.value.step > 0){
+                if (_state.value.step > 0) {
                     _state.update {
                         it.copy(
                             step = it.step - 1,
@@ -55,6 +57,7 @@ class RecipeStepViewModel : ViewModel() {
                     }
                 }
             }
+
             is RecipeStepAction.OnRecipeChange -> {
                 _state.update {
                     it.copy(
@@ -63,6 +66,7 @@ class RecipeStepViewModel : ViewModel() {
                     )
                 }
             }
+
             else -> Unit
         }
     }

@@ -12,23 +12,26 @@ import kotlinx.coroutines.launch
 
 class AuthenticationViewModel(
     private val googleAuthUiClient: GoogleAuthUiClient,
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthenticationState())
     val state = _state.asStateFlow()
 
     fun onLoginResult(result: SignInResult) {
-        _state.update { it.copy(
-            isSignInSuccessful =  result.data != null,
-            signInError = result.errorMessage,
-            signInIntentSender = null
-        ) }
+        _state.update {
+            it.copy(
+                isSignInSuccessful = result.data != null,
+                signInError = result.errorMessage,
+                signInIntentSender = null
+            )
+        }
 
     }
 
     fun resetState() {
         _state.update { AuthenticationState() }
     }
+
     fun onAction(action: AuthenticationAction) {
         when (action) {
             AuthenticationAction.OnAuthButtonClick -> {
@@ -44,7 +47,7 @@ class AuthenticationViewModel(
 
     fun handleSignInResult(googleAuthUiClient: GoogleAuthUiClient, data: Intent?) {
         viewModelScope.launch {
-            if (data != null){
+            if (data != null) {
                 val signInResult = googleAuthUiClient.signInWithIntent(data)
                 onLoginResult(signInResult)
             }

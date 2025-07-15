@@ -1,6 +1,8 @@
 package com.cook.easypan.easypan.presentation.navigation
 
 import ProfileAction
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -46,7 +48,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun Home(
-    googleAuthUiClient : GoogleAuthUiClient,
+    googleAuthUiClient: GoogleAuthUiClient,
     navController: NavHostController = rememberNavController(),
     onSignOut: () -> Unit
 ) {
@@ -58,7 +60,7 @@ fun Home(
         Box(
             modifier = Modifier
                 .padding(innerPadding)
-        ){
+        ) {
             HomeNavGraph(
                 navController = navController,
                 googleAuthUiClient = googleAuthUiClient,
@@ -78,7 +80,8 @@ fun BottomNavigationBar(navController: NavHostController) {
         BottomBarScreen.Favorite,
         BottomBarScreen.Profile
     )
-    val bottomBarDestination = screens.any { it.route::class.qualifiedName == currentDestination?.route }
+    val bottomBarDestination =
+        screens.any { it.route::class.qualifiedName == currentDestination?.route }
     if (bottomBarDestination) {
         NavigationBar {
             screens.forEach { screen ->
@@ -91,19 +94,21 @@ fun BottomNavigationBar(navController: NavHostController) {
         }
     }
 }
+
 @Composable
 fun HomeNavGraph(
     navController: NavHostController,
-    googleAuthUiClient : GoogleAuthUiClient,
+    googleAuthUiClient: GoogleAuthUiClient,
     onSignOut: () -> Unit
 ) {
     NavHost(
         navController = navController,
         startDestination = Route.Home
-    ){
+    ) {
         composable<Route.Home> {
             val viewModel = koinViewModel<HomeViewModel>()
-            val selectedRecipeViewModel = it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            val selectedRecipeViewModel =
+                it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
 
             LaunchedEffect(true) {
                 selectedRecipeViewModel.onSelectRecipe(null)
@@ -121,11 +126,12 @@ fun HomeNavGraph(
             )
         }
         composable<Route.RecipeDetail> {
-            val selectedRecipeViewModel = it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            val selectedRecipeViewModel =
+                it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
             val viewModel = koinViewModel<RecipeDetailViewModel>()
-            val selectedRecipe by  selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
+            val selectedRecipe by selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
             LaunchedEffect(selectedRecipe) {
-                selectedRecipe?.let{
+                selectedRecipe?.let {
                     viewModel.onAction(RecipeDetailAction.OnRecipeChange(it))
                 }
             }
@@ -141,10 +147,11 @@ fun HomeNavGraph(
         }
         composable<Route.RecipeStep> {
             val viewModel = koinViewModel<RecipeStepViewModel>()
-            val selectedRecipeViewModel = it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
-            val selectedRecipe by  selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
+            val selectedRecipeViewModel =
+                it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            val selectedRecipe by selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
             LaunchedEffect(selectedRecipe) {
-                selectedRecipe?.let{
+                selectedRecipe?.let {
                     viewModel.onAction(RecipeStepAction.OnRecipeChange(it))
                 }
             }
@@ -218,7 +225,7 @@ fun RowScope.AddItem(
 }
 
 @Composable
-private inline fun <reified T: ViewModel> NavBackStackEntry.sharedKoinViewModel(
+private inline fun <reified T : ViewModel> NavBackStackEntry.sharedKoinViewModel(
     navController: NavController
 ): T {
     // Use the Home route as the shared scope since it's your start destination
@@ -226,7 +233,7 @@ private inline fun <reified T: ViewModel> NavBackStackEntry.sharedKoinViewModel(
         try {
             navController.getBackStackEntry(Route.Home::class.qualifiedName!!)
         } catch (e: IllegalArgumentException) {
-            // Fallback to current entry if Home isn't in back stack
+            Log.e(TAG, e.toString())
             navController.currentBackStackEntry!!
         }
     }

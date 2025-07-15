@@ -39,8 +39,8 @@ fun RecipeStepRoot(
 
     RecipeStepScreen(
         state = state,
-        onAction = {action ->
-            when(action){
+        onAction = { action ->
+            when (action) {
                 is RecipeStepAction.OnFinishClick -> onFinishClick()
                 else -> Unit
             }

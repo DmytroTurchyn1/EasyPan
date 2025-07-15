@@ -10,7 +10,7 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun RootNavGraph(
-     googleAuthUiClient : GoogleAuthUiClient
+    googleAuthUiClient: GoogleAuthUiClient
 ) {
     EasyPanTheme {
         val navController = rememberNavController()
@@ -21,10 +21,10 @@ fun RootNavGraph(
                 Route.AuthGraph
             } else {
                 Route.AppGraph
-        }
-        ){
+            }
+        ) {
             authNavGraph(
-                navController= navController,
+                navController = navController,
                 googleAuthUiClient = googleAuthUiClient
             )
             composable<Route.AppGraph> {

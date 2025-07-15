@@ -6,15 +6,15 @@ import com.cook.easypan.easypan.domain.Recipe
 import com.cook.easypan.easypan.domain.StepDescription
 import com.cook.easypan.easypan.domain.StepType
 
-fun RecipeDto.toRecipe() : Recipe{
+fun RecipeDto.toRecipe(): Recipe {
     return Recipe(
         id = id,
         title = title,
         ingredients = ingredients,
-        preparationMinutes  =preparationMinutes,
+        preparationMinutes = preparationMinutes,
         cookMinutes = cookMinutes,
         chips = chips,
-        difficulty = when(difficulty) {
+        difficulty = when (difficulty) {
             1 -> "Easy"
             2 -> "Medium"
             3 -> "Hard"
@@ -25,13 +25,13 @@ fun RecipeDto.toRecipe() : Recipe{
     )
 }
 
-fun StepDescriptionDto.toStepDescription() : StepDescription {
+fun StepDescriptionDto.toStepDescription(): StepDescription {
     return StepDescription(
         title = title,
         description = description,
         step = step,
         imageUrl = imageUrl,
-        stepType = when(stepType){
+        stepType = when (stepType) {
             "TEXT" -> StepType.TEXT
             "TIMER" -> StepType.TIMER
             else -> throw IllegalArgumentException("Unknown step type: $stepType")

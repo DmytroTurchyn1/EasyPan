@@ -37,7 +37,7 @@ fun HomeRoot(
     HomeScreen(
         state = state,
         onAction = { action ->
-            when(action){
+            when (action) {
                 is HomeAction.OnRecipeClick -> onRecipeClick(action.recipe)
                 else -> Unit
             }
@@ -64,7 +64,7 @@ private fun HomeScreen(
                     .padding(top = 25.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
-            ){
+            ) {
                 Text(
                     text = stringResource(R.string.home_title),
                     modifier = Modifier
@@ -76,18 +76,18 @@ private fun HomeScreen(
 
         }
     ) { innerPadding ->
-        if( state.isLoading){
+        if (state.isLoading) {
             Box(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
 
-            ){
+            ) {
                 CircularProgressIndicator()
             }
 
-        }else if(state.recipes.isNotEmpty()){
+        } else if (state.recipes.isNotEmpty()) {
             RecipeList(
                 modifier = Modifier.padding(innerPadding),
                 recipes = state.recipes,

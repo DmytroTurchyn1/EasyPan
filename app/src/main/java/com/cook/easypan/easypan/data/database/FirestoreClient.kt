@@ -9,7 +9,7 @@ class FirestoreClient {
     private val firestore = Firebase.firestore
 
 
-    suspend fun getCollection(collectionName: String) : List<RecipeDto> {
+    suspend fun getCollection(collectionName: String): List<RecipeDto> {
         return firestore.collection(collectionName)
             .get()
             .await()

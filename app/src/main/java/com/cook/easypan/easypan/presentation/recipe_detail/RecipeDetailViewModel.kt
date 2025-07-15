@@ -28,25 +28,28 @@ class RecipeDetailViewModel : ViewModel() {
 
     fun onAction(action: RecipeDetailAction) {
         when (action) {
-           is RecipeDetailAction.OnRecipeChange -> {
-               _state.update {
-                   it.copy(
-                       recipe = action.recipe
-                   )
-               }
-           }
+            is RecipeDetailAction.OnRecipeChange -> {
+                _state.update {
+                    it.copy(
+                        recipe = action.recipe
+                    )
+                }
+            }
+
             is RecipeDetailAction.OnIngredientCheck -> {
-                    _state.update {
-                        val updatedSet = if (it.onIngredientCheckClicked.contains(action.ingredientIndex)){
-                           it.onIngredientCheckClicked - action.ingredientIndex
-                        }else{
+                _state.update {
+                    val updatedSet =
+                        if (it.onIngredientCheckClicked.contains(action.ingredientIndex)) {
+                            it.onIngredientCheckClicked - action.ingredientIndex
+                        } else {
                             it.onIngredientCheckClicked + action.ingredientIndex
                         }
-                        it.copy(
-                            onIngredientCheckClicked = updatedSet
-                        )
-                    }
+                    it.copy(
+                        onIngredientCheckClicked = updatedSet
+                    )
                 }
+            }
+
             else -> Unit
         }
     }

@@ -6,9 +6,9 @@ sealed interface RecipeDetailAction {
 
     data class OnRecipeChange(val recipe: Recipe) : RecipeDetailAction
 
-    data object OnStartRecipeClick: RecipeDetailAction
+    data object OnStartRecipeClick : RecipeDetailAction
 
-    data class OnIngredientCheck(val ingredientIndex: Int): RecipeDetailAction
+    data class OnIngredientCheck(val ingredientIndex: Int) : RecipeDetailAction
 
-    data object OnBackClick: RecipeDetailAction
+    data object OnBackClick : RecipeDetailAction
 }

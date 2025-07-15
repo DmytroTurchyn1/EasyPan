@@ -9,7 +9,7 @@ class SelectedRecipeViewModel : ViewModel() {
     private val _selectedRecipe = MutableStateFlow<Recipe?>(null)
     val selectedRecipe = _selectedRecipe.asStateFlow()
 
-    fun onSelectRecipe(recipe: Recipe?){
+    fun onSelectRecipe(recipe: Recipe?) {
         _selectedRecipe.value = recipe
     }
 }

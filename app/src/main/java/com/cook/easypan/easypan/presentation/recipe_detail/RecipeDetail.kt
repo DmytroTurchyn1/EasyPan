@@ -51,7 +51,7 @@ fun RecipeDetailRoot(
     RecipeDetailScreen(
         state = state,
         onAction = { action ->
-            when(action){
+            when (action) {
                 is RecipeDetailAction.OnBackClick -> onBackClick()
                 is RecipeDetailAction.OnStartRecipeClick -> onStartClick()
                 else -> Unit
@@ -92,7 +92,7 @@ private fun RecipeDetailScreen(
             }
         }
     ) { innerPadding ->
-        if(state.recipe != null){
+        if (state.recipe != null) {
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -101,7 +101,7 @@ private fun RecipeDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .size(300.dp)
-                ){
+                ) {
                     AsyncImage(
                         model = state.recipe.titleImg,
                         contentDescription = "Recipe Image",
@@ -112,11 +112,11 @@ private fun RecipeDetailScreen(
                             .fillMaxWidth()
                     )
                     IconButton(
-                        onClick = {onAction(RecipeDetailAction.OnBackClick)},
+                        onClick = { onAction(RecipeDetailAction.OnBackClick) },
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .statusBarsPadding()
-                    ){
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.go_back),
@@ -155,7 +155,7 @@ private fun RecipeDetailScreen(
                         modifier = Modifier
                             .padding(top = 14.dp)
                             .wrapContentSize(Alignment.Center)
-                    ){
+                    ) {
                         state.recipe.chips.forEach { text ->
                             RecipeChip(
                                 text = text,
@@ -190,8 +190,7 @@ private fun RecipeDetailScreen(
                     }
                 }
             }
-        }
-        else{
+        } else {
             Box(
                 modifier = Modifier
                     .fillMaxSize(),

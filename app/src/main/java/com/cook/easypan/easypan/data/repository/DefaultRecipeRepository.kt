@@ -7,10 +7,10 @@ import com.cook.easypan.easypan.domain.RecipeRepository
 
 class DefaultRecipeRepository(
     private val firestoreDataSource: FirestoreClient
-): RecipeRepository {
+) : RecipeRepository {
     override suspend fun getRecipes(): List<Recipe> {
         return firestoreDataSource
             .getCollection("Recipes")
-            .map { it.toRecipe()}
+            .map { it.toRecipe() }
     }
 }

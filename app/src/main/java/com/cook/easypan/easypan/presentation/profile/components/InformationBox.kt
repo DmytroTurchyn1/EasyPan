@@ -22,7 +22,7 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun InformationBox(
-    content : @Composable () -> Unit
+    content: @Composable () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -35,13 +35,13 @@ fun InformationBox(
                 shape = RoundedCornerShape(10.dp)
             )
             .background(MaterialTheme.colorScheme.primaryContainer)
-    ){
-        Column (
+    ) {
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-        ){
+        ) {
             content()
         }
     }
@@ -51,8 +51,9 @@ fun InformationBox(
 @Composable
 private fun InformationBoxPreview() {
     EasyPanTheme {
-        InformationBox(){
-            Text(text = "Information",
+        InformationBox() {
+            Text(
+                text = "Information",
                 color = Color.White,
             )
         }

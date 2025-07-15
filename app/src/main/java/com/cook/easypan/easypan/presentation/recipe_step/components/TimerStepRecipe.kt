@@ -31,7 +31,7 @@ fun TimerStepRecipe(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-    ){
+    ) {
         var timeSecondsLeft by remember { mutableIntStateOf(totalSeconds?.rem(60) ?: 60) }
         var timeMinutesLeft by remember { mutableIntStateOf(totalSeconds?.div(60) ?: 60) }
         var isPaused by remember { mutableStateOf(true) }
@@ -46,7 +46,7 @@ fun TimerStepRecipe(
             ) {
 
                 LaunchedEffect(timeSecondsLeft, isPaused) {
-                    while (timeMinutesLeft>0 && !isPaused){
+                    while (timeMinutesLeft > 0 && !isPaused) {
                         delay(1000L)
                         if (timeSecondsLeft == 0) {
                             timeMinutesLeft--

@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TimerCounterElement(
     title: String,
-    time : Int,
+    time: Int,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

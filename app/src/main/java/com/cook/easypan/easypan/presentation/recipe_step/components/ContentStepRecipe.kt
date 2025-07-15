@@ -19,7 +19,7 @@ fun ContentStepRecipe(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
-    ){
+    ) {
         Column {
             Text(
                 text = title,

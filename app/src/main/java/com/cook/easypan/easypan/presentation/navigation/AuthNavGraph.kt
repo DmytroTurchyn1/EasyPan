@@ -19,11 +19,11 @@ import org.koin.androidx.compose.koinViewModel
 
 fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
-    googleAuthUiClient : GoogleAuthUiClient
+    googleAuthUiClient: GoogleAuthUiClient
 ) {
     navigation<Route.AuthGraph>(
         startDestination = Route.Authentication
-    ){
+    ) {
         composable<Route.Authentication> {
             val viewModel = koinViewModel<AuthenticationViewModel>()
             val state by viewModel.state.collectAsStateWithLifecycle()
@@ -32,9 +32,9 @@ fun NavGraphBuilder.authNavGraph(
                 contract = ActivityResultContracts.StartIntentSenderForResult(),
                 onResult = { result ->
                     if (result.resultCode == RESULT_OK && result.data != null) {
-                       result.data.let {data ->
-                           viewModel.handleSignInResult(googleAuthUiClient, data)
-                       }
+                        result.data.let { data ->
+                            viewModel.handleSignInResult(googleAuthUiClient, data)
+                        }
                     }
                 }
             )

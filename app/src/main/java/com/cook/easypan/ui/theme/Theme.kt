@@ -1,4 +1,5 @@
 package com.cook.easypan.ui.theme
+
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -245,57 +246,57 @@ private val highContrastDarkColorScheme = darkColorScheme(
 )
 
 val extendedLight = ExtendedColorScheme(
-  textColor = ColorFamily(
-      textColorLight,
-      onTextColorLight,
-      textColorContainerLight,
-      onTextColorContainerLight,
-  ),
+    textColor = ColorFamily(
+        textColorLight,
+        onTextColorLight,
+        textColorContainerLight,
+        onTextColorContainerLight,
+    ),
 )
 
 val extendedDark = ExtendedColorScheme(
-  textColor = ColorFamily(
-      textColorDark,
-      onTextColorDark,
-      textColorContainerDark,
-      onTextColorContainerDark,
-  ),
+    textColor = ColorFamily(
+        textColorDark,
+        onTextColorDark,
+        textColorContainerDark,
+        onTextColorContainerDark,
+    ),
 )
 
 val extendedLightMediumContrast = ExtendedColorScheme(
-  textColor = ColorFamily(
-      textColorLightMediumContrast,
-      onTextColorLightMediumContrast,
-      textColorContainerLightMediumContrast,
-      onTextColorContainerLightMediumContrast,
-  ),
+    textColor = ColorFamily(
+        textColorLightMediumContrast,
+        onTextColorLightMediumContrast,
+        textColorContainerLightMediumContrast,
+        onTextColorContainerLightMediumContrast,
+    ),
 )
 
 val extendedLightHighContrast = ExtendedColorScheme(
-  textColor = ColorFamily(
-      textColorLightHighContrast,
-      onTextColorLightHighContrast,
-      textColorContainerLightHighContrast,
-      onTextColorContainerLightHighContrast,
-  ),
+    textColor = ColorFamily(
+        textColorLightHighContrast,
+        onTextColorLightHighContrast,
+        textColorContainerLightHighContrast,
+        onTextColorContainerLightHighContrast,
+    ),
 )
 
 val extendedDarkMediumContrast = ExtendedColorScheme(
-  textColor = ColorFamily(
-      textColorDarkMediumContrast,
-      onTextColorDarkMediumContrast,
-      textColorContainerDarkMediumContrast,
-      onTextColorContainerDarkMediumContrast,
-  ),
+    textColor = ColorFamily(
+        textColorDarkMediumContrast,
+        onTextColorDarkMediumContrast,
+        textColorContainerDarkMediumContrast,
+        onTextColorContainerDarkMediumContrast,
+    ),
 )
 
 val extendedDarkHighContrast = ExtendedColorScheme(
-  textColor = ColorFamily(
-      textColorDarkHighContrast,
-      onTextColorDarkHighContrast,
-      textColorContainerDarkHighContrast,
-      onTextColorContainerDarkHighContrast,
-  ),
+    textColor = ColorFamily(
+        textColorDarkHighContrast,
+        onTextColorDarkHighContrast,
+        textColorContainerDarkHighContrast,
+        onTextColorContainerDarkHighContrast,
+    ),
 )
 
 @Immutable
@@ -317,20 +318,20 @@ fun EasyPanTheme(
     dynamicColor: Boolean = true,
     content: @Composable() () -> Unit
 ) {
-  val colorScheme = when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-          val context = LocalContext.current
-          if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      }
-      
-      darkTheme -> darkScheme
-      else -> lightScheme
-  }
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography,
-    content = content
-  )
+        darkTheme -> darkScheme
+        else -> lightScheme
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = AppTypography,
+        content = content
+    )
 }
 

@@ -15,10 +15,10 @@ fun RecipeItem(
     title: String,
     text: String
 ) {
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-    ){
+    ) {
         Text(
             text = title,
             modifier = Modifier

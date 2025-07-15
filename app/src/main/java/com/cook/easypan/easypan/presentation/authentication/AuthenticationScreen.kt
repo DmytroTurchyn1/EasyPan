@@ -55,7 +55,7 @@ private fun AuthenticationScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -102,13 +102,14 @@ private fun AuthenticationScreen(
                 }
             ) {
                 Row(
-                    modifier = Modifier.padding(top = 2.dp, bottom = 2.dp)
+                    modifier = Modifier
+                        .padding(top = 2.dp, bottom = 2.dp)
                         .weight(1f),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
 
 
-                ) {
+                    ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.google_icon),
                         contentDescription = stringResource(R.string.google_icon_description),
@@ -116,7 +117,7 @@ private fun AuthenticationScreen(
                     )
                     Text(
                         text = stringResource(R.string.continue_with_google),
-                        color = Color.White ,
+                        color = Color.White,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,

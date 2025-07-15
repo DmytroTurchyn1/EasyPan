@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class StepDescriptionDto (
+data class StepDescriptionDto(
     @SerialName("step") val step: Int = 0,
     @SerialName("imageUrl") val imageUrl: String? = null,
     @SerialName("title") val title: String = "",

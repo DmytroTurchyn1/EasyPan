@@ -32,10 +32,12 @@ class HomeViewModel(
             initialValue = HomeState()
         )
 
-    private fun loadRecipes(){
-        _state.update { it.copy(
-            isLoading = true
-        ) }
+    private fun loadRecipes() {
+        _state.update {
+            it.copy(
+                isLoading = true
+            )
+        }
         viewModelScope.launch {
             _state.update {
                 it.copy(
@@ -45,9 +47,10 @@ class HomeViewModel(
             }
         }
     }
+
     fun onAction(action: HomeAction) {
         when (action) {
-            is HomeAction.OnRecipeClick ->{
+            is HomeAction.OnRecipeClick -> {
 
             }
         }

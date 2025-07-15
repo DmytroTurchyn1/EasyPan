@@ -31,11 +31,10 @@ import com.cook.easypan.easypan.domain.StepType
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 
-
 @Composable
 fun RecipeListItem(
     recipe: Recipe,
-    onClick: ()-> Unit
+    onClick: () -> Unit
 ) {
 
     Box(
@@ -43,7 +42,7 @@ fun RecipeListItem(
             .height(120.dp)
             .fillMaxWidth()
             .clickable(onClick = onClick)
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxHeight()
@@ -71,18 +70,18 @@ fun RecipeListItem(
                     maxLines = 2
                 )
             }
-                AsyncImage(
-                    model = recipe.titleImg,
-                    contentDescription = stringResource(R.string.dish_image_description),
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(R.drawable.auth_img),
-                    placeholder = painterResource(R.drawable.ic_launcher_background),
-                    modifier = Modifier
-                        .width(200.dp)
-                        .height(100.dp)
-                        .padding(10.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                )
+            AsyncImage(
+                model = recipe.titleImg,
+                contentDescription = stringResource(R.string.dish_image_description),
+                contentScale = ContentScale.Crop,
+                error = painterResource(R.drawable.auth_img),
+                placeholder = painterResource(R.drawable.ic_launcher_background),
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(100.dp)
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(14.dp))
+            )
         }
 
     }

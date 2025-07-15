@@ -21,8 +21,8 @@ class EasyPanApp : Application() {
         }
         Firebase.initialize(this)
         val buildType = BuildConfig.BUILD_TYPE.contentEquals("debug")
-        if(true){
-            Firebase.appCheck.installAppCheckProviderFactory (
+        if (true) {
+            Firebase.appCheck.installAppCheckProviderFactory(
                 DebugAppCheckProviderFactory.getInstance()
             )
         }

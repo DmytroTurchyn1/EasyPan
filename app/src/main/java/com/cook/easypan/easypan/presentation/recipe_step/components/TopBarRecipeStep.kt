@@ -31,7 +31,7 @@ fun TopBarRecipeStep(
     progress: Float
 ) {
     Column {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(6.dp),
@@ -40,7 +40,7 @@ fun TopBarRecipeStep(
 
         ) {
             IconButton(
-                onClick = { RecipeStepAction.OnBackClick}
+                onClick = { RecipeStepAction.OnBackClick }
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,

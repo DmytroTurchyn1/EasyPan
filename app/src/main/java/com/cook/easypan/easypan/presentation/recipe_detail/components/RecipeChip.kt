@@ -37,11 +37,11 @@ fun RecipeChip(
                 horizontal = 12.dp
             ),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
-        ){
+        ) {
             Text(
                 text = text,
                 color = Color.White

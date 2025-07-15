@@ -3,7 +3,7 @@ package com.cook.easypan.easypan.presentation.navigation
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Route{
+sealed class Route {
 
     @Serializable
     data object AuthGraph : Route()
@@ -28,5 +28,5 @@ sealed class Route{
     data class RecipeDetail(val id: String) : Route()
 
     @Serializable
-    data object RecipeStep: Route()
+    data object RecipeStep : Route()
 }
