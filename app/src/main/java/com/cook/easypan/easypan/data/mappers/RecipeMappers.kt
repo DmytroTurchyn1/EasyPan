@@ -36,5 +36,6 @@ fun StepDescriptionDto.toStepDescription() : StepDescription {
             "TIMER" -> StepType.TIMER
             else -> throw IllegalArgumentException("Unknown step type: $stepType")
         },
+        durationSec = durationSec
     )
 }

@@ -9,20 +9,32 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun TimerStepRecipe(
-    modifier: Modifier = Modifier
+    totalSeconds: Int? = 0
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ){
+        var timeSecondsLeft by remember { mutableIntStateOf(totalSeconds?.rem(60) ?: 60) }
+        var timeMinutesLeft by remember { mutableIntStateOf(totalSeconds?.div(60) ?: 60) }
+        var isPaused by remember { mutableStateOf(true) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -32,31 +44,49 @@ fun TimerStepRecipe(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
+
+                LaunchedEffect(timeSecondsLeft, isPaused) {
+                    while (timeMinutesLeft>0 && !isPaused){
+                        delay(1000L)
+                        if (timeSecondsLeft == 0) {
+                            timeMinutesLeft--
+                            timeSecondsLeft = 60
+                        }
+                        timeSecondsLeft--
+                    }
+                }
                 TimerCounterElement(
-                    title = "Minutes"
+                    title = stringResource(R.string.minutes_timer),
+                    time = timeMinutesLeft
                 )
                 TimerCounterElement(
-                    title = "Seconds"
+                    title = stringResource(R.string.seconds_timer),
+                    time = timeSecondsLeft
                 )
             }
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 20.dp),
-                onClick = {}
+                onClick = {
+                    isPaused = false
+                },
+                enabled = isPaused
             ) {
                 Text(
-                    text = "Start Timer"
+                    text = stringResource(R.string.start_button_timer)
                 )
             }
             Button(
                 modifier = Modifier
                     .fillMaxWidth(),
-                onClick = {},
-                enabled = false
+                onClick = {
+                    isPaused = true
+                },
+                enabled = !isPaused
             ) {
                 Text(
-                    text = "Stop Timer"
+                    text = stringResource(R.string.stop_button_timer)
                 )
             }
         }
@@ -67,8 +97,6 @@ fun TimerStepRecipe(
 @Composable
 private fun TimerStepRecipePreview() {
     EasyPanTheme {
-        TimerStepRecipe(
-
-        )
+        TimerStepRecipe()
     }
 }

@@ -93,7 +93,6 @@ private fun RecipeDetailScreen(
         }
     ) { innerPadding ->
         if(state.recipe != null){
-
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -191,7 +190,8 @@ private fun RecipeDetailScreen(
                     }
                 }
             }
-        }else{
+        }
+        else{
             Box(
                 modifier = Modifier
                     .fillMaxSize(),

@@ -46,7 +46,7 @@ fun BottomBarRecipeStep(
                 enabled = enabledNext
             ) {
                 Text(
-                    text = "Next",
+                    text = if (enabledNext) "Next" else "Finish",
                 )
             }
         }

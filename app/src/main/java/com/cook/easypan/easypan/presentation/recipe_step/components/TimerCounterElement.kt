@@ -18,7 +18,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TimerCounterElement(
-    title: String
+    title: String,
+    time : Int = 0,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -34,7 +35,7 @@ fun TimerCounterElement(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "1"
+                text = "$time"
             )
         }
         Text(

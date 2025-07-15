@@ -107,7 +107,9 @@ private fun RecipeStepScreen(
                                     title = state.recipe.instructions[state.step].title,
                                     description = state.recipe.instructions[state.step].description
                                 )
-                            TimerStepRecipe()
+                            TimerStepRecipe(
+                                totalSeconds = state.recipe.instructions[state.step].durationSec,
+                            )
                         }
                     }
             }
