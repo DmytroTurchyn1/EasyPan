@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.cook.easypan.R
 
 sealed class BottomBarScreen(
     val title: String,
@@ -13,19 +14,19 @@ sealed class BottomBarScreen(
 ) {
     object Home : BottomBarScreen(
         route = Route.Home,
-        title = "Home",
+        title = R.string.home_bar_title.toString(),
         icon = Icons.Default.Home
     )
 
     object Favorite : BottomBarScreen(
         route = Route.Favorite,
-        title = "Favorite",
+        title = R.string.favorite_bar_title.toString(),
         icon = Icons.Default.Favorite
     )
 
     object Profile : BottomBarScreen(
         route = Route.Profile,
-        title = "Profile",
+        title = R.string.profile_bar_title.toString(),
         icon = Icons.Default.Person
     )
 }

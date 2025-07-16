@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,9 +33,22 @@ fun TimerStepRecipe(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        var timeSecondsLeft by remember { mutableIntStateOf(totalSeconds?.rem(60) ?: 60) }
-        var timeMinutesLeft by remember { mutableIntStateOf(totalSeconds?.div(60) ?: 60) }
+        var timeSecondsLeft by remember { mutableIntStateOf(totalSeconds?.rem(60) ?: 0) }
+        var timeMinutesLeft by remember { mutableIntStateOf(totalSeconds?.div(60) ?: 0) }
         var isPaused by remember { mutableStateOf(true) }
+
+        LaunchedEffect(timeSecondsLeft, timeMinutesLeft, isPaused) {
+            while ((timeMinutesLeft > 0 || timeSecondsLeft > 0) && !isPaused) {
+                delay(1000L)
+                if (timeSecondsLeft > 0) {
+                    timeSecondsLeft--
+                } else if (timeMinutesLeft > 0) {
+                    timeMinutesLeft--
+                    timeSecondsLeft = 59
+                }
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -44,17 +58,6 @@ fun TimerStepRecipe(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-
-                LaunchedEffect(timeSecondsLeft, isPaused) {
-                    while (timeMinutesLeft > 0 && !isPaused) {
-                        delay(1000L)
-                        if (timeSecondsLeft == 0) {
-                            timeMinutesLeft--
-                            timeSecondsLeft = 60
-                        }
-                        timeSecondsLeft--
-                    }
-                }
                 TimerCounterElement(
                     title = stringResource(R.string.minutes_timer),
                     time = timeMinutesLeft
@@ -74,7 +77,8 @@ fun TimerStepRecipe(
                 enabled = isPaused
             ) {
                 Text(
-                    text = stringResource(R.string.start_button_timer)
+                    text = stringResource(R.string.start_button_timer),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Button(
@@ -86,7 +90,8 @@ fun TimerStepRecipe(
                 enabled = !isPaused
             ) {
                 Text(
-                    text = stringResource(R.string.stop_button_timer)
+                    text = stringResource(R.string.stop_button_timer),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

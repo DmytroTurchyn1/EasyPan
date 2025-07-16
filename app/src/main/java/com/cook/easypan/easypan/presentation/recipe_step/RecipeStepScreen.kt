@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -136,7 +137,8 @@ private fun RecipeStepScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(R.string.error_recipe)
+                text = stringResource(R.string.error_recipe),
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

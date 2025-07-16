@@ -26,14 +26,16 @@ fun ContentStepRecipe(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = description,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

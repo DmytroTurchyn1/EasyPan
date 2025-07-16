@@ -31,4 +31,10 @@
     <string name="next_button">Next</string>
     <string name="finish_button">Finish</string>
     <string name="previous_button">Previous</string>
+    <string name="recipe_finished_image">Recipe Finished</string>
+    <string name="recipe_finished_title">Congrats!</string>
+    <string name="recipe_finished_button">Finish</string>
+    <string name="home_bar_title">Home</string>
+    <string name="favorite_bar_title">Favorite</string>
+    <string name="profile_bar_title">Profile</string>
 </resources>

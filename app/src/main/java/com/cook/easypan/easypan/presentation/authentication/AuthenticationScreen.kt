@@ -71,7 +71,7 @@ private fun AuthenticationScreen(
             )
             Text(
                 text = stringResource(R.string.auth_title),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .padding(14.dp),
                 style = MaterialTheme.typography.titleLarge,
@@ -81,7 +81,7 @@ private fun AuthenticationScreen(
             )
             Text(
                 text = stringResource(R.string.auth_description),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .padding(14.dp),
                 style = MaterialTheme.typography.bodyMedium,
@@ -113,11 +113,11 @@ private fun AuthenticationScreen(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.google_icon),
                         contentDescription = stringResource(R.string.google_icon_description),
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = stringResource(R.string.continue_with_google),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,

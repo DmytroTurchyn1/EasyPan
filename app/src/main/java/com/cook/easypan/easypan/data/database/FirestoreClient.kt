@@ -8,14 +8,18 @@ import kotlinx.coroutines.tasks.await
 class FirestoreClient {
     private val firestore = Firebase.firestore
 
-
     suspend fun getCollection(collectionName: String): List<RecipeDto> {
-        return firestore.collection(collectionName)
-            .get()
-            .await()
-            .documents
-            .mapNotNull { document ->
-                document.toObject(RecipeDto::class.java)?.copy(id = document.id)
-            }
+        return try {
+            firestore.collection(collectionName)
+                .get()
+                .await()
+                .documents
+                .mapNotNull { document ->
+                    document.toObject(RecipeDto::class.java)?.copy(id = document.id)
+                }
+        } catch (e: Exception) {
+            throw e
+        }
+
     }
 }

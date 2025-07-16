@@ -39,7 +39,6 @@ fun HomeRoot(
         onAction = { action ->
             when (action) {
                 is HomeAction.OnRecipeClick -> onRecipeClick(action.recipe)
-                else -> Unit
             }
             viewModel.onAction(action)
         }
@@ -96,6 +95,18 @@ private fun HomeScreen(
                 },
                 scrollState = recipeListState
             )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.error_recipe),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
 
     }

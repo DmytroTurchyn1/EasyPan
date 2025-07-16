@@ -86,7 +86,8 @@ private fun RecipeDetailScreen(
                             .fillMaxWidth(),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -136,7 +137,8 @@ private fun RecipeDetailScreen(
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(top = 20.dp, bottom = 20.dp)
+                            .padding(top = 20.dp, bottom = 20.dp),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     RecipeItem(
                         title = stringResource(R.string.preparation_title),
@@ -166,7 +168,7 @@ private fun RecipeDetailScreen(
                     }
                     Text(
                         text = stringResource(R.string.ingredients_title),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -197,7 +199,8 @@ private fun RecipeDetailScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = stringResource(R.string.error_recipe)
+                    text = stringResource(R.string.error_recipe),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

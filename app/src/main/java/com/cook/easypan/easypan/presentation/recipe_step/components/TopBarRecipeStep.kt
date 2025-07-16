@@ -53,6 +53,7 @@ fun TopBarRecipeStep(
                 text = "${stringResource(R.string.step)} $step",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
         LinearProgressIndicator(

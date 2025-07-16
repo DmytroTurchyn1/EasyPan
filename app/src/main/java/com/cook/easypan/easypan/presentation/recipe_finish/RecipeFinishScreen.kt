@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,15 +57,16 @@ private fun RecipeFinishScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Congrats!",
+            text = stringResource(R.string.recipe_finished_title),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleLarge,
-            fontSize = 36.sp
+            fontSize = 36.sp,
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(42.dp))
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),
-            contentDescription = "Recipe Finished",
+            contentDescription = stringResource(R.string.recipe_finished_image),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
@@ -78,7 +80,8 @@ private fun RecipeFinishScreen(
                 .fillMaxWidth()
         ) {
             Text(
-                text = "Finish",
+                text = stringResource(R.string.recipe_finished_button),
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

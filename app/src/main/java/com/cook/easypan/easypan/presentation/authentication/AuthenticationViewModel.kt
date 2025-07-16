@@ -45,7 +45,7 @@ class AuthenticationViewModel(
         }
     }
 
-    fun handleSignInResult(googleAuthUiClient: GoogleAuthUiClient, data: Intent?) {
+    fun handleSignInResult(data: Intent?) {
         viewModelScope.launch {
             if (data != null) {
                 val signInResult = googleAuthUiClient.signInWithIntent(data)

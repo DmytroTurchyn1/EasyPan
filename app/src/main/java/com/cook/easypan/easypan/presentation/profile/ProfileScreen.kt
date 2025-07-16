@@ -49,7 +49,7 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun ProfileRoot(
     viewModel: ProfileViewModel,
-    onSingOutButton: () -> Unit,
+    onSignOutButton: () -> Unit,
     userData: UserData?
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -57,7 +57,7 @@ fun ProfileRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                is ProfileAction.OnSignOut -> onSingOutButton()
+                is ProfileAction.OnSignOut -> onSignOutButton()
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -141,9 +141,11 @@ private fun ProfileScreen(
                             text = "${state.recipesCooked}",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = stringResource(R.string.recipes_cooked)
+                            text = stringResource(R.string.recipes_cooked),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                     InformationBox {
@@ -151,9 +153,11 @@ private fun ProfileScreen(
                             text = "${state.favoriteCuisines}",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = stringResource(R.string.favorite_cuisines)
+                            text = stringResource(R.string.favorite_cuisines),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

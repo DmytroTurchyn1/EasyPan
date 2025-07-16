@@ -112,7 +112,7 @@ fun HomeNavGraph(
             val selectedRecipeViewModel =
                 it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
 
-            LaunchedEffect(true) {
+            LaunchedEffect(Unit) {
                 selectedRecipeViewModel.onSelectRecipe(null)
             }
 
@@ -188,7 +188,7 @@ fun HomeNavGraph(
             }
             ProfileRoot(
                 userData = googleAuthUiClient.getSignedInUser(),
-                onSingOutButton = {
+                onSignOutButton = {
                     viewModel.onAction(ProfileAction.OnSignOut)
                 },
                 viewModel = viewModel
