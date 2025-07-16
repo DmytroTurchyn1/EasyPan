@@ -25,7 +25,6 @@ fun RootNavGraph(
         ) {
             authNavGraph(
                 navController = navController,
-                googleAuthUiClient = googleAuthUiClient
             )
             composable<Route.AppGraph> {
                 Home(

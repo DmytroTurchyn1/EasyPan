@@ -111,14 +111,14 @@ private fun ProfileScreen(
                         .build(),
                     placeholder = painterResource(R.drawable.ic_launcher_background),
                     error = painterResource(R.drawable.auth_img),
-                    contentDescription = "profile picture",
+                    contentDescription = stringResource(R.string.profile_picture_description),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(150.dp)
                         .clip(CircleShape)
                 )
                 Text(
-                    text = userData?.username ?: "username",
+                    text = userData?.username ?: stringResource(R.string.username_placeholder),
                     modifier = Modifier.padding(top = 20.dp),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
@@ -172,7 +172,7 @@ private fun ProfileScreen(
                         .padding(start = 12.dp)
                 )
                 SettingsItem(
-                    text = "Notifications",
+                    text = stringResource(R.string.notificationes_title),
                     icon = Icons.Outlined.Notifications,
                     onClick = { onAction(ProfileAction.OnNotificationsToggle) },
                 ) {
@@ -182,13 +182,13 @@ private fun ProfileScreen(
                     )
                 }
                 SettingsItem(
-                    text = "Help & Support",
+                    text = stringResource(R.string.help_title),
                     icon = Icons.AutoMirrored.Filled.HelpOutline,
                     onClick = { onAction },
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "Navigate to help",
+                        contentDescription = stringResource(R.string.help_image_description),
                         modifier = Modifier
                             .size(30.dp)
                             .padding(end = 6.dp)

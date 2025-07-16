@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -226,7 +227,7 @@ fun RowScope.AddItem(
                 launchSingleTop = true
             }
         },
-        label = { Text(text = screen.title) },
+        label = { Text(text = stringResource(screen.title) ) },
         icon = {
             Icon(
                 imageVector = screen.icon,
