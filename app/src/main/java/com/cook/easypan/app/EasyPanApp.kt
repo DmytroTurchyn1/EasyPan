@@ -12,6 +12,11 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
 class EasyPanApp : Application() {
+    /**
+     * Initializes application-wide dependencies and services on startup.
+     *
+     * Sets up Koin dependency injection, initializes Firebase, and configures Firebase App Check with the debug provider factory.
+     */
     override fun onCreate() {
         super.onCreate()
         startKoin {

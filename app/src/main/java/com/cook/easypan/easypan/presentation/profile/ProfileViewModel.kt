@@ -12,6 +12,13 @@ class ProfileViewModel() : ViewModel() {
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
 
+    /**
+     * Handles a profile-related action and updates the profile state accordingly.
+     *
+     * Processes actions such as signing out or toggling notification preferences, updating the state flow to reflect the changes.
+     *
+     * @param action The profile action to handle.
+     */
     fun onAction(action: ProfileAction) {
         when (action) {
             ProfileAction.OnSignOut -> {

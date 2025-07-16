@@ -26,6 +26,11 @@ class RecipeDetailViewModel : ViewModel() {
             initialValue = RecipeDetailState()
         )
 
+    /**
+     * Handles UI actions related to recipe details by updating the state accordingly.
+     *
+     * Updates the recipe in the state when a recipe change action is received, or toggles the checked state of an ingredient when an ingredient check action is received. Other actions are ignored.
+     */
     fun onAction(action: RecipeDetailAction) {
         when (action) {
             is RecipeDetailAction.OnRecipeChange -> {

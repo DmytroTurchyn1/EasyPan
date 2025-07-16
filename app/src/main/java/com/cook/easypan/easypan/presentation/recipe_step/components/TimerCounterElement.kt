@@ -17,6 +17,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+/**
+ * Displays a timer counter UI element with a numeric value and a descriptive title.
+ *
+ * Arranges the time value in a styled box above the title, both centered vertically and horizontally.
+ *
+ * @param title The label displayed below the timer value.
+ * @param time The numeric value shown inside the timer box.
+ */
 @Composable
 fun TimerCounterElement(
     title: String,

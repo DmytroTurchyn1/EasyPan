@@ -21,6 +21,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Displays the favorite recipes screen, connecting the UI to the provided [FavoriteViewModel].
+ *
+ * Collects the UI state from the [viewModel] and passes it along with the action handler to the underlying screen composable.
+ */
 @Composable
 fun FavoriteRoot(
     viewModel: FavoriteViewModel
@@ -33,6 +38,14 @@ fun FavoriteRoot(
     )
 }
 
+/**
+ * Displays the favorite recipes screen with a top bar and a list or message based on the current state.
+ *
+ * Shows a centered title in the top bar. If there are no favorite recipes, displays a message indicating the absence of favorites; otherwise, presents a scrollable list of favorite recipes.
+ *
+ * @param state The current UI state containing the list of favorite recipes.
+ * @param onAction Callback for handling user actions on the screen.
+ */
 @Composable
 private fun FavoriteScreen(
     state: FavoriteState,
@@ -86,6 +99,9 @@ private fun FavoriteScreen(
 
 }
 
+/**
+ * Displays a preview of the FavoriteScreen composable with default state for design inspection.
+ */
 @Preview(showSystemUi = true)
 @Composable
 private fun Preview() {

@@ -27,6 +27,14 @@ import com.cook.easypan.easypan.presentation.home.components.RecipeList
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 
+/**
+ * Root composable for the home screen, connecting UI state from the [HomeViewModel] to the [HomeScreen].
+ *
+ * Collects the current home screen state and handles user actions, including recipe selection via [onRecipeClick].
+ *
+ * @param viewModel The view model providing home screen state and action handling.
+ * @param onRecipeClick Callback invoked when a recipe is selected.
+ */
 @Composable
 fun HomeRoot(
     viewModel: HomeViewModel,
@@ -46,6 +54,14 @@ fun HomeRoot(
     )
 }
 
+/**
+ * Displays the home screen UI, showing a loading indicator or a list of recipes based on the current state.
+ *
+ * Renders a top bar with the screen title. If loading, shows a centered progress indicator; otherwise, displays the list of recipes with click handling.
+ *
+ * @param state The current UI state for the home screen.
+ * @param onAction Callback for handling user actions such as recipe selection.
+ */
 @Composable
 private fun HomeScreen(
     state: HomeState,
@@ -101,6 +117,9 @@ private fun HomeScreen(
     }
 }
 
+/**
+ * Displays a preview of the HomeScreen composable with default state and theme for design-time visualization.
+ */
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun Preview() {

@@ -48,6 +48,15 @@ import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
 import org.koin.androidx.compose.koinViewModel
 
 
+/**
+ * Displays the main home screen scaffold with a bottom navigation bar and navigation graph.
+ *
+ * Sets up the navigation structure for the app, including bottom navigation and content area, and handles sign-out events.
+ *
+ * @param googleAuthUiClient The authentication client used for sign-out operations.
+ * @param navController The navigation controller managing navigation state. Defaults to a new controller if not provided.
+ * @param onSignOut Callback invoked when the user signs out.
+ */
 @Composable
 fun Home(
     googleAuthUiClient: GoogleAuthUiClient,
@@ -72,6 +81,11 @@ fun Home(
     }
 }
 
+/**
+ * Displays the bottom navigation bar with navigation items for Home, Favorite, and Profile screens.
+ *
+ * Highlights the current destination and enables navigation between main app sections.
+ */
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -97,6 +111,15 @@ fun BottomNavigationBar(navController: NavHostController) {
     }
 }
 
+/**
+ * Defines the navigation graph for the Home section, setting up composable destinations for Home, Recipe Detail, Recipe Step, Recipe Finish, Profile, and Favorite screens.
+ *
+ * Handles navigation actions, ViewModel instantiation (including shared ViewModels), and authentication sign-out logic. Manages state sharing and navigation transitions between different app sections.
+ *
+ * @param navController The navigation controller managing navigation within the Home section.
+ * @param googleAuthUiClient The authentication client used for sign-out and user data retrieval.
+ * @param onSignOut Callback invoked when the user signs out.
+ */
 @Composable
 fun HomeNavGraph(
     navController: NavHostController,
@@ -203,6 +226,15 @@ fun HomeNavGraph(
     }
 }
 
+/**
+ * Displays a navigation bar item for a bottom bar screen within a row, handling selection state and navigation.
+ *
+ * Navigates to the specified screen route when clicked, ensuring only a single instance is launched and popping up to the start destination as needed.
+ *
+ * @param screen The bottom bar screen to represent.
+ * @param currentDestination The current navigation destination, used to determine selection state.
+ * @param navController The navigation controller used for navigation actions.
+ */
 @Composable
 fun RowScope.AddItem(
     screen: BottomBarScreen,
@@ -236,6 +268,13 @@ fun RowScope.AddItem(
     )
 }
 
+/**
+ * Retrieves a shared Koin ViewModel instance scoped to the Home route's navigation back stack entry.
+ *
+ * Falls back to the current back stack entry if the Home route entry is unavailable.
+ *
+ * @return The shared ViewModel instance of type [T].
+ */
 @Composable
 private inline fun <reified T : ViewModel> NavBackStackEntry.sharedKoinViewModel(
     navController: NavController

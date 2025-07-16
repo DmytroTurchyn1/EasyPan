@@ -19,6 +19,11 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    /**
+     * Initializes the activity, sets up edge-to-edge display, and configures the Compose UI content with theming and navigation.
+     *
+     * @param savedInstanceState The previously saved instance state, or null if none exists.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

@@ -46,6 +46,15 @@ import com.cook.easypan.easypan.presentation.profile.components.SettingsItem
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 
+/**
+ * Entry point composable for the profile screen, connecting UI state and actions to the ProfileViewModel.
+ *
+ * Collects the current profile state from the view model and displays the profile UI. Handles user actions by forwarding them to the view model and triggers the sign-out callback when requested.
+ *
+ * @param viewModel The ProfileViewModel providing profile state and handling actions.
+ * @param onSingOutButton Callback invoked when the user requests to sign out.
+ * @param userData The current user's data, or null if unavailable.
+ */
 @Composable
 fun ProfileRoot(
     viewModel: ProfileViewModel,
@@ -66,6 +75,15 @@ fun ProfileRoot(
     )
 }
 
+/**
+ * Displays the user profile screen with profile information, statistics, and settings options.
+ *
+ * Shows the user's profile picture, username, number of recipes cooked, favorite cuisines, and provides settings for notifications, help & support, and sign-out.
+ *
+ * @param state The current profile state containing user statistics and settings.
+ * @param onAction Callback invoked when a profile-related action is triggered by the user.
+ * @param userData The user's profile data, including username and profile picture URL, or null if unavailable.
+ */
 @Composable
 private fun ProfileScreen(
     state: ProfileState,
@@ -201,6 +219,9 @@ private fun ProfileScreen(
     }
 }
 
+/**
+ * Displays a preview of the profile screen with sample user data and default state for design-time visualization.
+ */
 @Preview(showSystemUi = true)
 @Composable
 private fun Preview() {

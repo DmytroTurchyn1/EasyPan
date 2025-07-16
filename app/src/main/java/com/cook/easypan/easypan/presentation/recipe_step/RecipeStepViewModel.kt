@@ -36,6 +36,13 @@ class RecipeStepViewModel : ViewModel() {
         1f / (size?.toFloat() ?: 1f)
     }
 
+    /**
+     * Handles user actions related to recipe steps and updates the UI state accordingly.
+     *
+     * Supported actions include advancing to the next step, returning to the previous step, and changing the current recipe.
+     *
+     * @param action The user action to process.
+     */
     fun onAction(action: RecipeStepAction) {
         when (action) {
             is RecipeStepAction.OnNextClick -> {

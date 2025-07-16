@@ -40,6 +40,15 @@ import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeChip
 import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeItem
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Connects the RecipeDetailViewModel to the UI and handles user actions for the recipe detail screen.
+ *
+ * Collects the UI state from the ViewModel and passes it to the detail screen composable. Handles back navigation and starting the recipe by invoking the provided callbacks, and forwards all actions to the ViewModel.
+ *
+ * @param viewModel The ViewModel providing the recipe detail state and handling actions.
+ * @param onBackClick Callback invoked when the user requests to navigate back.
+ * @param onStartClick Callback invoked when the user starts the recipe.
+ */
 @Composable
 fun RecipeDetailRoot(
     viewModel: RecipeDetailViewModel,
@@ -61,6 +70,15 @@ fun RecipeDetailRoot(
     )
 }
 
+/**
+ * Displays the detailed UI for a recipe, including image, title, details, tags, and a list of ingredients with checkboxes.
+ *
+ * Shows a "Start Cooking" button in the bottom bar and handles user actions such as navigating back, starting the recipe, and checking ingredients.
+ * If no recipe data is available, displays a centered error message.
+ *
+ * @param state The current UI state containing recipe details and checked ingredient indices.
+ * @param onAction Callback invoked when the user performs an action on the screen.
+ */
 @Composable
 private fun RecipeDetailScreen(
     state: RecipeDetailState,
@@ -205,6 +223,11 @@ private fun RecipeDetailScreen(
     }
 }
 
+/**
+ * Displays a preview of the RecipeDetailScreen composable with default state and theming.
+ *
+ * Intended for use in the Compose UI preview tool.
+ */
 @Preview(showSystemUi = true)
 @Composable
 private fun Preview() {

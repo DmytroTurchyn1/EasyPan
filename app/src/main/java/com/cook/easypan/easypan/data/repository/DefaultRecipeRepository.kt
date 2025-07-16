@@ -8,6 +8,11 @@ import com.cook.easypan.easypan.domain.RecipeRepository
 class DefaultRecipeRepository(
     private val firestoreDataSource: FirestoreClient
 ) : RecipeRepository {
+    /**
+     * Retrieves all recipes from the Firestore "Recipes" collection.
+     *
+     * @return A list of `Recipe` domain objects.
+     */
     override suspend fun getRecipes(): List<Recipe> {
         return firestoreDataSource
             .getCollection("Recipes")

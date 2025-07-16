@@ -32,6 +32,11 @@ class HomeViewModel(
             initialValue = HomeState()
         )
 
+    /**
+     * Loads recipes from the repository and updates the UI state to reflect loading and completion.
+     *
+     * Sets the loading indicator to true, fetches recipes asynchronously, and updates the state with the retrieved recipes and loading status.
+     */
     private fun loadRecipes() {
         _state.update {
             it.copy(
@@ -48,6 +53,11 @@ class HomeViewModel(
         }
     }
 
+    /**
+     * Handles UI actions related to the home screen.
+     *
+     * @param action The action to process, such as a recipe click event.
+     */
     fun onAction(action: HomeAction) {
         when (action) {
             is HomeAction.OnRecipeClick -> {

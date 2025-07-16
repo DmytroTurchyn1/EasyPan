@@ -25,6 +25,12 @@ import com.cook.easypan.R
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Displays a top bar for a recipe step screen with a close button, step indicator, and progress bar.
+ *
+ * @param step The current step number or label to display.
+ * @param progress The progress value for the linear progress indicator, between 0.0 and 1.0.
+ */
 @Composable
 fun TopBarRecipeStep(
     step: String,
@@ -68,6 +74,9 @@ fun TopBarRecipeStep(
 
 }
 
+/**
+ * Displays a preview of the TopBarRecipeStep composable with sample step and progress values.
+ */
 @Preview
 @Composable
 private fun TopBarRecipeStepPreview() {

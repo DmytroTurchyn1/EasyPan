@@ -30,6 +30,15 @@ import com.cook.easypan.easypan.presentation.recipe_step.components.TimerStepRec
 import com.cook.easypan.easypan.presentation.recipe_step.components.TopBarRecipeStep
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Root composable for the recipe step screen, connecting the UI to the ViewModel and handling finish actions.
+ *
+ * Collects the UI state from the provided [RecipeStepViewModel] and renders the recipe step interface.
+ * Invokes [onFinishClick] when the finish action is triggered by the user.
+ *
+ * @param viewModel The ViewModel managing the recipe step state and actions.
+ * @param onFinishClick Callback invoked when the user completes the final recipe step.
+ */
 @Composable
 fun RecipeStepRoot(
     viewModel: RecipeStepViewModel,
@@ -49,6 +58,14 @@ fun RecipeStepRoot(
     )
 }
 
+/**
+ * Displays the UI for a single recipe step, including navigation, progress, and step content.
+ *
+ * Shows the current step's image, title, and description. If the step includes a timer, displays a timer component. Provides navigation controls for moving between steps or finishing the recipe. If no recipe data is available, displays an error message.
+ *
+ * @param state The current UI state for the recipe step screen.
+ * @param onAction Callback for handling user actions such as navigation or finishing the recipe.
+ */
 @Composable
 private fun RecipeStepScreen(
     state: RecipeStepState,
@@ -143,6 +160,9 @@ private fun RecipeStepScreen(
 
 }
 
+/**
+ * Displays a preview of the recipe step screen with default state for design-time visualization.
+ */
 @Preview(backgroundColor = 0xFFFFFFFF, showBackground = true)
 @Composable
 private fun Preview() {

@@ -26,6 +26,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Displays the recipe completion screen and handles user actions.
+ *
+ * Collects UI state from the provided [viewModel] and renders the finish screen. When the finish button is clicked, invokes [onFinishClick] and forwards the action to the view model.
+ */
 @Composable
 fun RecipeFinishRoot(
     viewModel: RecipeFinishViewModel,
@@ -44,6 +49,12 @@ fun RecipeFinishRoot(
     )
 }
 
+/**
+ * Displays the recipe completion screen with a congratulatory message, an image, and a finish button.
+ *
+ * @param state The current UI state for the recipe finish screen.
+ * @param onAction Callback invoked when user actions occur, such as clicking the finish button.
+ */
 @Composable
 private fun RecipeFinishScreen(
     state: RecipeFinishState,
@@ -84,6 +95,9 @@ private fun RecipeFinishScreen(
     }
 }
 
+/**
+ * Displays a preview of the recipe finish screen within the EasyPan theme using default state.
+ */
 @Preview
 @Composable
 private fun Preview() {

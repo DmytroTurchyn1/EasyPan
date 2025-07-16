@@ -17,6 +17,12 @@ import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewMo
 import org.koin.androidx.compose.koinViewModel
 
 
+/**
+ * Adds the authentication navigation graph to the navigation builder, handling user sign-in flow.
+ *
+ * Sets up the authentication screen, manages Google sign-in intent launching and result handling,
+ * and navigates to the main app graph upon successful authentication.
+ */
 fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
     googleAuthUiClient: GoogleAuthUiClient

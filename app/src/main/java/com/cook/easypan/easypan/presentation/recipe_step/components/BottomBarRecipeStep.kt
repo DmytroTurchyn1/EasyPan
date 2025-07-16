@@ -16,6 +16,17 @@ import androidx.compose.ui.unit.dp
 import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Displays a bottom bar with "Previous" and customizable "Next" buttons for recipe step navigation.
+ *
+ * The "Previous" button is enabled or disabled based on [enabledPrevious] and triggers [onPreviousClick] when pressed.
+ * The "Next" button displays [nextButtonTitle] and triggers [onNextClick] when pressed.
+ *
+ * @param enabledPrevious Whether the "Previous" button is enabled.
+ * @param onPreviousClick Callback invoked when the "Previous" button is clicked.
+ * @param onNextClick Callback invoked when the "Next" button is clicked.
+ * @param nextButtonTitle The label text for the "Next" button.
+ */
 @Composable
 fun BottomBarRecipeStep(
     modifier: Modifier = Modifier,

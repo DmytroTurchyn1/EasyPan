@@ -311,6 +311,15 @@ val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
+/**
+ * Applies the EasyPan app theme to its content, selecting color schemes based on system theme, dynamic color support, and user preference.
+ *
+ * Chooses between light, dark, and dynamic color schemes depending on the device's Android version and the provided flags, and applies the app's typography and color scheme to the given composable content.
+ *
+ * @param darkTheme If true, uses the dark color scheme; otherwise, uses the light color scheme. Defaults to the system setting.
+ * @param dynamicColor If true and supported (Android 12+), uses dynamic color schemes based on the user's wallpaper.
+ * @param content The composable UI content to which the theme will be applied.
+ */
 @Composable
 fun EasyPanTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

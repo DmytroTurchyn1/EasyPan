@@ -25,6 +25,13 @@ class RecipeFinishViewModel : ViewModel() {
             initialValue = RecipeFinishState()
         )
 
+    /**
+     * Handles actions related to the recipe finish screen.
+     *
+     * Currently, this method does not perform any operations for received actions.
+     *
+     * @param action The action to be handled.
+     */
     fun onAction(action: RecipeFinishAction) {
         when (action) {
             else -> Unit

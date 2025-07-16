@@ -23,6 +23,13 @@ import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
 import kotlinx.coroutines.delay
 
+/**
+ * Displays a countdown timer UI component for a recipe step with start and stop controls.
+ *
+ * Shows the remaining minutes and seconds, allowing the user to start or pause the countdown. The timer initializes from the provided total seconds or defaults to 60 minutes if not specified.
+ *
+ * @param totalSeconds The total countdown duration in seconds, or null to default to 60 minutes.
+ */
 @Composable
 fun TimerStepRecipe(
     totalSeconds: Int?
@@ -93,6 +100,9 @@ fun TimerStepRecipe(
     }
 }
 
+/**
+ * Displays a preview of the TimerStepRecipe composable with a preset duration, using the app's theme.
+ */
 @Preview
 @Composable
 private fun TimerStepRecipePreview() {

@@ -19,6 +19,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
+/**
+ * Displays a settings item with an icon, label, and an optional action element in a horizontal layout.
+ *
+ * @param text The label text displayed next to the icon.
+ * @param icon The icon graphic shown at the start of the item.
+ * @param onClick Callback invoked when the item is clicked.
+ * @param clickable If false, disables click interaction for the item.
+ * @param actionElement A composable lambda for an additional UI element displayed at the end of the row.
+ */
 @Composable
 fun SettingsItem(
     text: String,

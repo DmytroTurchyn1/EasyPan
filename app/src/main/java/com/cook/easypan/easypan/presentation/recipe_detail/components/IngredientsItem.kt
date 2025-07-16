@@ -12,6 +12,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Displays an ingredient item with a checkbox and a text label in a horizontal row.
+ *
+ * @param checked Whether the checkbox is selected.
+ * @param onCheckClick Callback invoked when the checkbox is toggled.
+ * @param text The ingredient description to display.
+ */
 @Composable
 fun IngredientsItem(
     checked: Boolean = false,
@@ -36,6 +43,9 @@ fun IngredientsItem(
     }
 }
 
+/**
+ * Displays a preview of the IngredientsItem composable with sample data for design-time visualization.
+ */
 @Preview
 @Composable
 private fun IngredientsItemPreview() {

@@ -6,6 +6,14 @@ import com.cook.easypan.easypan.domain.Recipe
 import com.cook.easypan.easypan.domain.StepDescription
 import com.cook.easypan.easypan.domain.StepType
 
+/**
+ * Converts a [RecipeDto] to a [Recipe] domain model.
+ *
+ * Maps all fields from the DTO to the domain object, translating the difficulty integer to a string label ("Easy", "Medium", "Hard"). Throws [IllegalArgumentException] if the difficulty value is unrecognized.
+ *
+ * @return The corresponding [Recipe] domain object.
+ * @throws IllegalArgumentException If the difficulty value is not 1, 2, or 3.
+ */
 fun RecipeDto.toRecipe(): Recipe {
     return Recipe(
         id = id,
@@ -25,6 +33,14 @@ fun RecipeDto.toRecipe(): Recipe {
     )
 }
 
+/**
+ * Converts a [StepDescriptionDto] to a [StepDescription] domain object.
+ *
+ * Maps the step type string to the corresponding [StepType] enum value.
+ * 
+ * @return The resulting [StepDescription] domain object.
+ * @throws IllegalArgumentException if the step type is unrecognized.
+ */
 fun StepDescriptionDto.toStepDescription(): StepDescription {
     return StepDescription(
         title = title,

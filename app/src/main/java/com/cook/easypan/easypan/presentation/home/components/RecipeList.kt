@@ -11,6 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.cook.easypan.easypan.domain.Recipe
 
+/**
+ * Displays a vertically scrollable list of recipes.
+ *
+ * Each recipe is shown as a list item. Clicking an item invokes the provided callback with the selected recipe.
+ *
+ * @param recipes The list of recipes to display.
+ * @param onRecipeClick Callback invoked when a recipe is clicked, receiving the selected recipe.
+ * @param modifier Modifier for styling and layout customization.
+ * @param scrollState The scroll state for the list, allowing external control or observation of scroll position.
+ */
 @Composable
 fun RecipeList(
     modifier: Modifier = Modifier,

@@ -25,6 +25,12 @@ class FavoriteViewModel : ViewModel() {
             initialValue = FavoriteState()
         )
 
+    /**
+     * Handles actions related to the favorite feature.
+     *
+     * @param action The action to be processed.
+     * @throws NotImplementedError Always thrown as action handling is not yet implemented.
+     */
     fun onAction(action: FavoriteAction) {
         when (action) {
             else -> TODO("Handle actions")

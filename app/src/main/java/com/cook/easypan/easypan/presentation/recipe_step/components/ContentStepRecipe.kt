@@ -10,6 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Displays a recipe step with a title and description in a styled vertical layout.
+ *
+ * Renders the title and description texts using Material3 typography within a padded container.
+ *
+ * @param title The title of the recipe step.
+ * @param description The description or instructions for the recipe step.
+ */
 @Composable
 fun ContentStepRecipe(
     title: String,

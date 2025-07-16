@@ -31,6 +31,14 @@ import com.cook.easypan.easypan.domain.StepType
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 
+/**
+ * Displays a clickable list item summarizing a recipe with its title, cooking details, and an image.
+ *
+ * The item shows the recipe's title, cooking time, difficulty, number of steps, and a thumbnail image. Triggers the provided action when clicked.
+ *
+ * @param recipe The recipe to display in the list item.
+ * @param onClick Callback invoked when the item is clicked.
+ */
 @Composable
 fun RecipeListItem(
     recipe: Recipe,
@@ -87,6 +95,9 @@ fun RecipeListItem(
     }
 }
 
+/**
+ * Displays a preview of the RecipeListItem composable with sample recipe data in the app theme.
+ */
 @Preview(showSystemUi = true)
 @Composable
 private fun RecipeListItemPreview() {

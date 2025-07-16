@@ -8,6 +8,11 @@ import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 
+/**
+ * Sets up the root navigation graph for the app, determining the start destination based on user authentication state.
+ *
+ * Applies the app theme, initializes navigation, and conditionally displays either the authentication flow or the main app content.
+ */
 @Composable
 fun RootNavGraph(
     googleAuthUiClient: GoogleAuthUiClient

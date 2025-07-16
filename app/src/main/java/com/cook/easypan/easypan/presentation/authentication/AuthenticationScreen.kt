@@ -34,6 +34,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Displays the authentication UI and connects it to the provided [AuthenticationViewModel].
+ *
+ * Observes the authentication state from the [viewModel] and passes it, along with the action handler, to the authentication screen composable.
+ */
 @Composable
 fun AuthenticationRoot(
     viewModel: AuthenticationViewModel
@@ -46,6 +51,12 @@ fun AuthenticationRoot(
     )
 }
 
+/**
+ * Displays the authentication UI with branding, description, a Google sign-in button, and terms text.
+ *
+ * @param state The current authentication UI state.
+ * @param onAction Callback invoked when user actions occur, such as clicking the sign-in button.
+ */
 @Composable
 private fun AuthenticationScreen(
     state: AuthenticationState,
@@ -138,6 +149,9 @@ private fun AuthenticationScreen(
     }
 }
 
+/**
+ * Displays a preview of the authentication screen within the EasyPan theme for design inspection.
+ */
 @Preview(showSystemUi = true)
 @Composable
 private fun Preview() {

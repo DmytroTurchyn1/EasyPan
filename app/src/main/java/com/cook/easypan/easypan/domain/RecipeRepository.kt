@@ -1,6 +1,11 @@
 package com.cook.easypan.easypan.domain
 
 interface RecipeRepository {
-    suspend fun getRecipes(): List<Recipe>
+    /**
+ * Retrieves a list of recipes asynchronously.
+ *
+ * @return A list of available recipes.
+ */
+suspend fun getRecipes(): List<Recipe>
 
 }

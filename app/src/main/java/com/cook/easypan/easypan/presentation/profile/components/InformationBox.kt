@@ -20,6 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Displays a fixed-size, rounded container box with a border and background, centering the provided composable content.
+ *
+ * The box has a height of 80dp, width of 150dp, rounded corners (10dp radius), a 1dp border using the theme's tertiary color, and a background using the theme's primary container color. Content is centered both vertically and horizontally.
+ *
+ * @param content The composable content to display inside the box.
+ */
 @Composable
 fun InformationBox(
     content: @Composable () -> Unit
@@ -47,6 +54,9 @@ fun InformationBox(
     }
 }
 
+/**
+ * Displays a preview of the InformationBox composable with sample content inside the app theme.
+ */
 @Preview(backgroundColor = 0xFFFFFFFF, showBackground = true, showSystemUi = true)
 @Composable
 private fun InformationBoxPreview() {

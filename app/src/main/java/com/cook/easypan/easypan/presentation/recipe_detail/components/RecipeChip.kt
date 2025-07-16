@@ -18,6 +18,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cook.easypan.ui.theme.EasyPanTheme
 
+/**
+ * Displays a rounded chip with a text label, styled using the theme's primary container color.
+ *
+ * The chip has a minimum width, rounded corners, and centered white text. The appearance can be customized via the [modifier] parameter.
+ *
+ * @param modifier Modifier for styling and layout adjustments.
+ * @param text The label to display inside the chip.
+ */
 @Composable
 fun RecipeChip(
     modifier: Modifier = Modifier,
