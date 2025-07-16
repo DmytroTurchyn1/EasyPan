@@ -29,4 +29,7 @@ sealed class Route {
 
     @Serializable
     data object RecipeStep : Route()
+
+    @Serializable
+    data object RecipeFinish : Route()
 }

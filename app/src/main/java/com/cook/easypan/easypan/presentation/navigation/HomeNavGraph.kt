@@ -40,6 +40,8 @@ import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailAction
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailRoot
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
+import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishRoot
+import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishViewModel
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepRoot
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
@@ -158,11 +160,21 @@ fun HomeNavGraph(
             RecipeStepRoot(
                 viewModel = viewModel,
                 onFinishClick = {
-
+                    navController.popBackStack()
+                    navController.navigate(Route.RecipeFinish)
                 }
             )
         }
 
+        composable<Route.RecipeFinish> {
+            val viewModel = RecipeFinishViewModel()
+            RecipeFinishRoot(
+                viewModel = viewModel,
+                onFinishClick = {
+                    navController.navigate(Route.Home)
+                }
+            )
+        }
 
         composable<Route.Profile> {
             val viewModel = remember { ProfileViewModel() }
