@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.cook.easypan" />
+                  <option name="mobileSdkAppId" value="1:788593303701:android:0c2927b274b8e3706e3b9c" />
+                  <option name="projectId" value="easypan-1bd0c" />
+                  <option name="projectNumber" value="788593303701" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
