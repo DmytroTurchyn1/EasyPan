@@ -1,3 +1,5 @@
 /build
 .idea/deploymentTargetSelector.xml
 app/google-services.json
+.idea/androidTestResultsUserPreferences.xml
+.idea/appInsightsSettings.xml

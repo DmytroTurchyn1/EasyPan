@@ -37,7 +37,7 @@
     <string name="home_bar_title">Home</string>
     <string name="favorite_bar_title">Favorite</string>
     <string name="profile_bar_title">Profile</string>
-    <string name="notificationes_title">Notifications</string>
+    <string name="notifications_title">Notifications</string>
     <string name="help_title"><![CDATA[Help & Support]]></string>
     <string name="help_image_description">Navigate to help</string>
     <string name="username_placeholder">Username</string>
