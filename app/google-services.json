@@ -1,79 +1,42 @@
 {
   "project_info": {
-    "project_number": "1",
-    "project_id": "1",
-    "storage_bucket": "1"
+    "project_number": "123456789012",
+    "project_id": "your-project-id",
+    "storage_bucket": "your-project-id.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1",
+        "mobilesdk_app_id": "1:123456789012:android:dummy123456789",
         "android_client_info": {
           "package_name": "com.cook.easypan"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1",
+          "client_id": "123456789012-dummy.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.cook.easypan",
-            "certificate_hash": "1"
+            "certificate_hash": "dummy_certificate_hash"
           }
         },
         {
-          "client_id": "1",
-          "client_type": 1
+          "client_id": "123456789012-dummy.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "1"
+          "current_key": "AIzaSyDUMMY_API_KEY_REPLACE_WITH_REAL"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1",
-              "client_type": 1
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1",
-        "android_client_info": {
-          "package_name": "1"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "1",
-            "certificate_hash": "1"
-          }
-        },
-        {
-          "client_id": "1",
-          "client_type": 1
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "1"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1",
-              "client_type": 1
+              "client_id": "123456789012-dummy.apps.googleusercontent.com",
+              "client_type": 3
             }
           ]
         }

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -172,7 +173,7 @@ private fun ProfileScreen(
                         .padding(start = 12.dp)
                 )
                 SettingsItem(
-                    text = stringResource(R.string.notificationes_title),
+                    text = stringResource(R.string.notifications_title),
                     icon = Icons.Outlined.Notifications,
                     onClick = { onAction(ProfileAction.OnNotificationsToggle) },
                 ) {
@@ -196,7 +197,11 @@ private fun ProfileScreen(
                 }
                 Spacer(modifier = Modifier.padding(15.dp))
                 Button(
-                    onClick = { onAction(ProfileAction.OnSignOut) }
+                    onClick = { onAction(ProfileAction.OnSignOut) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
                 ) {
                     Text(text = stringResource(R.string.logout_button))
                 }
