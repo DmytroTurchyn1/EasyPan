@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.easypan.domain.StepType
+import com.cook.easypan.easypan.presentation.recipe_step.components.AlertCancelRecipeDialog
 import com.cook.easypan.easypan.presentation.recipe_step.components.BottomBarRecipeStep
 import com.cook.easypan.easypan.presentation.recipe_step.components.ContentStepRecipe
 import com.cook.easypan.easypan.presentation.recipe_step.components.TimerStepRecipe
@@ -34,7 +37,8 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun RecipeStepRoot(
     viewModel: RecipeStepViewModel,
-    onFinishClick: () -> Unit
+    onFinishClick: () -> Unit,
+    onCancelClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -43,6 +47,7 @@ fun RecipeStepRoot(
         onAction = { action ->
             when (action) {
                 is RecipeStepAction.OnFinishClick -> onFinishClick()
+                is RecipeStepAction.OnCancelClick -> onCancelClick()
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -55,13 +60,27 @@ private fun RecipeStepScreen(
     state: RecipeStepState,
     onAction: (RecipeStepAction) -> Unit,
 ) {
+
+    if (state.isDialogShowing) {
+        AlertCancelRecipeDialog(
+            icon = Icons.Default.Info,
+            onConfirmation = {
+                onAction(RecipeStepAction.OnCancelClick)
+            },
+            onDismissRequest = { onAction(RecipeStepAction.OnDismissDialog) },
+            dialogTitle = stringResource(R.string.cancel_recipe_dialog_title),
+            dialogText = stringResource(R.string.cancel_recipe_dialog_text),
+        )
+    }
+
     if (state.recipe != null) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 TopBarRecipeStep(
                     step = "${state.step + 1} / ${state.recipe.instructions.size}",
-                    progress = state.progressBar
+                    progress = state.progressBar,
+                    onCancelClick = { onAction(RecipeStepAction.OnShowDialog) },
                 )
             },
             bottomBar = {
@@ -70,6 +89,7 @@ private fun RecipeStepScreen(
                         if (state.step < state.recipe.instructions.size - 1) {
                             onAction(RecipeStepAction.OnNextClick)
                         } else {
+                            onAction(RecipeStepAction.OnNextClick)
                             onAction(RecipeStepAction.OnFinishClick)
                         }
                     },
@@ -101,7 +121,7 @@ private fun RecipeStepScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp),
+                            .padding(10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -114,7 +134,7 @@ private fun RecipeStepScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp)
+                            .padding(10.dp)
                             .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center

@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -93,9 +93,11 @@ private fun AuthenticationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(
+                colors = ButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContentColor = MaterialTheme.colorScheme.surfaceBright,
+                    disabledContainerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.5f)
                 ),
                 onClick = {
                     onAction(AuthenticationAction.OnAuthButtonClick)
@@ -113,11 +115,9 @@ private fun AuthenticationScreen(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.google_icon),
                         contentDescription = stringResource(R.string.google_icon_description),
-                        tint = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = stringResource(R.string.continue_with_google),
-                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,

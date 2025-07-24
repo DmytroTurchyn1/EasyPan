@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,25 +33,35 @@ fun BottomBarRecipeStep(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(22.dp),
+                .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
                 onClick = { onPreviousClick() },
-                enabled = enabledPrevious
+                enabled = enabledPrevious,
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContentColor = MaterialTheme.colorScheme.surfaceBright,
+                    disabledContainerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.5f)
+                )
             ) {
                 Text(
                     text = stringResource(R.string.previous_button),
-                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Button(
                 onClick = { onNextClick() },
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContentColor = MaterialTheme.colorScheme.surfaceBright,
+                    disabledContainerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.5f)
+                )
             ) {
                 Text(
                     text = nextButtonTitle,
-                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

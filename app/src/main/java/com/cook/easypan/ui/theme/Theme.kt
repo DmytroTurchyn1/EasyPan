@@ -12,11 +12,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-@Immutable
-data class ExtendedColorScheme(
-    val textColor: ColorFamily,
-)
-
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
@@ -245,60 +240,6 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
-val extendedLight = ExtendedColorScheme(
-    textColor = ColorFamily(
-        textColorLight,
-        onTextColorLight,
-        textColorContainerLight,
-        onTextColorContainerLight,
-    ),
-)
-
-val extendedDark = ExtendedColorScheme(
-    textColor = ColorFamily(
-        textColorDark,
-        onTextColorDark,
-        textColorContainerDark,
-        onTextColorContainerDark,
-    ),
-)
-
-val extendedLightMediumContrast = ExtendedColorScheme(
-    textColor = ColorFamily(
-        textColorLightMediumContrast,
-        onTextColorLightMediumContrast,
-        textColorContainerLightMediumContrast,
-        onTextColorContainerLightMediumContrast,
-    ),
-)
-
-val extendedLightHighContrast = ExtendedColorScheme(
-    textColor = ColorFamily(
-        textColorLightHighContrast,
-        onTextColorLightHighContrast,
-        textColorContainerLightHighContrast,
-        onTextColorContainerLightHighContrast,
-    ),
-)
-
-val extendedDarkMediumContrast = ExtendedColorScheme(
-    textColor = ColorFamily(
-        textColorDarkMediumContrast,
-        onTextColorDarkMediumContrast,
-        textColorContainerDarkMediumContrast,
-        onTextColorContainerDarkMediumContrast,
-    ),
-)
-
-val extendedDarkHighContrast = ExtendedColorScheme(
-    textColor = ColorFamily(
-        textColorDarkHighContrast,
-        onTextColorDarkHighContrast,
-        textColorContainerDarkHighContrast,
-        onTextColorContainerDarkHighContrast,
-    ),
-)
-
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -315,7 +256,7 @@ val unspecified_scheme = ColorFamily(
 fun EasyPanTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable() () -> Unit
 ) {
     val colorScheme = when {

@@ -11,7 +11,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationRoot
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewModel
 import org.koin.androidx.compose.koinViewModel

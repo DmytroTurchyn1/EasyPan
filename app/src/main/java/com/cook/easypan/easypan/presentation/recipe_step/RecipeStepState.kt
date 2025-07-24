@@ -8,4 +8,5 @@ data class RecipeStepState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val progressBar: Float = 0f,
+    val isDialogShowing: Boolean = false
 )

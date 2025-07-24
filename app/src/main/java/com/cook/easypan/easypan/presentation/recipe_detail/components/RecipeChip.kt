@@ -30,7 +30,7 @@ fun RecipeChip(
             .clip(
                 RoundedCornerShape(16.dp)
             )
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
             .padding(
                 vertical = 8.dp,
                 horizontal = 12.dp
@@ -43,7 +43,7 @@ fun RecipeChip(
         ) {
             Text(
                 text = text,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }

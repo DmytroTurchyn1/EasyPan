@@ -14,12 +14,14 @@ class RecipeStepViewModel : ViewModel() {
 
 
     private val _state = MutableStateFlow(RecipeStepState())
+
+
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
                 _state.update {
                     it.copy(
-                        isLoading = true
+                        isLoading = true,
                     )
                 }
 
@@ -37,6 +39,7 @@ class RecipeStepViewModel : ViewModel() {
         val step = _state.value.recipe?.instructions?.size.let { size ->
             1f / (size?.toFloat() ?: 1f)
         }
+        println("Step: $step")
         when (action) {
             is RecipeStepAction.OnNextClick -> {
                 _state.update {
@@ -59,10 +62,36 @@ class RecipeStepViewModel : ViewModel() {
             }
 
             is RecipeStepAction.OnRecipeChange -> {
+
                 _state.update {
                     it.copy(
                         recipe = action.recipe,
-                        isLoading = false
+                        isLoading = false,
+                        progressBar = 1f / action.recipe.instructions.size.toFloat()
+                    )
+                }
+            }
+
+            is RecipeStepAction.OnDismissDialog -> {
+                _state.update {
+                    it.copy(
+                        isDialogShowing = false
+                    )
+                }
+            }
+
+            is RecipeStepAction.OnShowDialog -> {
+                _state.update {
+                    it.copy(
+                        isDialogShowing = true
+                    )
+                }
+            }
+
+            is RecipeStepAction.OnCancelClick -> {
+                _state.update {
+                    it.copy(
+                        isDialogShowing = false
                     )
                 }
             }

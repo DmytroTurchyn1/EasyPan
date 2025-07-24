@@ -17,7 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -142,11 +142,11 @@ private fun ProfileScreen(
                             text = "${state.recipesCooked}",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                         Text(
                             text = stringResource(R.string.recipes_cooked),
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                     InformationBox {
@@ -154,11 +154,11 @@ private fun ProfileScreen(
                             text = "${state.favoriteCuisines}",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                         Text(
                             text = stringResource(R.string.favorite_cuisines),
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 }
@@ -190,6 +190,7 @@ private fun ProfileScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = stringResource(R.string.help_image_description),
+                        tint = MaterialTheme.colorScheme.inverseSurface,
                         modifier = Modifier
                             .size(30.dp)
                             .padding(end = 6.dp)
@@ -198,9 +199,11 @@ private fun ProfileScreen(
                 Spacer(modifier = Modifier.padding(15.dp))
                 Button(
                     onClick = { onAction(ProfileAction.OnSignOut) },
-                    colors = ButtonDefaults.buttonColors(
+                    colors = ButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContentColor = MaterialTheme.colorScheme.surfaceBright,
+                        disabledContainerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.5f)
                     )
                 ) {
                     Text(text = stringResource(R.string.logout_button))

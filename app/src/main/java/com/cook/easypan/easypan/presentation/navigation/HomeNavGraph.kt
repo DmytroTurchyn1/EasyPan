@@ -80,7 +80,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 
     val screens = listOf(
         BottomBarScreen.Home,
-        BottomBarScreen.Favorite,
+        //BottomBarScreen.Favorite,
         BottomBarScreen.Profile
     )
     val bottomBarDestination =
@@ -158,11 +158,15 @@ fun HomeNavGraph(
                     viewModel.onAction(RecipeStepAction.OnRecipeChange(it))
                 }
             }
+
             RecipeStepRoot(
                 viewModel = viewModel,
                 onFinishClick = {
                     navController.popBackStack()
                     navController.navigate(Route.RecipeFinish)
+                },
+                onCancelClick = {
+                    navController.navigateUp()
                 }
             )
         }
@@ -227,7 +231,7 @@ fun RowScope.AddItem(
                 launchSingleTop = true
             }
         },
-        label = { Text(text = stringResource(screen.title) ) },
+        label = { Text(text = stringResource(screen.title)) },
         icon = {
             Icon(
                 imageVector = screen.icon,

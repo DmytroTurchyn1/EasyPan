@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,7 +52,7 @@ fun TimerStepRecipe(
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             Row(
                 modifier = Modifier
@@ -69,16 +70,20 @@ fun TimerStepRecipe(
             }
             Button(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
+                    .fillMaxWidth(),
                 onClick = {
                     isPaused = false
                 },
-                enabled = isPaused
+                enabled = isPaused,
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    disabledContentColor = MaterialTheme.colorScheme.surfaceBright,
+                    disabledContainerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.5f)
+                )
             ) {
                 Text(
                     text = stringResource(R.string.start_button_timer),
-                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Button(
@@ -87,11 +92,16 @@ fun TimerStepRecipe(
                 onClick = {
                     isPaused = true
                 },
-                enabled = !isPaused
+                enabled = !isPaused,
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    disabledContentColor = MaterialTheme.colorScheme.surfaceBright,
+                    disabledContainerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.5f)
+                )
             ) {
                 Text(
                     text = stringResource(R.string.stop_button_timer),
-                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
