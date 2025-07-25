@@ -7,14 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
 import com.cook.easypan.easypan.presentation.navigation.RootNavGraph
 import com.cook.easypan.ui.theme.EasyPanTheme
-import com.google.android.gms.auth.api.identity.Identity
 
 class MainActivity : ComponentActivity() {
 
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
             context = applicationContext,
-            oneTapClient = Identity.getSignInClient(applicationContext)
         )
     }
 

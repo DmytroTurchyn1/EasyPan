@@ -1,67 +1,100 @@
 package com.cook.easypan.easypan.data.auth
 
 import android.content.Context
-import android.content.Intent
-import android.content.IntentSender
+import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
+import androidx.credentials.GetCredentialRequest
 import com.cook.easypan.R
-import com.cook.easypan.easypan.domain.SignInResult
 import com.cook.easypan.easypan.domain.UserData
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import java.security.MessageDigest
+import java.util.UUID
 
 class GoogleAuthUiClient(
     private val context: Context,
-    private val oneTapClient: SignInClient
 ) {
     private val auth = Firebase.auth
 
-    suspend fun signIn(): IntentSender? {
-        val result = try {
-            oneTapClient.beginSignIn(
-                buildSignInRequest()
-            ).await()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            if (e is CancellationException) throw e
-            null
-        }
-        return result?.pendingIntent?.intentSender
-    }
-
-    suspend fun signInWithIntent(intent: Intent): SignInResult {
-        val credential = oneTapClient.getSignInCredentialFromIntent(intent)
-        val googleIdToken = credential.googleIdToken
-        val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
-        return try {
-            val user = auth.signInWithCredential(googleCredentials).await().user
-            SignInResult(
-                data = user?.run {
-                    UserData(
-                        userId = uid,
-                        username = displayName,
-                        profilePictureUrl = photoUrl?.toString()
-                    )
-                },
-                errorMessage = null
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            if (e is CancellationException) throw e
-            SignInResult(
-                data = null,
-                errorMessage = e.message
-            )
+    private fun createNonce(): String {
+        val rawNonce = UUID.randomUUID().toString()
+        val bytes = rawNonce.toByteArray()
+        val md = MessageDigest.getInstance("SHA-256")
+        val digest = md.digest(bytes)
+        return digest.fold("") { str, it ->
+            str + "%02x".format(it)
         }
     }
 
-    suspend fun signOut() {
+    fun signIn(): Flow<AuthResponse> = callbackFlow {
+
+        val googleIdOption = GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(true)
+            .setServerClientId(context.getString(R.string.default_web_client_id))
+            .setAutoSelectEnabled(false)
+            .setNonce(createNonce())
+            .build()
+
+        val request = GetCredentialRequest.Builder()
+            .addCredentialOption(googleIdOption)
+            .build()
         try {
-            oneTapClient.signOut().await()
+            val credentialManager = CredentialManager.create(context)
+            val result = credentialManager.getCredential(
+                context = context,
+                request = request
+            )
+            val credential = result.credential
+            if (credential is CustomCredential) {
+                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    try {
+                        val googleIdTokenCredential = GoogleIdTokenCredential
+                            .createFrom(credential.data)
+                        val firebaseCredential = GoogleAuthProvider
+                            .getCredential(
+                                googleIdTokenCredential.idToken,
+                                null
+                            )
+                        auth.signInWithCredential(firebaseCredential)
+                            .addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    trySend(AuthResponse.Success)
+                                } else {
+                                    trySend(
+                                        AuthResponse.Failure(
+                                            error = it.exception?.message ?: "Unknown error"
+                                        )
+                                    )
+                                }
+                            }
+
+                    } catch (e: GoogleIdTokenParsingException) {
+                        trySend(
+                            AuthResponse.Failure(
+                                error = e.message ?: "Failed to parse Google ID token"
+                            )
+                        )
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            trySend(AuthResponse.Failure(error = e.message ?: "Unknown error"))
+        }
+        awaitClose()
+
+    }
+
+
+    fun signOut() {
+        try {
             auth.signOut()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -77,16 +110,9 @@ class GoogleAuthUiClient(
         )
     }
 
-    private fun buildSignInRequest(): BeginSignInRequest {
-        return BeginSignInRequest.Builder()
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    .setFilterByAuthorizedAccounts(true)
-                    .setServerClientId(context.getString(R.string.default_web_client_id))
-                    .build()
-            )
-            .setAutoSelectEnabled(true)
-            .build()
-    }
+}
+
+interface AuthResponse {
+    data object Success : AuthResponse
+    data class Failure(val error: String) : AuthResponse
 }

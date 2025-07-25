@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.presentation.authentication
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -35,7 +37,7 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun AuthenticationRoot(
-    viewModel: AuthenticationViewModel
+    viewModel: AuthenticationViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -50,6 +52,9 @@ private fun AuthenticationScreen(
     state: AuthenticationState,
     onAction: (AuthenticationAction) -> Unit,
 ) {
+    if (state.signInError != null) {
+        Toast.makeText(LocalContext.current, state.signInError, Toast.LENGTH_LONG).show()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()

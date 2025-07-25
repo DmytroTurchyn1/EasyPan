@@ -44,7 +44,7 @@ fun TimerCounterElement(
         Text(
             text = title,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onPrimary
+            color = MaterialTheme.colorScheme.onSurface
         )
 
     }
