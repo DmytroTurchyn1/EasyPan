@@ -2,12 +2,13 @@ package com.cook.easypan.easypan.presentation.profile
 
 import ProfileAction
 import ProfileState
-import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,8 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,21 +36,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
+import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
-import com.cook.easypan.easypan.domain.UserData
+import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.easypan.presentation.profile.components.InformationBox
 import com.cook.easypan.easypan.presentation.profile.components.SettingsItem
 import com.cook.easypan.ui.theme.EasyPanTheme
-
 
 @Composable
 fun ProfileRoot(
     viewModel: ProfileViewModel,
     onSignOutButton: () -> Unit,
-    userData: UserData?
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     ProfileScreen(
@@ -62,8 +57,7 @@ fun ProfileRoot(
                 else -> Unit
             }
             viewModel.onAction(action)
-        },
-        userData = userData
+        }
     )
 }
 
@@ -71,7 +65,6 @@ fun ProfileRoot(
 private fun ProfileScreen(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit,
-    userData: UserData?
 ) {
     EasyPanTheme {
         Scaffold(
@@ -100,26 +93,34 @@ private fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(userData?.profilePictureUrl)
-                        .crossfade(true)
-                        .listener(
-                            onError = { _, result ->
-                                Log.e("Profile", "Image load failed", result.throwable)
-                            }
-                        )
-                        .build(),
-                    placeholder = painterResource(R.drawable.ic_launcher_background),
-                    error = painterResource(R.drawable.auth_img),
-                    contentDescription = stringResource(R.string.profile_picture_description),
-                    contentScale = ContentScale.Crop,
+
+                Box(
                     modifier = Modifier
                         .size(150.dp)
-                        .clip(CircleShape)
-                )
+                        .clip(CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    SubcomposeAsyncImage(
+                        model = state.currentUser?.profilePictureUrl,
+                        contentDescription = stringResource(R.string.profile_picture_description),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        error = {
+                            Image(
+                                painter = painterResource(R.drawable.auth_img),
+                                contentDescription = "User Image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    )
+                }
                 Text(
-                    text = userData?.username ?: stringResource(R.string.username_placeholder),
+                    text = state.currentUser?.username
+                        ?: stringResource(R.string.username_placeholder),
                     modifier = Modifier.padding(top = 20.dp),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
@@ -127,6 +128,7 @@ private fun ProfileScreen(
                     fontSize = 24.sp
 
                 )
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -139,7 +141,7 @@ private fun ProfileScreen(
                 ) {
                     InformationBox {
                         Text(
-                            text = "${state.recipesCooked}",
+                            text = "${state.currentUser?.data?.recipesCooked}",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -197,14 +199,8 @@ private fun ProfileScreen(
                     )
                 }
                 Spacer(modifier = Modifier.padding(15.dp))
-                Button(
-                    onClick = { onAction(ProfileAction.OnSignOut) },
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                        disabledContentColor = MaterialTheme.colorScheme.surfaceBright,
-                        disabledContainerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.5f)
-                    )
+                EasyPanButtonPrimary(
+                    onClick = { onAction(ProfileAction.OnSignOut) }
                 ) {
                     Text(text = stringResource(R.string.logout_button))
                 }
@@ -220,11 +216,6 @@ private fun Preview() {
         ProfileScreen(
             state = ProfileState(),
             onAction = {},
-            userData = UserData(
-                userId = "12345",
-                username = "JohnDoe",
-                profilePictureUrl = null
-            )
         )
     }
 }

@@ -5,14 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
+import com.cook.easypan.easypan.domain.UserRepository
 import com.cook.easypan.easypan.presentation.navigation.RootNavGraph
 import com.cook.easypan.ui.theme.EasyPanTheme
+import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
 
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
             context = applicationContext,
+            userRepository = get<UserRepository>()
         )
     }
 

@@ -28,7 +28,8 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun TopBarRecipeStep(
-    step: String,
+    currentStep: Int,
+    steps: Int,
     progress: Float,
     onCancelClick: () -> Unit,
 ) {
@@ -52,10 +53,9 @@ fun TopBarRecipeStep(
 
             }
             Text(
-                text = "${stringResource(R.string.step)} $step",
+                text = "${stringResource(R.string.step)} $currentStep / $steps",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
+                    .fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -86,7 +86,8 @@ fun TopBarRecipeStep(
 private fun TopBarRecipeStepPreview() {
     EasyPanTheme {
         TopBarRecipeStep(
-            step = "1",
+            currentStep = 1,
+            steps = 10,
             progress = 0.2f,
             onCancelClick = {}
         )

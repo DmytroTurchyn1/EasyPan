@@ -10,7 +10,7 @@ class DefaultRecipeRepository(
 ) : RecipeRepository {
     override suspend fun getRecipes(): List<Recipe> {
         return firestoreDataSource
-            .getCollection("Recipes")
+            .getRecipes()
             .map { it.toRecipe() }
     }
 }

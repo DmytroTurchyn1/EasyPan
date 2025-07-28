@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.presentation.home.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,9 +23,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.easypan.domain.Recipe
 import com.cook.easypan.easypan.domain.StepDescription
@@ -39,7 +42,7 @@ fun RecipeListItem(
 
     Box(
         modifier = Modifier
-            .height(120.dp)
+            .height(100.dp)
             .fillMaxWidth()
             .clickable(onClick = onClick)
     ) {
@@ -53,7 +56,8 @@ fun RecipeListItem(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(start = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -61,6 +65,7 @@ fun RecipeListItem(
                     text = recipe.title,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
                     maxLines = 2
                 )
                 Text(
@@ -70,18 +75,32 @@ fun RecipeListItem(
                     maxLines = 2
                 )
             }
-            AsyncImage(
-                model = recipe.titleImg,
-                contentDescription = stringResource(R.string.dish_image_description),
-                contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.auth_img),
-                placeholder = painterResource(R.drawable.ic_launcher_background),
+            Box(
                 modifier = Modifier
                     .width(200.dp)
                     .height(100.dp)
                     .padding(10.dp)
-                    .clip(RoundedCornerShape(14.dp))
-            )
+                    .clip(RoundedCornerShape(14.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                SubcomposeAsyncImage(
+                    model = recipe.titleImg,
+                    contentDescription = stringResource(R.string.dish_image_description),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier,
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    error = {
+                        Image(
+                            painter = painterResource(R.drawable.auth_img),
+                            contentDescription = stringResource(R.string.dish_image_description),
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                )
+            }
         }
 
     }

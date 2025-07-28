@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.presentation.recipe_step
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.easypan.domain.StepType
 import com.cook.easypan.easypan.presentation.recipe_step.components.AlertCancelRecipeDialog
@@ -78,7 +80,8 @@ private fun RecipeStepScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 TopBarRecipeStep(
-                    step = "${state.step + 1} / ${state.recipe.instructions.size}",
+                    currentStep = state.step + 1,
+                    steps = state.recipe.instructions.size,
                     progress = state.progressBar,
                     onCancelClick = { onAction(RecipeStepAction.OnShowDialog) },
                 )
@@ -105,18 +108,36 @@ private fun RecipeStepScreen(
                 modifier = Modifier
                     .padding(innerPadding)
             ) {
-                AsyncImage(
-                    model = state.recipe.instructions[state.step].imageUrl,
-                    contentDescription = stringResource(R.string.step_image),
-                    placeholder = painterResource(R.drawable.ic_launcher_background),
-                    error = painterResource(R.drawable.auth_img),
-                    contentScale = ContentScale.FillBounds,
+
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp)
-                        .size(300.dp)
-                )
-
+                        .size(300.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    SubcomposeAsyncImage(
+                        model = state.recipe.instructions[state.step].imageUrl,
+                        contentDescription = stringResource(R.string.dish_image_description),
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.fillMaxSize(),
+                        loading = {
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        },
+                        error = {
+                            Image(
+                                painter = painterResource(R.drawable.auth_img),
+                                contentDescription = null,
+                                contentScale = ContentScale.FillBounds,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    )
+                }
                 if (state.recipe.instructions[state.step].stepType == StepType.TEXT) {
                     Column(
                         modifier = Modifier

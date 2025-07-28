@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.presentation.authentication
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cook.easypan.easypan.data.auth.AuthResponse
@@ -27,10 +28,13 @@ class AuthenticationViewModel(
                 viewModelScope.launch {
                     googleAuthUiClient.signIn().collect { response ->
                         if (response is AuthResponse.Success) {
+                            val userWithData = googleAuthUiClient.getSignedInUserWithData()
+                            Log.d("Auth data", "User data: ${userWithData!!.data?.recipesCooked}")
                             _state.update {
                                 it.copy(
                                     isSignInSuccessful = true,
-                                    signInError = null
+                                    signInError = null,
+                                    currentUser = userWithData
                                 )
                             }
                         } else {

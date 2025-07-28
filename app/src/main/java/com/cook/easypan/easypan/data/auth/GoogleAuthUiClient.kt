@@ -5,7 +5,8 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.cook.easypan.R
-import com.cook.easypan.easypan.domain.UserData
+import com.cook.easypan.easypan.domain.User
+import com.cook.easypan.easypan.domain.UserRepository
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -21,6 +22,7 @@ import java.util.UUID
 
 class GoogleAuthUiClient(
     private val context: Context,
+    private val userRepository: UserRepository
 ) {
     private val auth = Firebase.auth
 
@@ -102,14 +104,23 @@ class GoogleAuthUiClient(
         }
     }
 
-    fun getSignedInUser(): UserData? = auth.currentUser?.run {
-        UserData(
+    fun getSignedInUser(): User? = auth.currentUser?.run {
+        User(
             userId = uid,
             username = displayName,
             profilePictureUrl = photoUrl?.toString()
         )
     }
 
+    suspend fun getSignedInUserWithData(): User? {
+        val baseUser = getSignedInUser() ?: return null
+        return try {
+            val userData = userRepository.getUserData(baseUser.userId)
+            baseUser.copy(data = userData)
+        } catch (e: Exception) {
+            baseUser
+        }
+    }
 }
 
 interface AuthResponse {

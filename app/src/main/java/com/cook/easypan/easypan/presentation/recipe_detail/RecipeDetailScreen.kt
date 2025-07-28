@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.presentation.recipe_detail
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
+import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.easypan.presentation.recipe_detail.components.IngredientsItem
 import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeChip
 import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeItem
@@ -75,18 +76,10 @@ private fun RecipeDetailScreen(
                         .fillMaxWidth()
                         .padding(6.dp)
                 ) {
-                    Button(
+                    EasyPanButtonPrimary(
                         onClick = {
                             onAction(RecipeDetailAction.OnStartRecipeClick)
-                        },
-                        colors = ButtonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            disabledContentColor = MaterialTheme.colorScheme.surfaceBright,
-                            disabledContainerColor = MaterialTheme.colorScheme.inverseSurface.copy(
-                                alpha = 0.5f
-                            )
-                        )
+                        }
                     ) {
                         Text(
                             text = stringResource(R.string.start_cooking_button),
@@ -124,19 +117,27 @@ private fun RecipeDetailScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(300.dp)
+                        .size(300.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    AsyncImage(
+                    SubcomposeAsyncImage(
                         model = state.recipe.titleImg,
-                        contentDescription = "Recipe Image",
-                        placeholder = painterResource(R.drawable.ic_launcher_background),
-                        error = painterResource(R.drawable.auth_img),
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        contentDescription = stringResource(R.string.dish_image_description),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        error = {
+                            Image(
+                                painter = painterResource(R.drawable.auth_img),
+                                contentDescription = "Recipe Image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                     )
                 }
-
 
                 Column(
                     modifier = Modifier

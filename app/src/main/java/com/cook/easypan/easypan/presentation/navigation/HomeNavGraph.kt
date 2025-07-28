@@ -182,7 +182,7 @@ fun HomeNavGraph(
         }
 
         composable<Route.Profile> {
-            val viewModel = remember { ProfileViewModel() }
+            val viewModel = koinViewModel<ProfileViewModel>()
             LaunchedEffect(Unit) {
                 viewModel.state.collect { event ->
                     if (event.isSignedOut) {
@@ -191,8 +191,8 @@ fun HomeNavGraph(
                     }
                 }
             }
+
             ProfileRoot(
-                userData = googleAuthUiClient.getSignedInUser(),
                 onSignOutButton = {
                     viewModel.onAction(ProfileAction.OnSignOut)
                 },
