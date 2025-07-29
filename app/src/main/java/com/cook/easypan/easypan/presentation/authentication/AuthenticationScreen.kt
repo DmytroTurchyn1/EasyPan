@@ -1,6 +1,7 @@
 package com.cook.easypan.easypan.presentation.authentication
 
 import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,6 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -51,9 +55,6 @@ private fun AuthenticationScreen(
     state: AuthenticationState,
     onAction: (AuthenticationAction) -> Unit,
 ) {
-    if (state.signInError != null) {
-        Toast.makeText(LocalContext.current, state.signInError, Toast.LENGTH_LONG).show()
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -99,7 +100,8 @@ private fun AuthenticationScreen(
                     .padding(16.dp),
                 onClick = {
                     onAction(AuthenticationAction.OnAuthButtonClick)
-                }
+                },
+                enabled = !state.isLoading
             ) {
                 Row(
                     modifier = Modifier
@@ -132,6 +134,26 @@ private fun AuthenticationScreen(
                 modifier = Modifier
                     .padding(bottom = 24.dp, start = 5.dp, end = 5.dp)
             )
+        }
+        val animatedColor by animateColorAsState(
+            targetValue = if (state.isLoading) Color.Black.copy(alpha = 0.8f) else Color.Transparent,
+            label = "overlay_color"
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .drawBehind {
+                    drawRect(animatedColor)
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            if (state.isLoading) {
+                CircularProgressIndicator()
+            }
+        }
+
+        if (state.signInError != null) {
+            Toast.makeText(LocalContext.current, state.signInError, Toast.LENGTH_SHORT).show()
         }
     }
 }

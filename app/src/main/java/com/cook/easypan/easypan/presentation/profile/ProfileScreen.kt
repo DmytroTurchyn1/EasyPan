@@ -89,6 +89,7 @@ private fun ProfileScreen(
             if (state.isLoading) {
                 Box(
                     modifier = Modifier
+                        .fillMaxSize()
                         .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {

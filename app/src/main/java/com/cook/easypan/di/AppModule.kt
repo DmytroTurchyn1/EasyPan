@@ -24,14 +24,19 @@ val appModule = module {
     single {
         GoogleAuthUiClient(
             context = androidContext(),
-            userRepository = get<UserRepository>()
+        )
+    }
+
+    single<UserRepository> {
+        DefaultUserRepository(
+            firestoreDataSource = get(),
+            googleAuthClient = get()
         )
     }
 
     singleOf(::FirestoreClient)
 
     singleOf(::DefaultRecipeRepository).bind<RecipeRepository>()
-    singleOf(::DefaultUserRepository).bind<UserRepository>()
 
     viewModelOf(::AuthenticationViewModel)
     viewModelOf(::HomeViewModel)

@@ -4,7 +4,7 @@ import ProfileAction
 import ProfileState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
+import com.cook.easypan.easypan.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class ProfileViewModel(
-    private val googleAuthUiClient: GoogleAuthUiClient,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
     private val _state = MutableStateFlow(ProfileState())
@@ -32,7 +32,7 @@ class ProfileViewModel(
     private suspend fun loadUserData() {
         _state.update {
             it.copy(
-                currentUser = googleAuthUiClient.getSignedInUserWithData(),
+                currentUser = userRepository.getCurrentUser(),
                 isLoading = false
             )
         }

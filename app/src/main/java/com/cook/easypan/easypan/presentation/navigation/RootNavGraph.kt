@@ -4,23 +4,20 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
-import com.cook.easypan.ui.theme.EasyPanTheme
+import com.cook.easypan.easypan.domain.UserRepository
+import org.koin.java.KoinJavaComponent.inject
 
 
 @Composable
-fun RootNavGraph(
-    googleAuthUiClient: GoogleAuthUiClient
-) {
-    EasyPanTheme {
+fun RootNavGraph() {
         val navController = rememberNavController()
-
+    val userRepository: UserRepository by inject(UserRepository::class.java)
         NavHost(
             navController = navController,
-            startDestination = if (googleAuthUiClient.getSignedInUser() == null) {
-                Route.AuthGraph
-            } else {
+            startDestination = if (userRepository.isUserSignedIn()) {
                 Route.AppGraph
+            } else {
+                Route.AuthGraph
             }
         ) {
             authNavGraph(
@@ -34,11 +31,11 @@ fun RootNavGraph(
                                 inclusive = true
                             }
                         }
-                        googleAuthUiClient.signOut()
+                        userRepository.signOut()
                     }
                 )
             }
         }
-    }
+
 }
 

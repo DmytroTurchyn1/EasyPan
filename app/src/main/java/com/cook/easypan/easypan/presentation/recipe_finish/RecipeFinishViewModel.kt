@@ -3,7 +3,6 @@ package com.cook.easypan.easypan.presentation.recipe_finish
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
 import com.cook.easypan.easypan.domain.UserData
 import com.cook.easypan.easypan.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.stateIn
 
 class RecipeFinishViewModel(
     private val userRepository: UserRepository,
-    private val googleAuthUiClient: GoogleAuthUiClient
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -34,10 +32,7 @@ class RecipeFinishViewModel(
 
     private suspend fun updateCookedRecipes() {
         try {
-            val cookedRecipes =
-                userRepository.getUserData("TxiGwY9sPde8V6g3YJnipjLy53o1").recipesCooked
-            val user = googleAuthUiClient.getSignedInUserWithData()
-            Log.d("FirestoreClient", "cooked recipes updating user data userRepo: $cookedRecipes")
+            val user = userRepository.getCurrentUser()
             userRepository.updateUserData(
                 userId = user?.userId ?: "111",
                 userData = UserData(
@@ -45,7 +40,7 @@ class RecipeFinishViewModel(
                 )
             )
         } catch (e: Exception) {
-            Log.e("FirestoreClient", "Error updating user data screen: ${e.message}")
+            Log.e("screen", "Error updating user data screen: ${e.message}")
         }
 
 

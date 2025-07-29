@@ -126,7 +126,11 @@ private fun RecipeDetailScreen(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize(),
                         loading = {
-                            CircularProgressIndicator()
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         },
                         error = {
                             Image(
