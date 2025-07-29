@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.data.database
 
+import android.util.Log
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import com.google.firebase.firestore.DocumentSnapshot
@@ -64,6 +65,22 @@ class FirestoreClient {
                 user.toObject(UserDto::class.java) ?: UserDto(0)
             }
         } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun updateUserData(
+        userId: String,
+        userData: UserDto
+    ) {
+        return try {
+            addDocument(
+                documentId = userId,
+                collectionName = "Users",
+                data = userData
+            )
+        } catch (e: Exception) {
+            Log.e("FirestoreClient", "Error updating user data: ${e.message}")
             throw e
         }
     }

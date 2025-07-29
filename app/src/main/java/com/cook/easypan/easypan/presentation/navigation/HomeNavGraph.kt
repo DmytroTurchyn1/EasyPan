@@ -80,10 +80,7 @@ fun HomeNavGraph(
                 viewModel = viewModel,
                 onRecipeClick = { recipe ->
                     selectedRecipeViewModel.onSelectRecipe(recipe)
-                    navController.navigate(
-                        Route.RecipeDetail(recipe.id)
-                    )
-
+                    navController.navigate(Route.RecipeDetail(recipe.id))
                 }
             )
         }
@@ -122,7 +119,7 @@ fun HomeNavGraph(
                 viewModel = viewModel,
                 onFinishClick = {
                     navController.navigate(Route.RecipeFinish) {
-                        popUpTo(Route.RecipeDetail) {
+                        popUpTo(Route.RecipeStep) {
                             inclusive = true
                         }
                     }
@@ -134,11 +131,15 @@ fun HomeNavGraph(
         }
 
         composable<Route.RecipeFinish> {
-            val viewModel = RecipeFinishViewModel()
+            val viewModel = koinViewModel<RecipeFinishViewModel>()
             RecipeFinishRoot(
                 viewModel = viewModel,
                 onFinishClick = {
-                    navController.navigate(Route.Home)
+                    navController.navigate(Route.Home) {
+                        popUpTo(Route.RecipeFinish) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

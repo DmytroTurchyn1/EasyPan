@@ -12,6 +12,7 @@ import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewMo
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
+import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishViewModel
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
@@ -38,4 +39,5 @@ val appModule = module {
     viewModelOf(::SelectedRecipeViewModel)
     viewModelOf(::RecipeStepViewModel)
     viewModelOf(::ProfileViewModel)
+    viewModelOf(::RecipeFinishViewModel)
 }
