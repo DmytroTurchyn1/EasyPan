@@ -6,7 +6,7 @@ import com.cook.easypan.easypan.domain.UserData
 import com.cook.easypan.easypan.domain.UserRepository
 
 class DefaultUserRepository(
-    private val firestoreDataSource: FirestoreClient
+    private val firestoreDataSource: FirestoreClient,
 ) : UserRepository {
 
     override suspend fun getUserData(userId: String): UserData {
@@ -14,5 +14,4 @@ class DefaultUserRepository(
             .getUserData(userId)
             .toUserData()
     }
-
 }

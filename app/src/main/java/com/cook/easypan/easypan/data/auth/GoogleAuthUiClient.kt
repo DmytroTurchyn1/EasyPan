@@ -5,6 +5,7 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.cook.easypan.R
+import com.cook.easypan.easypan.domain.AuthResponse
 import com.cook.easypan.easypan.domain.User
 import com.cook.easypan.easypan.domain.UserRepository
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -121,9 +122,4 @@ class GoogleAuthUiClient(
             baseUser
         }
     }
-}
-
-interface AuthResponse {
-    data object Success : AuthResponse
-    data class Failure(val error: String) : AuthResponse
 }

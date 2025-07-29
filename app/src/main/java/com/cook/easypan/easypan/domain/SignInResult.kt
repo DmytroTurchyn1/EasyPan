@@ -1,6 +1,6 @@
 package com.cook.easypan.easypan.domain
 
-data class SignInResult(
-    val data: User?,
-    val errorMessage: String?
-)
+interface AuthResponse {
+    data object Success : AuthResponse
+    data class Failure(val error: String) : AuthResponse
+}

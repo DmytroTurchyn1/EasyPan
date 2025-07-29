@@ -28,10 +28,13 @@ fun RootNavGraph(
             )
             composable<Route.AppGraph> {
                 Home(
-                    googleAuthUiClient = googleAuthUiClient,
                     onSignOut = {
-                        navController.popBackStack()
-                        navController.navigate(Route.AuthGraph)
+                        navController.navigate(Route.AuthGraph) {
+                            popUpTo(Route.AppGraph) {
+                                inclusive = true
+                            }
+                        }
+                        googleAuthUiClient.signOut()
                     }
                 )
             }

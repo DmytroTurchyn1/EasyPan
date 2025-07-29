@@ -1,10 +1,9 @@
 package com.cook.easypan.easypan.presentation.authentication
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cook.easypan.easypan.data.auth.AuthResponse
 import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
+import com.cook.easypan.easypan.domain.AuthResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,22 +26,24 @@ class AuthenticationViewModel(
             AuthenticationAction.OnAuthButtonClick -> {
                 viewModelScope.launch {
                     googleAuthUiClient.signIn().collect { response ->
-                        if (response is AuthResponse.Success) {
-                            val userWithData = googleAuthUiClient.getSignedInUserWithData()
-                            Log.d("Auth data", "User data: ${userWithData!!.data?.recipesCooked}")
-                            _state.update {
-                                it.copy(
-                                    isSignInSuccessful = true,
-                                    signInError = null,
-                                    currentUser = userWithData
-                                )
+                        when (response) {
+                            is AuthResponse.Success -> {
+                                _state.update {
+                                    it.copy(
+                                        isSignInSuccessful = true,
+                                        signInError = null,
+                                        currentUser = googleAuthUiClient.getSignedInUserWithData()
+                                    )
+                                }
                             }
-                        } else {
-                            _state.update {
-                                it.copy(
-                                    isSignInSuccessful = false,
-                                    signInError = (response as AuthResponse.Failure).error
-                                )
+
+                            is AuthResponse.Failure -> {
+                                _state.update {
+                                    it.copy(
+                                        isSignInSuccessful = false,
+                                        signInError = response.error
+                                    )
+                                }
                             }
                         }
                     }
