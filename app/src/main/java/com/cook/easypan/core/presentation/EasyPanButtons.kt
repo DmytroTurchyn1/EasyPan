@@ -1,10 +1,14 @@
 package com.cook.easypan.core.presentation
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun EasyPanButtonPrimary(
@@ -15,6 +19,7 @@ fun EasyPanButtonPrimary(
 ) {
     Button(
         modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
         colors = ButtonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -53,5 +58,29 @@ fun EasyPanButtonSecondary(
     ) {
         content()
     }
+
+}
+
+@Preview
+@Composable
+private fun EasyPanButtonPrimaryPreview() {
+    EasyPanButtonPrimary(
+        onClick = { /* Do nothing */ },
+        content = {
+            Text(text = "Primary Button")
+        }
+    )
+
+}
+
+@Preview
+@Composable
+private fun EasyPanButtonSecondaryPreview() {
+    EasyPanButtonSecondary(
+        onClick = { /* Do nothing */ },
+        content = {
+            Text(text = "Secondary Button")
+        }
+    )
 
 }

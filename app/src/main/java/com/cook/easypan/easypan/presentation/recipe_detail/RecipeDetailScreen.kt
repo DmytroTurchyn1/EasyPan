@@ -85,7 +85,7 @@ private fun RecipeDetailScreen(
                             text = stringResource(R.string.start_cooking_button),
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            style = MaterialTheme.typography.labelLarge,
+                            style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                         )

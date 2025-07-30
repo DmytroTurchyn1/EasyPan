@@ -1,5 +1,8 @@
 package com.cook.easypan.easypan.presentation.recipe_step
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -104,69 +107,82 @@ private fun RecipeStepScreen(
                 )
             }
         ) { innerPadding ->
-            Column(
+            AnimatedContent(
                 modifier = Modifier
                     .padding(innerPadding)
-            ) {
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)
-                        .size(300.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    SubcomposeAsyncImage(
-                        model = state.recipe.instructions[state.step].imageUrl,
-                        contentDescription = stringResource(R.string.dish_image_description),
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.fillMaxSize(),
-                        loading = {
-                            Box(
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        },
-                        error = {
-                            Image(
-                                painter = painterResource(R.drawable.auth_img),
-                                contentDescription = null,
-                                contentScale = ContentScale.FillBounds,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                    )
+                    .verticalScroll(rememberScrollState()),
+                targetState = state.step,
+                label = "StepContent",
+                transitionSpec = {
+                    if (targetState > initialState) {
+                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) togetherWith
+                                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                    } else {
+                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right) togetherWith
+                                slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                    }
                 }
-                if (state.recipe.instructions[state.step].stepType == StepType.TEXT) {
-                    Column(
+            ) { currentStep ->
+                Column {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                            .padding(top = 20.dp)
+                            .size(300.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        ContentStepRecipe(
-                            title = state.recipe.instructions[state.step].title,
-                            description = state.recipe.instructions[state.step].description
+                        SubcomposeAsyncImage(
+                            model = state.recipe.instructions[currentStep].imageUrl,
+                            contentDescription = stringResource(R.string.dish_image_description),
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier.fillMaxSize(),
+                            loading = {
+                                Box(
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            },
+                            error = {
+                                Image(
+                                    painter = painterResource(R.drawable.auth_img),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.FillBounds,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
                         )
                     }
-                } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                            .verticalScroll(rememberScrollState()),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        ContentStepRecipe(
-                            title = state.recipe.instructions[state.step].title,
-                            description = state.recipe.instructions[state.step].description
-                        )
-                        TimerStepRecipe(
-                            totalSeconds = state.recipe.instructions[state.step].durationSec,
-                        )
+                    if (state.recipe.instructions[currentStep].stepType == StepType.TEXT) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            ContentStepRecipe(
+                                title = state.recipe.instructions[currentStep].title,
+                                description = state.recipe.instructions[currentStep].description
+                            )
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            ContentStepRecipe(
+                                title = state.recipe.instructions[currentStep].title,
+                                description = state.recipe.instructions[currentStep].description
+                            )
+                            TimerStepRecipe(
+                                totalSeconds = state.recipe.instructions[currentStep].durationSec,
+                            )
+                        }
                     }
                 }
             }
