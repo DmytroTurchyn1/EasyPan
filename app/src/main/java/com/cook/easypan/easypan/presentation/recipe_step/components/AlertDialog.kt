@@ -9,7 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.ui.theme.EasyPanTheme
 
@@ -26,7 +28,7 @@ fun AlertCancelRecipeDialog(
         icon = {
             Icon(
                 imageVector = icon,
-                contentDescription = "Example Icon"
+                contentDescription = stringResource(R.string.information_icon_description)
             )
         },
         title = {
@@ -44,7 +46,7 @@ fun AlertCancelRecipeDialog(
                     onConfirmation()
                 }
             ) {
-                Text("Confirm")
+                Text(stringResource(R.string.confirm_button))
             }
         },
         dismissButton = {
@@ -53,7 +55,7 @@ fun AlertCancelRecipeDialog(
                     onDismissRequest()
                 }
             ) {
-                Text("Dismiss")
+                Text(stringResource(R.string.dismiss_button))
             }
         }
     )

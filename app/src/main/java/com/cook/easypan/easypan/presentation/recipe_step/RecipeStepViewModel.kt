@@ -39,7 +39,6 @@ class RecipeStepViewModel : ViewModel() {
         val step = _state.value.recipe?.instructions?.size.let { size ->
             1f / (size?.toFloat() ?: 1f)
         }
-        println("Step: $step")
         when (action) {
             is RecipeStepAction.OnNextClick -> {
                 _state.update {

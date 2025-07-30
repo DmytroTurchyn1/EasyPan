@@ -34,7 +34,7 @@ class DefaultUserRepository(
             )
             AuthResponse.Success
         } catch (e: Exception) {
-            Log.e("FirestoreClient", "Error updating user data userRepo: ${e.message}")
+            Log.e("DefaultUserRepository", "Error updating user data: ${e.message}")
             AuthResponse.Failure(e.message ?: "Unknown error")
         }
     }
@@ -45,6 +45,10 @@ class DefaultUserRepository(
             val userData = getUserData(baseUser.userId)
             baseUser.copy(data = userData)
         } catch (e: Exception) {
+            Log.w(
+                "DefaultUserRepository",
+                "Failed to fetch user data for ${baseUser.userId}: ${e.message}"
+            )
             baseUser
         }
     }

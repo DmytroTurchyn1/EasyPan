@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -151,10 +152,13 @@ private fun AuthenticationScreen(
                 CircularProgressIndicator()
             }
         }
-
-        if (state.signInError != null) {
-            Toast.makeText(LocalContext.current, state.signInError, Toast.LENGTH_SHORT).show()
+        val context = LocalContext.current
+        LaunchedEffect(state.signInError, context) {
+            if (state.signInError != null) {
+                Toast.makeText(context, state.signInError, Toast.LENGTH_SHORT).show()
+            }
         }
+
     }
 }
 

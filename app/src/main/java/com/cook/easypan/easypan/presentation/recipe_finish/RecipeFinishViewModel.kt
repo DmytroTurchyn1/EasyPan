@@ -34,13 +34,13 @@ class RecipeFinishViewModel(
         try {
             val user = userRepository.getCurrentUser()
             userRepository.updateUserData(
-                userId = user?.userId ?: "111",
+                userId = user?.userId ?: throw IllegalStateException("User not signed in"),
                 userData = UserData(
-                    recipesCooked = (user?.data?.recipesCooked ?: 0) + 1,
+                    recipesCooked = (user.data?.recipesCooked ?: 0) + 1,
                 )
             )
         } catch (e: Exception) {
-            Log.e("screen", "Error updating user data screen: ${e.message}")
+            Log.e("Recipe Finish Screen", "Error updating user data: ${e.message}")
         }
 
 

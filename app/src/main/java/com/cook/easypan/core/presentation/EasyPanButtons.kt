@@ -54,6 +54,7 @@ fun EasyPanButtonSecondary(
         onClick = {
             onClick()
         },
+        shape = RoundedCornerShape(16.dp),
         enabled = enabled
     ) {
         content()

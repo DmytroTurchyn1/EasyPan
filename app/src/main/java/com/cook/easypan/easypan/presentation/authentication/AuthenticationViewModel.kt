@@ -33,15 +33,13 @@ class AuthenticationViewModel(
                     userRepository.signInWithGoogle().collect { response ->
                         when (response) {
                             is AuthResponse.Success -> {
-                                viewModelScope.launch {
-                                    _state.update {
-                                        it.copy(
-                                            isSignInSuccessful = true,
-                                            signInError = null,
-                                            currentUser = userRepository.getCurrentUser(),
-                                            isLoading = false
-                                        )
-                                    }
+                                _state.update {
+                                    it.copy(
+                                        isSignInSuccessful = true,
+                                        signInError = null,
+                                        currentUser = userRepository.getCurrentUser(),
+                                        isLoading = false
+                                    )
                                 }
                             }
 

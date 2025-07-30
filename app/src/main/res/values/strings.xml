@@ -45,4 +45,7 @@
     <string name="cancel_recipe_dialog_title">Cancel Recipe</string>
     <string name="cancel_recipe_dialog_text">Are you sure you want to cancel this recipe?</string>
     <string name="restart_button_timer">Restart Timer</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="dismiss_button">Dismiss</string>
+    <string name="information_icon_description">Information Icon</string>
 </resources>

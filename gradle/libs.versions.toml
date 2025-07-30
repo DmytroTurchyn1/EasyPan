@@ -13,7 +13,6 @@ composeBom = "2025.07.00"
 uiTextGoogleFonts = "1.8.3"
 compose-material-icons-extended = "1.7.8"
 nav_version = "2.9.2"
-playServicesAuth = "21.4.0"
 firebaseAuth = "24.0.0"
 koin = "4.1.0"
 coil3 = "3.3.0"
@@ -47,7 +46,6 @@ firebase-bom = {module = "com.google.firebase:firebase-bom", version.ref = "fire
 firebase-analytics = {module = "com.google.firebase:firebase-analytics"}
 navigation-compose = {module = "androidx.navigation:navigation-compose", version.ref = "nav_version"}
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 firebase-firestore = { module= "com.google.firebase:firebase-firestore-ktx"}
 firebase-appcheck-playintegrity = {module= "com.google.firebase:firebase-appcheck-playintegrity"}
 firebase-appcheck-debug = {module= "com.google.firebase:firebase-appcheck-debug"}
@@ -98,7 +96,6 @@ firebase = [
     "firebase-bom",
     "firebase-analytics",
     "firebase-auth",
-    "play-services-auth",
     "firebase-appcheck-playintegrity",
     "firebase-appcheck-debug",
     "firebase-firestore",
