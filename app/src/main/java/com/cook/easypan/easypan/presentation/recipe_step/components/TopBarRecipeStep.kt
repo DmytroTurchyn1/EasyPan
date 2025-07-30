@@ -1,8 +1,10 @@
 package com.cook.easypan.easypan.presentation.recipe_step.components
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,50 +16,60 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cook.easypan.R
-import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun TopBarRecipeStep(
-    step: String,
-    progress: Float
+    currentStep: Int,
+    steps: Int,
+    progress: Float,
+    onCancelClick: () -> Unit,
 ) {
     Column {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(6.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
 
-        ) {
+            ) {
             IconButton(
-                onClick = { RecipeStepAction.OnBackClick }
+                onClick = { onCancelClick() },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.go_back),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.inverseSurface
                 )
 
             }
             Text(
-                text = "${stringResource(R.string.step)} $step",
-                modifier = Modifier.fillMaxWidth(),
+                text = "${stringResource(R.string.step)} $currentStep / $steps",
+                modifier = Modifier
+                    .fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
+        val size by animateFloatAsState(
+            targetValue = progress,
+            tween(
+                durationMillis = 500,
+                delayMillis = 200,
+                easing = LinearOutSlowInEasing
+            )
+        )
         LinearProgressIndicator(
-            progress = { progress },
+            progress = { size },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp)
@@ -74,8 +86,10 @@ fun TopBarRecipeStep(
 private fun TopBarRecipeStepPreview() {
     EasyPanTheme {
         TopBarRecipeStep(
-            step = "1",
-            progress = 0.2f
+            currentStep = 1,
+            steps = 10,
+            progress = 0.2f,
+            onCancelClick = {}
         )
     }
 

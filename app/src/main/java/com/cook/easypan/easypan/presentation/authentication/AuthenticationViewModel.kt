@@ -1,32 +1,21 @@
 package com.cook.easypan.easypan.presentation.authentication
 
-import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
-import com.cook.easypan.easypan.domain.SignInResult
+import com.cook.easypan.easypan.domain.AuthResponse
+import com.cook.easypan.easypan.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthenticationViewModel(
-    private val googleAuthUiClient: GoogleAuthUiClient,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthenticationState())
     val state = _state.asStateFlow()
 
-    fun onLoginResult(result: SignInResult) {
-        _state.update {
-            it.copy(
-                isSignInSuccessful = result.data != null,
-                signInError = result.errorMessage,
-                signInIntentSender = null
-            )
-        }
-
-    }
 
     fun resetState() {
         _state.update { AuthenticationState() }
@@ -35,21 +24,37 @@ class AuthenticationViewModel(
     fun onAction(action: AuthenticationAction) {
         when (action) {
             AuthenticationAction.OnAuthButtonClick -> {
+                _state.update {
+                    it.copy(
+                        isLoading = true
+                    )
+                }
                 viewModelScope.launch {
-                    val signInIntentSender = googleAuthUiClient.signIn()
-                    _state.update {
-                        it.copy(signInIntentSender = signInIntentSender)
+                    userRepository.signInWithGoogle().collect { response ->
+                        when (response) {
+                            is AuthResponse.Success -> {
+                                _state.update {
+                                    it.copy(
+                                        isSignInSuccessful = true,
+                                        signInError = null,
+                                        currentUser = userRepository.getCurrentUser(),
+                                        isLoading = false
+                                    )
+                                }
+                            }
+
+                            is AuthResponse.Failure -> {
+                                _state.update {
+                                    it.copy(
+                                        isSignInSuccessful = false,
+                                        signInError = response.error,
+                                        isLoading = false
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
-            }
-        }
-    }
-
-    fun handleSignInResult(data: Intent?) {
-        viewModelScope.launch {
-            if (data != null) {
-                val signInResult = googleAuthUiClient.signInWithIntent(data)
-                onLoginResult(signInResult)
             }
         }
     }

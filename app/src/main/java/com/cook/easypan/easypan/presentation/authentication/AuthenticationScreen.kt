@@ -1,5 +1,7 @@
 package com.cook.easypan.easypan.presentation.authentication
 
+import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,17 +12,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -31,11 +36,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
+import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun AuthenticationRoot(
-    viewModel: AuthenticationViewModel
+    viewModel: AuthenticationViewModel,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -89,17 +95,14 @@ private fun AuthenticationScreen(
             )
             Spacer(modifier = Modifier.weight(0.01f))
 
-            Button(
+            EasyPanButtonPrimary(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
                 onClick = {
                     onAction(AuthenticationAction.OnAuthButtonClick)
-                }
+                },
+                enabled = !state.isLoading
             ) {
                 Row(
                     modifier = Modifier
@@ -113,11 +116,9 @@ private fun AuthenticationScreen(
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.google_icon),
                         contentDescription = stringResource(R.string.google_icon_description),
-                        tint = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = stringResource(R.string.continue_with_google),
-                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -135,6 +136,29 @@ private fun AuthenticationScreen(
                     .padding(bottom = 24.dp, start = 5.dp, end = 5.dp)
             )
         }
+        val animatedColor by animateColorAsState(
+            targetValue = if (state.isLoading) Color.Black.copy(alpha = 0.8f) else Color.Transparent,
+            label = "overlay_color"
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .drawBehind {
+                    drawRect(animatedColor)
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            if (state.isLoading) {
+                CircularProgressIndicator()
+            }
+        }
+        val context = LocalContext.current
+        LaunchedEffect(state.signInError, context) {
+            if (state.signInError != null) {
+                Toast.makeText(context, state.signInError, Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 }
 

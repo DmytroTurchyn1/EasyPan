@@ -7,17 +7,18 @@ gms = "4.4.3"
 firebase = "33.16.0"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.9.1"
+lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
-composeBom = "2025.06.01"
+composeBom = "2025.07.00"
 uiTextGoogleFonts = "1.8.3"
 compose-material-icons-extended = "1.7.8"
-nav_version = "2.8.0-beta02"
-playServicesAuth = "21.3.0"
-firebaseAuth = "23.2.1"
+nav_version = "2.9.2"
+firebaseAuth = "24.0.0"
 koin = "4.1.0"
-coil3 = "3.2.0"
-ktor = "3.2.1"
+coil3 = "3.3.0"
+ktor = "3.2.2"
+credentials = "1.5.0"
+googleid = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,11 +39,13 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose-material-icons-extended" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
+androidx-credentials ={ module= "androidx.credentials:credentials", version.ref= "credentials" }
+credentials-play-services-auth = { module="androidx.credentials:credentials-play-services-auth", version.ref= "credentials" }
+identity-googleid = {module= "com.google.android.libraries.identity.googleid:googleid", version.ref= "googleid"}
 firebase-bom = {module = "com.google.firebase:firebase-bom", version.ref = "firebase"}
 firebase-analytics = {module = "com.google.firebase:firebase-analytics"}
 navigation-compose = {module = "androidx.navigation:navigation-compose", version.ref = "nav_version"}
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 firebase-firestore = { module= "com.google.firebase:firebase-firestore-ktx"}
 firebase-appcheck-playintegrity = {module= "com.google.firebase:firebase-appcheck-playintegrity"}
 firebase-appcheck-debug = {module= "com.google.firebase:firebase-appcheck-debug"}
@@ -60,6 +63,7 @@ coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -79,7 +83,8 @@ compose = [
     "androidx-ui-graphics",
     "androidx-ui-tooling-preview",
     "compose-material-icons-extended",
-    "navigation-compose"
+    "navigation-compose",
+    "androidx-credentials"
 ]
 
 compose-debug = [
@@ -91,10 +96,11 @@ firebase = [
     "firebase-bom",
     "firebase-analytics",
     "firebase-auth",
-    "play-services-auth",
-    "firebase-firestore",
     "firebase-appcheck-playintegrity",
-    "firebase-appcheck-debug"
+    "firebase-appcheck-debug",
+    "firebase-firestore",
+    "identity-googleid",
+    "credentials-play-services-auth"
 ]
 
 koin = [

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
+import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
@@ -65,7 +65,7 @@ private fun RecipeFinishScreen(
             fontSize = 36.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
-        Spacer(modifier = Modifier.height(42.dp))
+        Spacer(modifier = Modifier.height(64.dp))
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),
             contentDescription = stringResource(R.string.recipe_finished_image),
@@ -75,15 +75,14 @@ private fun RecipeFinishScreen(
                 .clip(RoundedCornerShape(16.dp)),
             contentScale = ContentScale.FillBounds,
         )
-        Spacer(modifier = Modifier.height(42.dp))
-        Button(
+        Spacer(modifier = Modifier.height(58.dp))
+        EasyPanButtonPrimary(
             onClick = { onAction(RecipeFinishAction.OnFinishClick) },
             modifier = Modifier
                 .fillMaxWidth()
         ) {
             Text(
                 text = stringResource(R.string.recipe_finished_button),
-                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

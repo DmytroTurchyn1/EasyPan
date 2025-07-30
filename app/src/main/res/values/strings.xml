@@ -42,4 +42,10 @@
     <string name="help_image_description">Navigate to help</string>
     <string name="username_placeholder">Username</string>
     <string name="profile_picture_description">Profile picture</string>
+    <string name="cancel_recipe_dialog_title">Cancel Recipe</string>
+    <string name="cancel_recipe_dialog_text">Are you sure you want to cancel this recipe?</string>
+    <string name="restart_button_timer">Restart Timer</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="dismiss_button">Dismiss</string>
+    <string name="information_icon_description">Information Icon</string>
 </resources>

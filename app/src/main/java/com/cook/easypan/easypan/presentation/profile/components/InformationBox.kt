@@ -34,7 +34,7 @@ fun InformationBox(
                 color = MaterialTheme.colorScheme.tertiary,
                 shape = RoundedCornerShape(10.dp)
             )
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

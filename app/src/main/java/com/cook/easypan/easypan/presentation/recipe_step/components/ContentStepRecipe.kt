@@ -34,7 +34,7 @@ fun ContentStepRecipe(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
         }

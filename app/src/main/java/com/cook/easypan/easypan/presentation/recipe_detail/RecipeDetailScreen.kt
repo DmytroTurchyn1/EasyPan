@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.presentation.recipe_detail
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,13 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,8 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
+import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.easypan.presentation.recipe_detail.components.IngredientsItem
 import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeChip
 import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeItem
@@ -70,24 +70,40 @@ private fun RecipeDetailScreen(
         modifier = Modifier
             .fillMaxSize(),
         bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(6.dp)
-            ) {
-                Button(
-                    onClick = {
-                        onAction(RecipeDetailAction.OnStartRecipeClick)
-                    }
+            if (state.recipe != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(6.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.start_cooking_button),
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurface
+                    EasyPanButtonPrimary(
+                        onClick = {
+                            onAction(RecipeDetailAction.OnStartRecipeClick)
+                        }
+                    ) {
+                        Text(
+                            text = stringResource(R.string.start_cooking_button),
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+            }
+        },
+        topBar = {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                IconButton(
+                    onClick = { onAction(RecipeDetailAction.OnBackClick) },
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.go_back),
+                        tint = MaterialTheme.colorScheme.inverseSurface
                     )
                 }
             }
@@ -101,31 +117,31 @@ private fun RecipeDetailScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(300.dp)
+                        .size(300.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    AsyncImage(
+                    SubcomposeAsyncImage(
                         model = state.recipe.titleImg,
-                        contentDescription = "Recipe Image",
-                        placeholder = painterResource(R.drawable.ic_launcher_background),
-                        error = painterResource(R.drawable.auth_img),
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        contentDescription = stringResource(R.string.dish_image_description),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                        loading = {
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        },
+                        error = {
+                            Image(
+                                painter = painterResource(R.drawable.auth_img),
+                                contentDescription = "Recipe Image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                     )
-                    IconButton(
-                        onClick = { onAction(RecipeDetailAction.OnBackClick) },
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .statusBarsPadding()
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.go_back),
-                            tint = Color.Black
-                        )
-                    }
                 }
-
 
                 Column(
                     modifier = Modifier

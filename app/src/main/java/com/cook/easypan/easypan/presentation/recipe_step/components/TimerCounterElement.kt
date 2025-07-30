@@ -1,5 +1,11 @@
 package com.cook.easypan.easypan.presentation.recipe_step.components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,14 +38,24 @@ fun TimerCounterElement(
                 .width(150.dp)
                 .padding(12.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.primary),
+                .background(MaterialTheme.colorScheme.secondary),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "$time",
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            AnimatedContent(
+                targetState = time,
+                transitionSpec = {
+                    slideInVertically { height -> height } + fadeIn() togetherWith
+                            slideOutVertically { height -> -height } + fadeOut()
+
+                }, label = "animated content"
+            ) { targetTime ->
+                Text(
+                    text = "$targetTime",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+
         }
         Text(
             text = title,

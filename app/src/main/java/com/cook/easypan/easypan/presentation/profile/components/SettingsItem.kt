@@ -42,12 +42,13 @@ fun SettingsItem(
                 modifier = Modifier
                     .clip(RoundedCornerShape(14.dp))
                     .size(40.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
             Text(

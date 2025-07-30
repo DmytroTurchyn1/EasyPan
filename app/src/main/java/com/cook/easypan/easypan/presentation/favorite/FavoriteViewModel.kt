@@ -26,9 +26,7 @@ class FavoriteViewModel : ViewModel() {
         )
 
     fun onAction(action: FavoriteAction) {
-        when (action) {
-            else -> TODO("Handle actions")
-        }
+
     }
 
 }

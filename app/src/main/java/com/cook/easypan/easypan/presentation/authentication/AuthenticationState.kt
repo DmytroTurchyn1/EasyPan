@@ -1,9 +1,10 @@
 package com.cook.easypan.easypan.presentation.authentication
 
-import android.content.IntentSender
+import com.cook.easypan.easypan.domain.User
 
 data class AuthenticationState(
     val isSignInSuccessful: Boolean = false,
     val signInError: String? = null,
-    val signInIntentSender: IntentSender? = null
+    val currentUser: User? = null,
+    val isLoading: Boolean = false,
 )

@@ -20,7 +20,6 @@ class HomeViewModel(
     private val _state = MutableStateFlow(HomeState())
     val state = _state
         .onStart {
-
             if (!hasLoadedInitialData) {
                 loadRecipes()
                 hasLoadedInitialData = true
@@ -33,11 +32,6 @@ class HomeViewModel(
         )
 
     private fun loadRecipes() {
-        _state.update {
-            it.copy(
-                isLoading = true
-            )
-        }
         viewModelScope.launch {
             _state.update {
                 it.copy(
