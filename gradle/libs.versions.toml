@@ -5,20 +5,26 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 gms = "4.4.3"
 firebase = "33.16.0"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
+junitVersion = "1.1.5"
+espressoCore = "3.5.0"
+kotlinTest = "2.2.0"
 lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
 composeBom = "2025.07.00"
 uiTextGoogleFonts = "1.8.3"
 compose-material-icons-extended = "1.7.8"
-nav_version = "2.9.2"
+nav_version = "2.9.3"
 firebaseAuth = "24.0.0"
+playServicesAuth = "21.4.0"
 koin = "4.1.0"
 coil3 = "3.3.0"
-ktor = "3.2.2"
+ktor = "3.2.3"
 credentials = "1.5.0"
 googleid = "1.1.1"
+crashlytics = "3.0.5"
+firebasePerf = "2.0.0"
+uiTestJunit4Android = "1.8.3"
+mockk = "1.14.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,8 +38,7 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.8.3" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
@@ -44,11 +49,17 @@ credentials-play-services-auth = { module="androidx.credentials:credentials-play
 identity-googleid = {module= "com.google.android.libraries.identity.googleid:googleid", version.ref= "googleid"}
 firebase-bom = {module = "com.google.firebase:firebase-bom", version.ref = "firebase"}
 firebase-analytics = {module = "com.google.firebase:firebase-analytics"}
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlinTest" }
 navigation-compose = {module = "androidx.navigation:navigation-compose", version.ref = "nav_version"}
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { module= "com.google.firebase:firebase-firestore-ktx"}
 firebase-appcheck-playintegrity = {module= "com.google.firebase:firebase-appcheck-playintegrity"}
-firebase-appcheck-debug = {module= "com.google.firebase:firebase-appcheck-debug"}
+firebase-appcheck-debug = { module = "com.google.firebase:firebase-appcheck-debug", version = "18.0.0" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
+firebase-perf = { module = "com.google.firebase:firebase-perf", version = "21.0.5" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
@@ -63,6 +74,7 @@ coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 
 
 [plugins]
@@ -71,6 +83,9 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-services = {id = "com.google.gms.google-services", version.ref = "gms" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerf" }
+
 
 [bundles]
 
@@ -84,7 +99,9 @@ compose = [
     "androidx-ui-tooling-preview",
     "compose-material-icons-extended",
     "navigation-compose",
-    "androidx-credentials"
+    "androidx-credentials",
+    "mockk",
+    "mockk-android",
 ]
 
 compose-debug = [
@@ -100,7 +117,10 @@ firebase = [
     "firebase-appcheck-debug",
     "firebase-firestore",
     "identity-googleid",
-    "credentials-play-services-auth"
+    "credentials-play-services-auth",
+    "play-services-auth",
+    "firebase-crashlytics-ndk",
+    "firebase-perf"
 ]
 
 koin = [

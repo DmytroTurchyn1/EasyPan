@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
-import com.cook.easypan.R
 import com.cook.easypan.easypan.domain.AuthResponse
 import com.cook.easypan.easypan.domain.User
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -24,7 +23,8 @@ class GoogleAuthUiClient(
     private val context: Context,
 ) {
     private val auth = Firebase.auth
-
+    private val clientId =
+        "788593303701-u4fjs48vo8eelcvd015la3vpba60jqog.apps.googleusercontent.com"
     private fun createNonce(): String {
         val rawNonce = UUID.randomUUID().toString()
         val bytes = rawNonce.toByteArray()
@@ -38,8 +38,8 @@ class GoogleAuthUiClient(
     fun signIn(): Flow<AuthResponse> = callbackFlow {
 
         val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(true)
-            .setServerClientId(context.getString(R.string.default_web_client_id))
+            .setFilterByAuthorizedAccounts(false)
+            .setServerClientId(clientId)
             .setAutoSelectEnabled(false)
             .setNonce(createNonce())
             .build()

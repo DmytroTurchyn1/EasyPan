@@ -133,7 +133,7 @@ private fun AuthenticationScreen(
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(bottom = 24.dp, start = 5.dp, end = 5.dp)
+                    .padding(bottom = 26.dp, start = 5.dp, end = 5.dp)
             )
         }
         val animatedColor by animateColorAsState(

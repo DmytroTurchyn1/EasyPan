@@ -53,6 +53,7 @@ class DefaultUserRepository(
         }
     }
 
+
     override fun signOut() = googleAuthClient.signOut()
 
     override fun isUserSignedIn(): Boolean {

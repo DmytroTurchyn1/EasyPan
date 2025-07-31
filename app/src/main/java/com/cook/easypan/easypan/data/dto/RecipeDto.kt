@@ -1,17 +1,17 @@
 package com.cook.easypan.easypan.data.dto
 
-import kotlinx.serialization.SerialName
+import com.google.firebase.firestore.PropertyName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class RecipeDto(
     val id: String = "",
-    @SerialName("title") val title: String = "",
-    @SerialName("ingredients") val ingredients: List<String> = emptyList(),
-    @SerialName("preparationMinutes") val preparationMinutes: Int = 0,
-    @SerialName("cookMinutes") val cookMinutes: Int = 0,
-    @SerialName("chips") val chips: List<String> = emptyList(),
-    @SerialName("difficulty") val difficulty: Int = 1,
-    @SerialName("instructions") val instructions: List<StepDescriptionDto> = emptyList(),
-    @SerialName("titleImg") val titleImg: String = ""
+    @PropertyName("title") val title: String = "",
+    @PropertyName("ingredients") val ingredients: List<String> = emptyList(),
+    @PropertyName("preparationMinutes") val preparationMinutes: Int = 0,
+    @PropertyName("cookMinutes") val cookMinutes: Int = 0,
+    @PropertyName("chips") val chips: List<String> = emptyList(),
+    @PropertyName("difficulty") val difficulty: Int = 1,
+    @PropertyName("instructions") val instructions: List<StepDescriptionDto> = emptyList(),
+    @PropertyName("titleImg") val titleImg: String = ""
 )
