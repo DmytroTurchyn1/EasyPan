@@ -30,7 +30,5 @@ class EasyPanApp : Application() {
                 PlayIntegrityAppCheckProviderFactory.getInstance(),
             )
         }
-
-
     }
 }

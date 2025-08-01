@@ -68,6 +68,7 @@ class GoogleAuthUiClient(
                                 if (it.isSuccessful) {
                                     trySend(AuthResponse.Success)
                                 } else {
+
                                     trySend(
                                         AuthResponse.Failure(
                                             error = it.exception?.message ?: "Unknown error"
@@ -75,8 +76,12 @@ class GoogleAuthUiClient(
                                     )
                                 }
                             }
+                            .addOnFailureListener {
+                                throw it
+                            }
 
                     } catch (e: GoogleIdTokenParsingException) {
+                        throw e
                         trySend(
                             AuthResponse.Failure(
                                 error = e.message ?: "Failed to parse Google ID token"
@@ -86,6 +91,7 @@ class GoogleAuthUiClient(
                 }
             }
         } catch (e: Exception) {
+            throw e
             trySend(AuthResponse.Failure(error = e.message ?: "Unknown error"))
         }
         awaitClose()

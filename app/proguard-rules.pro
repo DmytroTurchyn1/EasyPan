@@ -20,39 +20,41 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# Keep only what Firebase Firestore needs for serialization
--keep class com.google.firebase.firestore.PropertyName { *; }
--keep class com.google.firebase.firestore.Exclude { *; }
--keep class com.google.firebase.firestore.ServerTimestamp { *; }
+# Keep Firebase Firestore classes
+-keep class com.google.firebase.firestore.** { *; }
+-keep class com.google.firebase.** { *; }
 
-# Keep DTO classes but only what's needed for Firebase serialization
--keep class com.cook.easypan.easypan.data.dto.RecipeDto {
-    <init>();
-    <fields>;
-}
--keep class com.cook.easypan.easypan.data.dto.UserDto {
-    <init>();
-    <fields>;
-}
--keep class com.cook.easypan.easypan.data.dto.StepDescriptionDto {
-    <init>();
-    <fields>;
-}
+# Keep all DTO classes for Firebase serialization
+-keep class com.cook.easypan.easypan.data.dto.** { *; }
 
-# Keep only the default constructors and field names for Firebase
+# Keep all public constructors and getters/setters for DTO classes
 -keepclassmembers class com.cook.easypan.easypan.data.dto.** {
-    <init>();
-}
-
-# Keep field names for Firebase serialization but not methods
--keepclassmembernames class com.cook.easypan.easypan.data.dto.** {
-    <fields>;
+    public <init>();
+    public <init>(...);
+    public *;
 }
 
 # Keep serialization annotations
 -keepattributes *Annotation*
 -keepattributes Signature
+-keep class kotlinx.serialization.** { *; }
 
-# Keep only specific Kotlinx serialization classes that are actually used
--keep class kotlinx.serialization.SerialName { *; }
--keep class kotlinx.serialization.Serializable { *; }
+# Keep data class properties
+-keepclassmembers class * {
+    @kotlinx.serialization.SerialName <fields>;
+}
+
+# Prevent obfuscation of classes used with Firebase
+-keepnames class com.cook.easypan.easypan.data.dto.**
+-keepclassmembernames class com.cook.easypan.easypan.data.dto.** { *; }
+
+-dontwarn org.apiguardian.api.API
+
+-keep class com.cook.easypan.easypan.data.** { *; }
+-keep class com.cook.easypan.easypan.domain.** { *; }
+-keep class com.cook.easypan.** { *; }
+
+# Keep credential providers
+-keep class androidx.credentials.** { *; }
+-keep class com.google.android.libraries.identity.googleid.** { *; }
+
