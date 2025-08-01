@@ -5,7 +5,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
+import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.repository.DefaultUserRepository
 import com.cook.easypan.easypan.domain.UserRepository
@@ -27,13 +27,13 @@ class EasyPanUiTest {
 
     private lateinit var userRepository: UserRepository
     private lateinit var viewModel: AuthenticationViewModel
-    private lateinit var googleAuthUiClient: GoogleAuthUiClient
+    private lateinit var authClient: AuthClient
 
     @Before
     fun setUp() {
-        googleAuthUiClient = mockk(relaxed = true)
+        authClient = mockk(relaxed = true)
         val firestoreDataSource = mockk<FirestoreClient>(relaxed = true)
-        userRepository = DefaultUserRepository(firestoreDataSource, googleAuthUiClient)
+        userRepository = DefaultUserRepository(firestoreDataSource, authClient)
         viewModel = AuthenticationViewModel(userRepository)
     }
 
@@ -53,7 +53,7 @@ class EasyPanUiTest {
         rule.onNodeWithText("Continue with Google").performClick()
         rule.waitForIdle()
         verify(timeout = 2000) {
-            googleAuthUiClient.signIn()
+            authClient.signInWithGoogle(any())
         }
     }
 }

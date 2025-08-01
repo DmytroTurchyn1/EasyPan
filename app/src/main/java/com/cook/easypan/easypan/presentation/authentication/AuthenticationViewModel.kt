@@ -23,14 +23,14 @@ class AuthenticationViewModel(
 
     fun onAction(action: AuthenticationAction) {
         when (action) {
-            AuthenticationAction.OnAuthButtonClick -> {
+            is AuthenticationAction.OnAuthButtonClick -> {
                 _state.update {
                     it.copy(
                         isLoading = true
                     )
                 }
                 viewModelScope.launch {
-                    userRepository.signInWithGoogle().collect { response ->
+                    userRepository.signInWithGoogle(action.activityContext).collect { response ->
                         when (response) {
                             is AuthResponse.Success -> {
                                 _state.update {

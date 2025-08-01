@@ -56,6 +56,7 @@ private fun AuthenticationScreen(
     state: AuthenticationState,
     onAction: (AuthenticationAction) -> Unit,
 ) {
+    val context = LocalContext.current
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -72,7 +73,7 @@ private fun AuthenticationScreen(
                         .fillMaxWidth()
                         .padding(16.dp),
                     onClick = {
-                        onAction(AuthenticationAction.OnAuthButtonClick)
+                        onAction(AuthenticationAction.OnAuthButtonClick(context))
                     },
                     enabled = !state.isLoading
                 ) {
@@ -108,7 +109,6 @@ private fun AuthenticationScreen(
                         .padding(bottom = 26.dp, start = 5.dp, end = 5.dp)
                 )
             }
-            val context = LocalContext.current
             LaunchedEffect(state.signInError, context) {
                 if (state.signInError != null) {
                     Toast.makeText(context, state.signInError, Toast.LENGTH_SHORT).show()

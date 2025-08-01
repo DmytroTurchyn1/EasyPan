@@ -26,10 +26,11 @@ android {
         applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 36
-        versionCode = 11
+        versionCode = 12
         versionName = "v1.0.0-beta.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "CLIENT_ID", "${keystoreProperties.getProperty("clientId")}")
     }
     signingConfigs {
         if (keystorePropertiesFile.exists() && keystoreProperties.getProperty("storeFile") != null) {
@@ -56,6 +57,7 @@ android {
         }
         getByName("debug") {
             isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

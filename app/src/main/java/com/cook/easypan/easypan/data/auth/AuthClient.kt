@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
+import com.cook.easypan.BuildConfig
 import com.cook.easypan.easypan.domain.AuthResponse
 import com.cook.easypan.easypan.domain.User
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -19,12 +20,12 @@ import kotlinx.coroutines.flow.callbackFlow
 import java.security.MessageDigest
 import java.util.UUID
 
-class GoogleAuthUiClient(
-    private val context: Context,
+class AuthClient(
+    private val applicationContext: Context,
 ) {
     private val auth = Firebase.auth
-    private val clientId =
-        "788593303701-u4fjs48vo8eelcvd015la3vpba60jqog.apps.googleusercontent.com"
+    private val clientId = BuildConfig.CLIENT_ID
+
     private fun createNonce(): String {
         val rawNonce = UUID.randomUUID().toString()
         val bytes = rawNonce.toByteArray()
@@ -35,7 +36,7 @@ class GoogleAuthUiClient(
         }
     }
 
-    fun signIn(): Flow<AuthResponse> = callbackFlow {
+    fun signInWithGoogle(activityContext: Context): Flow<AuthResponse> = callbackFlow {
 
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
@@ -47,9 +48,9 @@ class GoogleAuthUiClient(
             .addCredentialOption(googleIdOption)
             .build()
         try {
-            val credentialManager = CredentialManager.create(context)
+            val credentialManager = CredentialManager.create(applicationContext)
             val result = credentialManager.getCredential(
-                context = context,
+                context = activityContext,
                 request = request
             )
             val credential = result.credential
@@ -76,12 +77,8 @@ class GoogleAuthUiClient(
                                     )
                                 }
                             }
-                            .addOnFailureListener {
-                                throw it
-                            }
 
                     } catch (e: GoogleIdTokenParsingException) {
-                        throw e
                         trySend(
                             AuthResponse.Failure(
                                 error = e.message ?: "Failed to parse Google ID token"
@@ -91,13 +88,11 @@ class GoogleAuthUiClient(
                 }
             }
         } catch (e: Exception) {
-            throw e
             trySend(AuthResponse.Failure(error = e.message ?: "Unknown error"))
         }
         awaitClose()
 
     }
-
 
     fun signOut() {
         try {
