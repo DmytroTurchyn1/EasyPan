@@ -19,3 +19,42 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep Firebase Firestore classes
+-keep class com.google.firebase.firestore.** { *; }
+-keep class com.google.firebase.** { *; }
+
+# Keep all DTO classes for Firebase serialization
+-keep class com.cook.easypan.easypan.data.dto.** { *; }
+
+# Keep all public constructors and getters/setters for DTO classes
+-keepclassmembers class com.cook.easypan.easypan.data.dto.** {
+    public <init>();
+    public <init>(...);
+    public *;
+}
+
+# Keep serialization annotations
+-keepattributes *Annotation*
+-keepattributes Signature
+-keep class kotlinx.serialization.** { *; }
+
+# Keep data class properties
+-keepclassmembers class * {
+    @kotlinx.serialization.SerialName <fields>;
+}
+
+# Prevent obfuscation of classes used with Firebase
+-keepnames class com.cook.easypan.easypan.data.dto.**
+-keepclassmembernames class com.cook.easypan.easypan.data.dto.** { *; }
+
+-dontwarn org.apiguardian.api.API
+
+-keep class com.cook.easypan.easypan.data.** { *; }
+-keep class com.cook.easypan.easypan.domain.** { *; }
+-keep class com.cook.easypan.** { *; }
+
+# Keep credential providers
+-keep class androidx.credentials.** { *; }
+-keep class com.google.android.libraries.identity.googleid.** { *; }
+

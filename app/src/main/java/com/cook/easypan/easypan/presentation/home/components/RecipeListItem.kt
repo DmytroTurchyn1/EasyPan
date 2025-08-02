@@ -63,21 +63,21 @@ fun RecipeListItem(
             ) {
                 Text(
                     text = recipe.title,
-                    style = MaterialTheme.typography.labelLarge,
+                    fontSize = MaterialTheme.typography.labelLarge.fontSize,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                     maxLines = 2
                 )
                 Text(
                     text = "${recipe.cookMinutes} · ${recipe.difficulty} · ${recipe.instructions.size} steps",
-                    style = MaterialTheme.typography.labelLarge,
+                    fontSize = MaterialTheme.typography.labelLarge.fontSize,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2
                 )
             }
             Box(
                 modifier = Modifier
-                    .width(200.dp)
+                    .width(150.dp)
                     .height(100.dp)
                     .padding(10.dp)
                     .clip(RoundedCornerShape(14.dp)),
