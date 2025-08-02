@@ -106,13 +106,16 @@ private fun AuthenticationScreen(
                         .padding(bottom = 38.dp, start = 5.dp, end = 5.dp)
                 )
             }
-            LaunchedEffect(state.signInError, context) {
-                if (state.signInError != null) {
-                    Toast.makeText(context, state.signInError, Toast.LENGTH_SHORT).show()
-                }
-            }
+
         }
     ) { innerPadding ->
+
+        LaunchedEffect(state.signInError, context) {
+            if (state.signInError != null) {
+                Toast.makeText(context, state.signInError, Toast.LENGTH_SHORT).show()
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
