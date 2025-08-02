@@ -22,12 +22,14 @@ fun RecipeItem(
             text = title,
             modifier = Modifier
                 .weight(1f),
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = MaterialTheme.typography.bodyLarge.fontSize
         )
         Text(
             text = text,
             modifier = Modifier,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = MaterialTheme.typography.bodyLarge.fontSize
         )
     }
 }

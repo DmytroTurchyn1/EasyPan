@@ -7,10 +7,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -95,7 +95,6 @@ private fun RecipeStepScreen(
                         if (state.step < state.recipe.instructions.size - 1) {
                             onAction(RecipeStepAction.OnNextClick)
                         } else {
-                            onAction(RecipeStepAction.OnNextClick)
                             onAction(RecipeStepAction.OnFinishClick)
                         }
                     },
@@ -103,7 +102,8 @@ private fun RecipeStepScreen(
                     enabledPrevious = state.step > 0,
                     nextButtonTitle = if (state.step < state.recipe.instructions.size - 1) stringResource(
                         R.string.next_button
-                    ) else stringResource(R.string.finish_button)
+                    ) else stringResource(R.string.finish_button),
+
                 )
             }
         ) { innerPadding ->
@@ -128,7 +128,7 @@ private fun RecipeStepScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 20.dp)
-                            .size(300.dp),
+                            .aspectRatio(16f / 9f),
                         contentAlignment = Alignment.Center
                     ) {
                         SubcomposeAsyncImage(

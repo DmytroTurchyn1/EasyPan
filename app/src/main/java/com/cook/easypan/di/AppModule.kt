@@ -1,7 +1,7 @@
 package com.cook.easypan.di
 
 
-import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
+import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.repository.DefaultRecipeRepository
 import com.cook.easypan.easypan.data.repository.DefaultUserRepository
@@ -22,8 +22,8 @@ import org.koin.dsl.module
 
 val appModule = module {
     single {
-        GoogleAuthUiClient(
-            context = androidContext(),
+        AuthClient(
+            applicationContext = androidContext(),
         )
     }
 

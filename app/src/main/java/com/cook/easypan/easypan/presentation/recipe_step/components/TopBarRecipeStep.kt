@@ -38,6 +38,7 @@ fun TopBarRecipeStep(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(6.dp),
+            contentAlignment = Alignment.Center
 
             ) {
             IconButton(
@@ -72,7 +73,7 @@ fun TopBarRecipeStep(
             progress = { size },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp)
+                .padding(start = 14.dp, end = 14.dp)
                 .height(10.dp),
             color = MaterialTheme.colorScheme.primary
         )

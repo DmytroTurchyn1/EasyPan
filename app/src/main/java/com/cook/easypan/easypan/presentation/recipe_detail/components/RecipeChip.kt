@@ -25,7 +25,7 @@ fun RecipeChip(
     Box(
         modifier = modifier
             .widthIn(
-                min = 50.dp
+                min = 40.dp
             )
             .clip(
                 RoundedCornerShape(16.dp)
@@ -33,7 +33,7 @@ fun RecipeChip(
             .background(MaterialTheme.colorScheme.secondaryContainer)
             .padding(
                 vertical = 8.dp,
-                horizontal = 12.dp
+                horizontal = 8.dp
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -43,7 +43,8 @@ fun RecipeChip(
         ) {
             Text(
                 text = text,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                fontSize = MaterialTheme.typography.bodyMedium.fontSize
             )
         }
     }

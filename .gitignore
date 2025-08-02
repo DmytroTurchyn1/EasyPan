@@ -18,3 +18,4 @@ app/google-services.json
 /.idea/androidTestResultsUserPreferences.xml
 /.idea/appInsightsSettings.xml
 /.idea/copilotDiffState.xml
+keystore.properties

@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -85,8 +85,8 @@ private fun RecipeDetailScreen(
                             text = stringResource(R.string.start_cooking_button),
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold,
+                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                            fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
                         )
                     }
@@ -117,7 +117,7 @@ private fun RecipeDetailScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .size(300.dp),
+                        .aspectRatio(16f / 9f),
                     contentAlignment = Alignment.Center
                 ) {
                     SubcomposeAsyncImage(
@@ -150,10 +150,10 @@ private fun RecipeDetailScreen(
                 ) {
                     Text(
                         text = state.recipe.title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
-                            .padding(top = 20.dp, bottom = 20.dp),
+                            .padding(top = 20.dp, bottom = 10.dp),
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     RecipeItem(
@@ -185,10 +185,10 @@ private fun RecipeDetailScreen(
                     Text(
                         text = stringResource(R.string.ingredients_title),
                         color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
-                            .padding(top = 20.dp, bottom = 20.dp)
+                            .padding(top = 10.dp, bottom = 10.dp)
                     )
 
                     Column(

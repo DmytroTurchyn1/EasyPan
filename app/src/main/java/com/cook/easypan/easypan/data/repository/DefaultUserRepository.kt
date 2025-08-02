@@ -1,7 +1,8 @@
 package com.cook.easypan.easypan.data.repository
 
+import android.content.Context
 import android.util.Log
-import com.cook.easypan.easypan.data.auth.GoogleAuthUiClient
+import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.mappers.toUserData
 import com.cook.easypan.easypan.data.mappers.toUserDto
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 
 class DefaultUserRepository(
     private val firestoreDataSource: FirestoreClient,
-    private val googleAuthClient: GoogleAuthUiClient
+    private val googleAuthClient: AuthClient
 ) : UserRepository {
 
     override suspend fun getUserData(userId: String): UserData {
@@ -53,11 +54,13 @@ class DefaultUserRepository(
         }
     }
 
+
     override fun signOut() = googleAuthClient.signOut()
 
     override fun isUserSignedIn(): Boolean {
         return googleAuthClient.getSignedInUser() != null
     }
 
-    override suspend fun signInWithGoogle(): Flow<AuthResponse> = googleAuthClient.signIn()
+    override suspend fun signInWithGoogle(activityContext: Context): Flow<AuthResponse> =
+        googleAuthClient.signInWithGoogle(activityContext)
 }

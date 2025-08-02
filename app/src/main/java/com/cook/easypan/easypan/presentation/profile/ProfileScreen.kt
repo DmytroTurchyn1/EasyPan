@@ -2,20 +2,23 @@ package com.cook.easypan.easypan.presentation.profile
 
 import ProfileAction
 import ProfileState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -29,12 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
@@ -69,21 +71,15 @@ private fun ProfileScreen(
 
         Scaffold(
             topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
                     Text(
                         text = stringResource(R.string.Profile_title),
-                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 20.sp
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
-                }
-
             }
         ) { innerPadding ->
             if (state.isLoading) {
@@ -99,14 +95,17 @@ private fun ProfileScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(innerPadding),
+                        .padding(top = innerPadding.calculateTopPadding())
+                        .padding(top = 14.dp)
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
 
                     Box(
                         modifier = Modifier
-                            .size(150.dp)
+                            .fillMaxWidth(0.35f)
+                            .aspectRatio(1f)
                             .clip(CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
@@ -119,11 +118,10 @@ private fun ProfileScreen(
                                 CircularProgressIndicator()
                             },
                             error = {
-                                Image(
-                                    painter = painterResource(R.drawable.auth_img),
+                                Icon(
+                                    imageVector = Icons.Default.Person,
                                     contentDescription = "User Image",
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
+                                    tint = MaterialTheme.colorScheme.tertiary,
                                 )
                             }
                         )
@@ -132,11 +130,9 @@ private fun ProfileScreen(
                         text = state.currentUser?.username
                             ?: stringResource(R.string.username_placeholder),
                         modifier = Modifier.padding(top = 20.dp),
-                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 24.sp
-
                     )
 
                     Row(
@@ -144,7 +140,7 @@ private fun ProfileScreen(
                             .fillMaxWidth()
                             .padding(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(
-                            16.dp,
+                            12.dp,
                             alignment = Alignment.CenterHorizontally
                         ),
                         verticalAlignment = Alignment.CenterVertically
@@ -152,8 +148,8 @@ private fun ProfileScreen(
                         InformationBox {
                             Text(
                                 text = "${state.currentUser?.data?.recipesCooked}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                                fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                             Text(
@@ -161,23 +157,11 @@ private fun ProfileScreen(
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
                         }
-                        InformationBox {
-                            Text(
-                                text = "${state.favoriteCuisines}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                            Text(
-                                text = stringResource(R.string.favorite_cuisines),
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                        }
                     }
                     Spacer(modifier = Modifier.padding(16.dp))
                     Text(
                         text = stringResource(R.string.settings_title),
-                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
@@ -208,7 +192,7 @@ private fun ProfileScreen(
                                 .padding(end = 6.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.padding(15.dp))
+                    Spacer(modifier = Modifier.padding(12.dp))
                     EasyPanButtonPrimary(
                         onClick = { onAction(ProfileAction.OnSignOut) }
                     ) {

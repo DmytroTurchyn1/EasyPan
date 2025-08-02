@@ -41,19 +41,19 @@ fun SettingsItem(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(14.dp))
-                    .size(40.dp)
+                    .size(36.dp)
                     .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
-                    contentDescription = null,
+                    contentDescription = text,
                     tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
             Text(
                 text = text,
-                style = MaterialTheme.typography.bodyLarge,
+                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                 modifier = Modifier
                     .padding(start = 10.dp)
                     .weight(1f),

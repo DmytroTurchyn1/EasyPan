@@ -17,7 +17,7 @@ fun RootNavGraph() {
         startDestination = if (userRepository.isUserSignedIn()) {
             Route.AppGraph
         } else {
-            Route.AuthGraph
+            Route.AppGraph
         }
     ) {
         authNavGraph(

@@ -31,7 +31,8 @@ fun IngredientsItem(
             text = text,
             modifier = Modifier
                 .weight(1f),
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize
         )
     }
 }
