@@ -89,7 +89,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.androidx.compose.bom))
@@ -100,16 +99,12 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coil)
-    implementation(libs.bundles.testing)
-    implementation(libs.androidx.ui.test.junit4.android)
+
     debugImplementation(libs.bundles.compose.debug)
 
-
-    implementation(libs.androidx.ui.text.google.fonts)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    testImplementation(libs.kotlin.test)
-
+    androidTestImplementation(libs.androidx.ui.test.junit4.android)
+    testImplementation(libs.bundles.testing)
 }

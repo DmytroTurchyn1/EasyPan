@@ -115,12 +115,15 @@ compose = [
     "navigation-compose",
     "androidx-credentials",
     "credentials-play-services-auth",
-    "identity-googleid"
+    "identity-googleid",
+    "androidx-ui-text-google-fonts"
 ]
 
 testing = [
     "mockk",
-    "mockk-android"
+    "mockk-android",
+    "junit",
+    "kotlin-test"
 ]
 
 compose-debug = [
