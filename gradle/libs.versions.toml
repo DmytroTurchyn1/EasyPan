@@ -28,6 +28,7 @@ mockk = "1.14.5"
 playIntegrity = "1.4.0"
 appCheckDebug = "18.0.0"
 firebasePerf = "21.0.5"
+windowSizeClass = "1.3.2"
 
 
 [libraries]
@@ -47,7 +48,7 @@ compose-material-icons-extended = { group = "androidx.compose.material", name = 
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "nav_version" }
-
+androidx-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "windowSizeClass" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
@@ -118,6 +119,7 @@ compose = [
     "identity-googleid",
     "mockk",
     "mockk-android",
+    "androidx-material3-window-size"
 ]
 
 compose-debug = [

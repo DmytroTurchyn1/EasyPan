@@ -44,8 +44,8 @@ fun BottomBarRecipeStep(
             ) {
                 Text(
                     text = stringResource(R.string.previous_button),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                 )
             }
@@ -54,7 +54,7 @@ fun BottomBarRecipeStep(
             ) {
                 Text(
                     text = nextButtonTitle,
-                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                 )

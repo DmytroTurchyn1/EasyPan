@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,10 +34,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.core.presentation.EasyPanText
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
@@ -79,12 +79,10 @@ private fun AuthenticationScreen(
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(top = 2.dp, bottom = 2.dp)
+                            .padding(bottom = 2.dp)
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically,
-
-
                         ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.google_icon),
@@ -93,20 +91,19 @@ private fun AuthenticationScreen(
                         Text(
                             text = stringResource(R.string.continue_with_google),
                             style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .padding(start = 12.dp)
                         )
                     }
                 }
-                Text(
+                EasyPanText(
                     text = stringResource(R.string.terms_and_conditions),
                     color = MaterialTheme.colorScheme.tertiary,
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center,
+                    fontSize = MaterialTheme.typography.bodySmall.fontSize,
                     modifier = Modifier
-                        .padding(bottom = 26.dp, start = 5.dp, end = 5.dp)
+                        .padding(bottom = 38.dp, start = 5.dp, end = 5.dp)
                 )
             }
             LaunchedEffect(state.signInError, context) {
@@ -128,26 +125,18 @@ private fun AuthenticationScreen(
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .size(300.dp)
+                    .aspectRatio(16f / 12f)
             )
-            Text(
+            EasyPanText(
                 text = stringResource(R.string.auth_title),
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
-                    .padding(14.dp),
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 36.sp
+                    .padding(12.dp),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize
             )
-            Text(
+            EasyPanText(
                 text = stringResource(R.string.auth_description),
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .padding(14.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                fontSize = 16.sp
             )
         }
         val animatedColor by animateColorAsState(
@@ -171,7 +160,7 @@ private fun AuthenticationScreen(
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview()
 @Composable
 private fun Preview() {
     EasyPanTheme {

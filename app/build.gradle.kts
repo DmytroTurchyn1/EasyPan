@@ -26,8 +26,8 @@ android {
         applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 36
-        versionCode = 12
-        versionName = "v1.0.0-beta.0"
+        versionCode = 13
+        versionName = "v1.0.0-beta.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "CLIENT_ID", "${keystoreProperties.getProperty("clientId")}")
