@@ -16,10 +16,6 @@ import com.google.firebase.messaging.RemoteMessage
 import kotlin.random.Random
 
 class FirebaseCloudMessaging : FirebaseMessagingService() {
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-        Log.d("FCM_TOKEN", token)
-    }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
@@ -34,10 +30,10 @@ class FirebaseCloudMessaging : FirebaseMessagingService() {
     }
 
     private fun handleDataMessage(message: RemoteMessage) {
-
+        Log.d("FirebaseCloudMessaging", "Data message received: ${message.data}")
     }
 
-    fun showNotification(message: RemoteMessage.Notification) {
+    private fun showNotification(message: RemoteMessage.Notification) {
 
         val channelId = CHANNEL_ID
 

@@ -7,5 +7,6 @@ data class HomeState(
     val recipes: List<Recipe> = emptyList(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
-    val recipeListState: LazyListState = LazyListState()
+    val recipeListState: LazyListState = LazyListState(),
+    val hasSubscribedToTopic: Boolean = false
 )

@@ -37,7 +37,6 @@ class AuthClient(
     }
 
     fun signInWithGoogle(activityContext: Context): Flow<AuthResponse> = callbackFlow {
-
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
             .setServerClientId(clientId)

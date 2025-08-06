@@ -40,13 +40,9 @@ fun HomeRoot(
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 viewModel.onPermissionResult(
                     isGranted = isGranted
                 )
-            } else {
-                viewModel.onPermissionResult(true)
-            }
         }
     )
 
@@ -55,11 +51,22 @@ fun HomeRoot(
         onAction = { action ->
             when (action) {
                 is HomeAction.OnRecipeClick -> {
-                    if (!viewModel.checkNotificationPermission(context) && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)) {
-                        notificationPermissionLauncher.launch(
-                            POST_NOTIFICATIONS
-                        )
+
+                    if (!viewModel.checkNotificationPermission(context)) {
+                        when {
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                                notificationPermissionLauncher.launch(POST_NOTIFICATIONS)
+                            }
+
+                            else -> {
+
+                                viewModel.onPermissionResult(isGranted = false)
+                            }
+                        }
+                    } else {
+                        viewModel.onPermissionResult(isGranted = true)
                     }
+
                     onRecipeClick(action.recipe)
                 }
             }
@@ -99,6 +106,7 @@ private fun HomeScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(top = 8.dp)
                 )
                 RecipeList(
                     modifier = Modifier

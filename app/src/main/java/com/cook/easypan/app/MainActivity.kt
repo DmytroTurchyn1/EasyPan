@@ -15,7 +15,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         retrieveToken()
-        Firebase.messaging.subscribeToTopic("all")
         setContent {
             EasyPanTheme {
                 RootNavGraph()
@@ -28,7 +27,7 @@ class MainActivity : ComponentActivity() {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val token = it.result
-                    Log.d("FCM_TOKEN_MAIN_ACTIVITY", token)
+                    Log.d("FirebaseCloudMessaging", "New token: $token")
                 }
             }
     }

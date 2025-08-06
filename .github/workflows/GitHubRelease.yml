@@ -32,12 +32,12 @@ jobs:
       - name: create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.tag.outputs.tag_name  }}
-          name: v${{ steps.tag.outputs.tag_name }}
+          tag_name: ${{ steps.tag.outputs.tag_name  }}
+          name: ${{ steps.tag.outputs.tag_name }}
           generate_release_notes: true
           draft: false
           prerelease: false
           files: |
-            app/build/outputs/apk/release/*.apk
+            app/release/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

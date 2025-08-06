@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.core.util.GITHUB_REPOSITORY_URL
 import com.cook.easypan.core.util.Launcher
 import com.cook.easypan.easypan.presentation.profile.components.InformationBox
 import com.cook.easypan.easypan.presentation.profile.components.SettingsItem
@@ -65,7 +66,7 @@ fun ProfileRoot(
                 is ProfileAction.OnHelpClick -> {
                     Launcher.openUrl(
                         context = context,
-                        url = "https://github.com/DmytroTurchyn1/EasyPan.git"
+                        url = GITHUB_REPOSITORY_URL
                     )
                 }
             }
