@@ -7,7 +7,6 @@ on:
 jobs:
   createRelease:
     runs-on: ubuntu-latest
-    needs: build
     permissions:
       contents: write
 
@@ -15,10 +14,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Extract version name using Gradle
+        id: tag
+        run: |
+          VERSION_NAME=$(./gradlew -q printVersion --console=plain)
+          echo "tag_name=${VERSION_NAME}" >> $GITHUB_OUTPUT
+
       - name: create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.tag.outputs.tag_name }}
+          tag_name: v${{ steps.tag.outputs.tag_name  }}
           name: v${{ steps.tag.outputs.tag_name }}
           generate_release_notes: true
           draft: false

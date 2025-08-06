@@ -86,6 +86,11 @@ android {
             merges += "META-INF/LICENSE-notice.md"
         }
     }
+    tasks.register("printVersion") {
+        doLast {
+            println(android.defaultConfig.versionName)
+        }
+    }
 }
 
 dependencies {
