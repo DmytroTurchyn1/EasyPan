@@ -1,6 +1,7 @@
 # 🍳 EasyPan
 
-**EasyPan** is a fun, interactive, and user-friendly mobile app that helps users cook delicious meals with ease. It features a sleek design, step-by-step instructions, and an intuitive interface built with modern Android development practices and MVVM architecture.
+**EasyPan** is a fun, interactive, and user-friendly mobile app that helps users cook easy delicious
+meals.
 
 ## 📱 About
 
@@ -53,12 +54,6 @@ app/src/main/java/com/cook/easypan/easypan/
 - **Platform**: Android (SDK 21+)
 
 ## 🚀 Getting Started
-
-### Prerequisites
-
-- Android Studio Arctic Fox or later
-- Kotlin 1.9+
-- Android SDK 21+
 
 ### Installation
 
