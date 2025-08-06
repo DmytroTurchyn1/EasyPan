@@ -58,3 +58,12 @@
 -keep class androidx.credentials.** { *; }
 -keep class com.google.android.libraries.identity.googleid.** { *; }
 
+
+# Keep Firebase KTX classes
+-keep class com.google.firebase.ktx.** { *; }
+-dontwarn com.google.firebase.ktx.**
+
+# Keep classes that R8 couldn't resolve
+-dontwarn sun.misc.Unsafe
+-dontwarn javax.naming.**
+-dontwarn androidx.appcompat.view.ContextThemeWrapper

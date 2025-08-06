@@ -103,7 +103,6 @@ class RecipeStepViewModel : ViewModel() {
                 }
             }
 
-            else -> Unit
         }
     }
 
