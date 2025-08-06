@@ -47,14 +47,7 @@ class ProfileViewModel(
                     )
                 }
             }
-
-            ProfileAction.OnNotificationsToggle -> {
-                _state.update { currentState ->
-                    currentState.copy(
-                        notificationsEnabled = !currentState.notificationsEnabled
-                    )
-                }
-            }
+            else -> Unit
         }
     }
 }

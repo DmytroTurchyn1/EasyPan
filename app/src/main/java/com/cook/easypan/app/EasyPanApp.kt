@@ -31,4 +31,5 @@ class EasyPanApp : Application() {
             )
         }
     }
+
 }

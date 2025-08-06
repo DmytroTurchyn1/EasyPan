@@ -21,6 +21,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -42,7 +45,6 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun RecipeStepRoot(
     viewModel: RecipeStepViewModel,
-    onFinishClick: () -> Unit,
     onCancelClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -51,7 +53,6 @@ fun RecipeStepRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                is RecipeStepAction.OnFinishClick -> onFinishClick()
                 is RecipeStepAction.OnCancelClick -> onCancelClick()
                 else -> Unit
             }
@@ -90,11 +91,13 @@ private fun RecipeStepScreen(
                 )
             },
             bottomBar = {
+                var isFinishEnabled by remember { mutableStateOf(true) }
                 BottomBarRecipeStep(
                     onNextClick = {
                         if (state.step < state.recipe.instructions.size - 1) {
                             onAction(RecipeStepAction.OnNextClick)
                         } else {
+                            isFinishEnabled = false
                             onAction(RecipeStepAction.OnFinishClick)
                         }
                     },
@@ -103,6 +106,7 @@ private fun RecipeStepScreen(
                     nextButtonTitle = if (state.step < state.recipe.instructions.size - 1) stringResource(
                         R.string.next_button
                     ) else stringResource(R.string.finish_button),
+                    enabledNext = isFinishEnabled
 
                 )
             }

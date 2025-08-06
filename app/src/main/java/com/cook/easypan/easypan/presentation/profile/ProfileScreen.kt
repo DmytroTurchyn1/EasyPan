@@ -24,7 +24,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.core.util.Launcher
 import com.cook.easypan.easypan.presentation.profile.components.InformationBox
 import com.cook.easypan.easypan.presentation.profile.components.SettingsItem
 import com.cook.easypan.ui.theme.EasyPanTheme
@@ -51,12 +52,22 @@ fun ProfileRoot(
     onSignOutButton: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     ProfileScreen(
         state = state,
         onAction = { action ->
             when (action) {
                 is ProfileAction.OnSignOut -> onSignOutButton()
-                else -> Unit
+                is ProfileAction.OnNotificationsClick -> {
+                    Launcher.openAppSettings(context)
+                }
+
+                is ProfileAction.OnHelpClick -> {
+                    Launcher.openUrl(
+                        context = context,
+                        url = "https://github.com/DmytroTurchyn1/EasyPan.git"
+                    )
+                }
             }
             viewModel.onAction(action)
         }
@@ -68,7 +79,6 @@ private fun ProfileScreen(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit,
 ) {
-
         Scaffold(
             topBar = {
                     Text(
@@ -79,6 +89,7 @@ private fun ProfileScreen(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(4.dp)
                     )
             }
         ) { innerPadding ->
@@ -171,17 +182,21 @@ private fun ProfileScreen(
                     SettingsItem(
                         text = stringResource(R.string.notifications_title),
                         icon = Icons.Outlined.Notifications,
-                        onClick = { onAction(ProfileAction.OnNotificationsToggle) },
+                        onClick = { onAction(ProfileAction.OnNotificationsClick) },
                     ) {
-                        Switch(
-                            checked = state.notificationsEnabled,
-                            onCheckedChange = { onAction(ProfileAction.OnNotificationsToggle) }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = stringResource(R.string.help_image_description),
+                            tint = MaterialTheme.colorScheme.inverseSurface,
+                            modifier = Modifier
+                                .size(30.dp)
+                                .padding(end = 6.dp)
                         )
                     }
                     SettingsItem(
                         text = stringResource(R.string.help_title),
                         icon = Icons.AutoMirrored.Filled.HelpOutline,
-                        onClick = { onAction },
+                        onClick = { onAction(ProfileAction.OnHelpClick) },
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,

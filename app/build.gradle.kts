@@ -26,7 +26,7 @@ android {
         applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 36
-        versionCode = 15
+        versionCode = 14
         versionName = "v1.0.0-beta.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -106,5 +106,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4.android)
+    androidTestImplementation(libs.mockk.android)
+
     testImplementation(libs.bundles.testing)
 }
