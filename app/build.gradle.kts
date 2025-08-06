@@ -102,11 +102,7 @@ dependencies {
 
     debugImplementation(libs.bundles.compose.debug)
 
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4.android)
-    androidTestImplementation(libs.mockk.android)
-
-    testImplementation(libs.bundles.testing)
+    androidTestImplementation(libs.bundles.android.test)
+    testImplementation(libs.bundles.test)
 }

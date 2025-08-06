@@ -122,11 +122,16 @@ compose = [
     "androidx-ui-text-google-fonts"
 ]
 
-testing = [
+test = [
     "mockk",
-    "mockk-android",
     "junit",
     "kotlin-test"
+]
+android-test = [
+    "mockk-android",
+    "androidx-junit",
+    "androidx-espresso-core",
+    "androidx-ui-test-junit4-android"
 ]
 
 compose-debug = [
