@@ -23,6 +23,7 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 fun BottomBarRecipeStep(
     modifier: Modifier = Modifier,
     enabledPrevious: Boolean = false,
+    enabledNext: Boolean = true,
     onPreviousClick: () -> Unit,
     onNextClick: () -> Unit,
     nextButtonTitle: String
@@ -50,14 +51,16 @@ fun BottomBarRecipeStep(
                 )
             }
             EasyPanButtonPrimary(
-                onClick = { onNextClick() }
+                onClick = { onNextClick() },
+                enabled = enabledNext
             ) {
                 Text(
                     text = nextButtonTitle,
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                )
+
+                    )
             }
         }
 

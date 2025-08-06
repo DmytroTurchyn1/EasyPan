@@ -5,6 +5,5 @@ data class ProfileState(
     val recipesCooked: Int = 0,
     val favoriteCuisines: Int = 0,
     val isLoading: Boolean = true,
-    val currentUser: User? = null,
-    val notificationsEnabled: Boolean = false,
+    val currentUser: User? = null
 )

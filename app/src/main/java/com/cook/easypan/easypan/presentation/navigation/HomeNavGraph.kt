@@ -90,8 +90,8 @@ fun HomeNavGraph(
             val viewModel = koinViewModel<RecipeDetailViewModel>()
             val selectedRecipe by selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
             LaunchedEffect(selectedRecipe) {
-                selectedRecipe?.let {
-                    viewModel.onAction(RecipeDetailAction.OnRecipeChange(it))
+                selectedRecipe?.let { recipe ->
+                    viewModel.onAction(RecipeDetailAction.OnRecipeChange(recipe))
                 }
             }
             RecipeDetailRoot(
@@ -109,21 +109,23 @@ fun HomeNavGraph(
             val selectedRecipeViewModel =
                 it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
             val selectedRecipe by selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
+            val state by viewModel.state.collectAsStateWithLifecycle()
             LaunchedEffect(selectedRecipe) {
-                selectedRecipe?.let {
-                    viewModel.onAction(RecipeStepAction.OnRecipeChange(it))
+                selectedRecipe?.let { recipe ->
+                    viewModel.onAction(RecipeStepAction.OnRecipeChange(recipe))
                 }
             }
-
-            RecipeStepRoot(
-                viewModel = viewModel,
-                onFinishClick = {
+            LaunchedEffect(state.isFinishButtonEnabled) {
+                if (!state.isFinishButtonEnabled) {
                     navController.navigate(Route.RecipeFinish) {
                         popUpTo(Route.RecipeStep) {
                             inclusive = true
                         }
                     }
-                },
+                }
+            }
+            RecipeStepRoot(
+                viewModel = viewModel,
                 onCancelClick = {
                     navController.navigateUp()
                 }

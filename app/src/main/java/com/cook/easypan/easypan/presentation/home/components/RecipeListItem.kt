@@ -69,7 +69,7 @@ fun RecipeListItem(
                     maxLines = 2
                 )
                 Text(
-                    text = "${recipe.cookMinutes} · ${recipe.difficulty} · ${recipe.instructions.size} steps",
+                    text = "${recipe.cookMinutes} min · ${recipe.difficulty} · ${recipe.instructions.size} steps",
                     fontSize = MaterialTheme.typography.labelLarge.fontSize,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2

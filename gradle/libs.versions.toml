@@ -26,9 +26,10 @@ firebasePerfPlugin = "2.0.0"
 uiTestJunit4Android = "1.8.3"
 mockk = "1.14.5"
 playIntegrity = "1.4.0"
-appCheckDebug = "18.0.0"
-firebasePerf = "21.0.5"
-
+appCheckDebug = "19.0.0"
+firebasePerf = "22.0.0"
+inappMessaging = "22.0.0"
+messaging = "25.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,10 +54,11 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" }
-firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug", version = "appCheckDebug" }
+firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug", version.ref = "appCheckDebug" }
 firebase-crashlytics-ndk = { group = "com.google.firebase", name = "firebase-crashlytics-ndk" }
-firebase-perf = { group = "com.google.firebase", name = "firebase-perf", version = "firebasePerf" }
-
+firebase-perf = { group = "com.google.firebase", name = "firebase-perf", version.ref = "firebasePerf" }
+firebase-inapp-messaging = { module = "com.google.firebase:firebase-inappmessaging-display", version.ref = "inappMessaging" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "messaging" }
 
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
@@ -69,7 +71,7 @@ androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-te
 
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
-play-integrity = { group = "com.google.android.play", name = "integrity", version = "playIntegrity" }
+play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
 identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 
@@ -88,6 +90,7 @@ coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+
 
 
 
@@ -119,11 +122,16 @@ compose = [
     "androidx-ui-text-google-fonts"
 ]
 
-testing = [
+test = [
     "mockk",
-    "mockk-android",
     "junit",
     "kotlin-test"
+]
+android-test = [
+    "mockk-android",
+    "androidx-junit",
+    "androidx-espresso-core",
+    "androidx-ui-test-junit4-android"
 ]
 
 compose-debug = [
@@ -141,7 +149,9 @@ firebase = [
     "play-services-auth",
     "firebase-crashlytics-ndk",
     "firebase-perf",
-    "play-integrity"
+    "play-integrity",
+    "firebase-inapp-messaging",
+    "firebase-messaging"
 ]
 
 koin = [

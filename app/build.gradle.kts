@@ -27,7 +27,7 @@ android {
         minSdk = 28
         targetSdk = 36
         versionCode = 15
-        versionName = "v1.0.0-beta.1"
+        versionName = "v1.0.0-beta.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "CLIENT_ID", "${keystoreProperties.getProperty("clientId")}")
@@ -86,6 +86,11 @@ android {
             merges += "META-INF/LICENSE-notice.md"
         }
     }
+    tasks.register("printVersion") {
+        doLast {
+            println(android.defaultConfig.versionName)
+        }
+    }
 }
 
 dependencies {
@@ -102,9 +107,7 @@ dependencies {
 
     debugImplementation(libs.bundles.compose.debug)
 
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4.android)
-    testImplementation(libs.bundles.testing)
+    androidTestImplementation(libs.bundles.android.test)
+    testImplementation(libs.bundles.test)
 }

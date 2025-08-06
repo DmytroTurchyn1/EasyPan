@@ -95,7 +95,14 @@ class RecipeStepViewModel : ViewModel() {
                 }
             }
 
-            else -> Unit
+            is RecipeStepAction.OnFinishClick -> {
+                _state.update {
+                    it.copy(
+                        isFinishButtonEnabled = false
+                    )
+                }
+            }
+
         }
     }
 
