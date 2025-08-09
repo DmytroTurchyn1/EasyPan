@@ -1,6 +1,6 @@
 package com.cook.easypan.easypan.presentation.recipe_step
 
-import com.cook.easypan.easypan.domain.Recipe
+import com.cook.easypan.easypan.domain.model.Recipe
 
 data class RecipeStepState(
     val recipe: Recipe? = null,

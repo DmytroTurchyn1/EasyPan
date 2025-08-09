@@ -4,7 +4,7 @@ import ProfileAction
 import ProfileState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cook.easypan.easypan.domain.UserRepository
+import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart

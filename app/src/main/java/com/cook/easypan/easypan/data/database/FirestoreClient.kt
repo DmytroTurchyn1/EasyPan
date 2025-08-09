@@ -1,15 +1,17 @@
 package com.cook.easypan.easypan.data.database
 
-import android.util.Log
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
-class FirestoreClient {
-    private val firestore = Firebase.firestore
+class FirestoreClient(
+    private val firestore: FirebaseFirestore = Firebase.firestore
+) {
+
     private suspend fun getCollection(collectionName: String): List<DocumentSnapshot> {
         return try {
             firestore.collection(collectionName)
@@ -80,7 +82,6 @@ class FirestoreClient {
                 data = userData
             )
         } catch (e: Exception) {
-            Log.e("FirestoreClient", "Error updating user data: ${e.message}")
             throw e
         }
     }

@@ -5,8 +5,8 @@ import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.repository.DefaultRecipeRepository
 import com.cook.easypan.easypan.data.repository.DefaultUserRepository
-import com.cook.easypan.easypan.domain.RecipeRepository
-import com.cook.easypan.easypan.domain.UserRepository
+import com.cook.easypan.easypan.domain.repository.RecipeRepository
+import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.cook.easypan.easypan.presentation.SelectedRecipeViewModel
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewModel
 import com.cook.easypan.easypan.presentation.home.HomeViewModel

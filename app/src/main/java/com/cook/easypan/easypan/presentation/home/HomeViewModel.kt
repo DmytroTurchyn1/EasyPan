@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cook.easypan.core.util.NOTIFICATION_TOPIC
-import com.cook.easypan.easypan.domain.RecipeRepository
+import com.cook.easypan.easypan.domain.repository.RecipeRepository
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import kotlinx.coroutines.flow.MutableStateFlow

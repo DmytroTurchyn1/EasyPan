@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.cook.easypan.easypan.domain.Recipe
+import com.cook.easypan.easypan.domain.model.Recipe
 
 @Composable
 fun RecipeList(

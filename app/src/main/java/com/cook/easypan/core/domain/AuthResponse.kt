@@ -1,4 +1,4 @@
-package com.cook.easypan.easypan.domain
+package com.cook.easypan.core.domain
 
 interface AuthResponse {
     data object Success : AuthResponse

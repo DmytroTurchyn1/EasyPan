@@ -1,10 +1,10 @@
 package com.cook.easypan.easypan.data.mappers
 
+import com.cook.easypan.core.domain.StepType
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.StepDescriptionDto
-import com.cook.easypan.easypan.domain.Recipe
-import com.cook.easypan.easypan.domain.StepDescription
-import com.cook.easypan.easypan.domain.StepType
+import com.cook.easypan.easypan.domain.model.Recipe
+import com.cook.easypan.easypan.domain.model.StepDescription
 
 fun RecipeDto.toRecipe(): Recipe {
     return Recipe(
@@ -31,11 +31,15 @@ fun StepDescriptionDto.toStepDescription(): StepDescription {
         description = description,
         step = step,
         imageUrl = imageUrl,
-        stepType = when (stepType) {
+        stepType = when (stepType.uppercase()) {
             "TEXT" -> StepType.TEXT
             "TIMER" -> StepType.TIMER
             else -> throw IllegalArgumentException("Unknown step type: $stepType")
         },
-        durationSec = durationSec
+        durationSec = when {
+            durationSec == null -> 0
+            (durationSec < 0) -> throw IllegalArgumentException("Duration cannot be negative: $durationSec")
+            else -> durationSec
+        }
     )
 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
-import com.cook.easypan.easypan.domain.Recipe
+import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.presentation.home.components.RecipeList
 import com.cook.easypan.ui.theme.EasyPanTheme
 

@@ -1,4 +1,4 @@
-import com.cook.easypan.easypan.domain.User
+import com.cook.easypan.easypan.domain.model.User
 
 data class ProfileState(
     val isSignedOut: Boolean = false,

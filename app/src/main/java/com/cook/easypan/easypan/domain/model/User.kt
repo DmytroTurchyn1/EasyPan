@@ -1,4 +1,4 @@
-package com.cook.easypan.easypan.domain
+package com.cook.easypan.easypan.domain.model
 
 data class User(
     val userId: String = "",

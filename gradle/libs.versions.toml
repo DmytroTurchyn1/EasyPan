@@ -30,6 +30,8 @@ appCheckDebug = "19.0.0"
 firebasePerf = "22.0.0"
 inappMessaging = "22.0.0"
 messaging = "25.0.0"
+coroutinesTest = "1.10.2"
+kotlinxSerializationJson = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +50,8 @@ compose-material-icons-extended = { group = "androidx.compose.material", name = 
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "nav_version" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
@@ -103,7 +107,6 @@ jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serializati
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 
-
 [bundles]
 
 compose = [
@@ -119,14 +122,17 @@ compose = [
     "androidx-credentials",
     "credentials-play-services-auth",
     "identity-googleid",
-    "androidx-ui-text-google-fonts"
+    "androidx-ui-text-google-fonts",
+    "kotlinx-serialization-json"
 ]
 
 test = [
     "mockk",
     "junit",
-    "kotlin-test"
+    "kotlin-test",
+    "kotlinx-coroutines-test"
 ]
+
 android-test = [
     "mockk-android",
     "androidx-junit",

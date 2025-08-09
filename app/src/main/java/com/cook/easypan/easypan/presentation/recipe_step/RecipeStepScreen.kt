@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
-import com.cook.easypan.easypan.domain.StepType
+import com.cook.easypan.core.domain.StepType
 import com.cook.easypan.easypan.presentation.recipe_step.components.AlertCancelRecipeDialog
 import com.cook.easypan.easypan.presentation.recipe_step.components.BottomBarRecipeStep
 import com.cook.easypan.easypan.presentation.recipe_step.components.ContentStepRecipe

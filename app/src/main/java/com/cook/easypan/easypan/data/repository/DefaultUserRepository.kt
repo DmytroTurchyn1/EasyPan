@@ -2,14 +2,14 @@ package com.cook.easypan.easypan.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.cook.easypan.core.domain.AuthResponse
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.mappers.toUserData
 import com.cook.easypan.easypan.data.mappers.toUserDto
-import com.cook.easypan.easypan.domain.AuthResponse
-import com.cook.easypan.easypan.domain.User
-import com.cook.easypan.easypan.domain.UserData
-import com.cook.easypan.easypan.domain.UserRepository
+import com.cook.easypan.easypan.domain.model.User
+import com.cook.easypan.easypan.domain.model.UserData
+import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 
 class DefaultUserRepository(
@@ -35,7 +35,6 @@ class DefaultUserRepository(
             )
             AuthResponse.Success
         } catch (e: Exception) {
-            Log.e("DefaultUserRepository", "Error updating user data: ${e.message}")
             AuthResponse.Failure(e.message ?: "Unknown error")
         }
     }
@@ -46,7 +45,7 @@ class DefaultUserRepository(
             val userData = getUserData(baseUser.userId)
             baseUser.copy(data = userData)
         } catch (e: Exception) {
-            Log.w(
+            Log.e(
                 "DefaultUserRepository",
                 "Failed to fetch user data for ${baseUser.userId}: ${e.message}"
             )

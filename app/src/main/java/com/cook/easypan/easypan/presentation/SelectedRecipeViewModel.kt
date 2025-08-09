@@ -1,7 +1,7 @@
 package com.cook.easypan.easypan.presentation
 
 import androidx.lifecycle.ViewModel
-import com.cook.easypan.easypan.domain.Recipe
+import com.cook.easypan.easypan.domain.model.Recipe
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
