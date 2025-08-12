@@ -1,3 +1,11 @@
+/*
+ * Created  13/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.data.repository
 
 import android.content.Context
@@ -5,8 +13,11 @@ import android.util.Log
 import com.cook.easypan.core.domain.AuthResponse
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
+import com.cook.easypan.easypan.data.mappers.toRecipe
+import com.cook.easypan.easypan.data.mappers.toRecipeDto
 import com.cook.easypan.easypan.data.mappers.toUserData
 import com.cook.easypan.easypan.data.mappers.toUserDto
+import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.model.UserData
 import com.cook.easypan.easypan.domain.repository.UserRepository
@@ -37,6 +48,61 @@ class DefaultUserRepository(
         } catch (e: Exception) {
             AuthResponse.Failure(e.message ?: "Unknown error")
         }
+    }
+
+    override suspend fun getFavoriteRecipes(): List<Recipe> {
+        return try {
+            firestoreDataSource.getFavoriteRecipes(
+                googleAuthClient.getSignedInUser()?.userId
+                    ?: throw IllegalStateException("User not logged in")
+            )
+                .map { it.toRecipe() }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun addRecipeToFavorites(
+        recipe: Recipe
+    ): AuthResponse {
+        return try {
+            firestoreDataSource.addRecipeToFavorite(
+                userId = googleAuthClient.getSignedInUser()?.userId
+                    ?: throw IllegalStateException("User not logged in"),
+                recipe = recipe.toRecipeDto()
+            )
+            AuthResponse.Success
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun deleteRecipeFromFavorites(recipeId: String): AuthResponse {
+        return try {
+            val deleteFavoriteRecipe = firestoreDataSource.deleteRecipeFromFavorite(
+                userId = googleAuthClient.getSignedInUser()?.userId
+                    ?: throw IllegalStateException("User not logged in"),
+                recipeId = recipeId
+            )
+            if (deleteFavoriteRecipe) {
+                AuthResponse.Success
+            } else {
+                AuthResponse.Failure("Failed to delete recipe from favorites")
+            }
+
+
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun isRecipeFavorite(recipeId: String): Boolean {
+        val userId = googleAuthClient.getSignedInUser()?.userId
+            ?: throw IllegalStateException("User not logged in")
+        val favoriteRecipes = firestoreDataSource.getFavoriteRecipes(userId = userId)
+        val result = favoriteRecipes.map { it.toRecipe() }.any { it.id == recipeId }
+        Log.d("DefaultUserRepository", "isRecipeFavorite: $result")
+        return result
     }
 
     override suspend fun getCurrentUser(): User? {

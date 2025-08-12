@@ -1,3 +1,11 @@
+/*
+ * Created  13/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.recipe_detail
 
 import androidx.compose.foundation.Image
@@ -14,6 +22,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -106,6 +117,19 @@ private fun RecipeDetailScreen(
                         tint = MaterialTheme.colorScheme.inverseSurface
                     )
                 }
+                if (state.recipe != null) {
+                    IconButton(
+                        onClick = { onAction(RecipeDetailAction.OnFavoriteButtonClick(state.recipe.id)) },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = if (state.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            tint = Color.Red,
+                            contentDescription = stringResource(R.string.go_back),
+                        )
+                    }
+                }
             }
         }
     ) { innerPadding ->
@@ -113,6 +137,7 @@ private fun RecipeDetailScreen(
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Box(
                     modifier = Modifier
@@ -194,7 +219,6 @@ private fun RecipeDetailScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
                     ) {
                         state.recipe.ingredients.forEachIndexed { index, ingredient ->
                             IngredientsItem(

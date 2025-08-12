@@ -1,13 +1,26 @@
+/*
+ * Created  13/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class FavoriteViewModel : ViewModel() {
+class FavoriteViewModel(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     private var hasLoadedInitialData = false
 
@@ -15,7 +28,7 @@ class FavoriteViewModel : ViewModel() {
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                /** Load initial data here **/
+                loadRecipes()
                 hasLoadedInitialData = true
             }
         }
@@ -25,8 +38,21 @@ class FavoriteViewModel : ViewModel() {
             initialValue = FavoriteState()
         )
 
-    fun onAction(action: FavoriteAction) {
+    private fun loadRecipes() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    favoriteRecipes = userRepository.getFavoriteRecipes(),
+                    isLoading = false
+                )
+            }
+        }
+    }
 
+    fun onAction(action: FavoriteAction) {
+        when (action) {
+            else -> Unit
+        }
     }
 
 }
