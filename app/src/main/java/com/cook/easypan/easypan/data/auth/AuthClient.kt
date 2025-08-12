@@ -10,10 +10,8 @@ import com.cook.easypan.easypan.domain.model.User
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.auth
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +21,7 @@ import java.util.UUID
 
 class AuthClient(
     private val applicationContext: Context,
-    private val auth: FirebaseAuth = Firebase.auth
+    private val auth: FirebaseAuth
 ) {
 
     private val clientId = BuildConfig.CLIENT_ID

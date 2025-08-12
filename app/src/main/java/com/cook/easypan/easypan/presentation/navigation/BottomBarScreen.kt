@@ -59,7 +59,7 @@ fun BottomNavigationBar(
 
     val screens = listOf(
         BottomBarScreen.Home,
-        //BottomBarScreen.Favorite,
+        BottomBarScreen.Favorite,
         BottomBarScreen.Profile
     )
     val bottomBarDestination =

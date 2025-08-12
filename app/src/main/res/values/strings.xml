@@ -48,4 +48,8 @@
     <string name="confirm_button">Confirm</string>
     <string name="dismiss_button">Dismiss</string>
     <string name="information_icon_description">Information Icon</string>
+    <string name="countdown_timer_title">Countdown Timer</string>
+    <string name="add_to_favorite_button">Add to favorite</string>
+    <string name="delete_favorite_button">Delete recipe</string>
+    <string name="added_to_favorite_button">Added to favorite</string>
 </resources>

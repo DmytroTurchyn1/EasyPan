@@ -31,5 +31,5 @@ sealed class Route {
     data object RecipeStep : Route()
 
     @Serializable
-    data object RecipeFinish : Route()
+    data class RecipeFinish(val id: String) : Route()
 }

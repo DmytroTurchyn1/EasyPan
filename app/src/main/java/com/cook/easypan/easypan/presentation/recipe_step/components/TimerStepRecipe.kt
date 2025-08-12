@@ -18,10 +18,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonSecondary
+import com.cook.easypan.core.presentation.EasyPanText
 import com.cook.easypan.ui.theme.EasyPanTheme
 import kotlinx.coroutines.delay
 
@@ -54,7 +56,13 @@ fun TimerStepRecipe(
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
+                EasyPanText(
+                    text = stringResource(R.string.countdown_timer_title),
+                    fontWeight = FontWeight.SemiBold
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
