@@ -1,3 +1,11 @@
+/*
+ * Created  14/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.profile
 
 import ProfileAction
@@ -19,11 +27,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ScreenLockPortrait
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -69,6 +79,7 @@ fun ProfileRoot(
                         url = GITHUB_REPOSITORY_URL
                     )
                 }
+                else -> Unit
             }
             viewModel.onAction(action)
         }
@@ -80,143 +91,155 @@ private fun ProfileScreen(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit,
 ) {
-        Scaffold(
-            topBar = {
-                    Text(
-                        text = stringResource(R.string.Profile_title),
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                    )
+    Scaffold(
+        topBar = {
+            Text(
+                text = stringResource(R.string.Profile_title),
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
+            )
+        }
+    ) { innerPadding ->
+        if (state.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-        ) { innerPadding ->
-            if (state.isLoading) {
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .padding(top = 14.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                        .fillMaxWidth(0.35f)
+                        .aspectRatio(1f)
+                        .clip(CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = innerPadding.calculateTopPadding())
-                        .padding(top = 14.dp)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.35f)
-                            .aspectRatio(1f)
-                            .clip(CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        SubcomposeAsyncImage(
-                            model = state.currentUser?.profilePictureUrl,
-                            contentDescription = stringResource(R.string.profile_picture_description),
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize(),
-                            loading = {
-                                CircularProgressIndicator()
-                            },
-                            error = {
-                                Icon(
-                                    imageVector = Icons.Default.Person,
-                                    contentDescription = "User Image",
-                                    tint = MaterialTheme.colorScheme.tertiary,
-                                )
-                            }
-                        )
-                    }
-                    Text(
-                        text = state.currentUser?.username
-                            ?: stringResource(R.string.username_placeholder),
-                        modifier = Modifier.padding(top = 20.dp),
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(
-                            12.dp,
-                            alignment = Alignment.CenterHorizontally
-                        ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        InformationBox {
-                            Text(
-                                text = "${state.currentUser?.data?.recipesCooked}",
-                                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                            Text(
-                                text = stringResource(R.string.recipes_cooked),
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                    SubcomposeAsyncImage(
+                        model = state.currentUser?.profilePictureUrl,
+                        contentDescription = stringResource(R.string.profile_picture_description),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                        loading = {
+                            CircularProgressIndicator()
+                        },
+                        error = {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "User Image",
+                                tint = MaterialTheme.colorScheme.tertiary,
                             )
                         }
-                    }
-                    Spacer(modifier = Modifier.padding(16.dp))
-                    Text(
-                        text = stringResource(R.string.settings_title),
-                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 12.dp)
                     )
-                    SettingsItem(
-                        text = stringResource(R.string.notifications_title),
-                        icon = Icons.Outlined.Notifications,
-                        onClick = { onAction(ProfileAction.OnNotificationsClick) },
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = stringResource(R.string.help_image_description),
-                            tint = MaterialTheme.colorScheme.inverseSurface,
-                            modifier = Modifier
-                                .size(30.dp)
-                                .padding(end = 6.dp)
+                }
+                Text(
+                    text = state.currentUser?.username
+                        ?: stringResource(R.string.username_placeholder),
+                    modifier = Modifier.padding(top = 20.dp),
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        12.dp,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    InformationBox {
+                        Text(
+                            text = "${state.currentUser?.data?.recipesCooked}",
+                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                        Text(
+                            text = stringResource(R.string.recipes_cooked),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
-                    SettingsItem(
-                        text = stringResource(R.string.help_title),
-                        icon = Icons.AutoMirrored.Filled.HelpOutline,
-                        onClick = { onAction(ProfileAction.OnHelpClick) },
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = stringResource(R.string.help_image_description),
-                            tint = MaterialTheme.colorScheme.inverseSurface,
-                            modifier = Modifier
-                                .size(30.dp)
-                                .padding(end = 6.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.padding(12.dp))
-                    EasyPanButtonPrimary(
-                        onClick = { onAction(ProfileAction.OnSignOut) }
-                    ) {
-                        Text(text = stringResource(R.string.logout_button))
-                    }
+                }
+                Spacer(modifier = Modifier.padding(16.dp))
+                Text(
+                    text = stringResource(R.string.settings_title),
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp)
+                )
+                SettingsItem(
+                    text = stringResource(R.string.keep_screen_on_title),
+                    icon = Icons.Filled.ScreenLockPortrait,
+                    onClick = { onAction(ProfileAction.OnKeepScreenOnToggle) },
+                ) {
+
+                    Switch(
+                        checked = state.keepScreenOn,
+                        onCheckedChange = { onAction(ProfileAction.OnKeepScreenOnToggle) }
+                    )
+
+                }
+                SettingsItem(
+                    text = stringResource(R.string.notifications_title),
+                    icon = Icons.Outlined.Notifications,
+                    onClick = { onAction(ProfileAction.OnNotificationsClick) },
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = stringResource(R.string.help_image_description),
+                        tint = MaterialTheme.colorScheme.inverseSurface,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(end = 6.dp)
+                    )
+                }
+                SettingsItem(
+                    text = stringResource(R.string.help_title),
+                    icon = Icons.AutoMirrored.Filled.HelpOutline,
+                    onClick = { onAction(ProfileAction.OnHelpClick) },
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = stringResource(R.string.help_image_description),
+                        tint = MaterialTheme.colorScheme.inverseSurface,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(end = 6.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.padding(12.dp))
+                EasyPanButtonPrimary(
+                    onClick = { onAction(ProfileAction.OnSignOut) }
+                ) {
+                    Text(text = stringResource(R.string.logout_button))
                 }
             }
         }
+    }
 
 }
 

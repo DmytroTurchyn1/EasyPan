@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  14/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -17,11 +17,23 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 
 class FirestoreClient(
     private val firestore: FirebaseFirestore
 ) {
+
+    private suspend fun collectionExists(collectionRef: CollectionReference): Boolean {
+        val snap = collectionRef.limit(1).get().await()
+        return !snap.isEmpty
+    }
+
+    private suspend fun documentExists(documentRef: DocumentReference): Boolean {
+        val snap = documentRef.get().await()
+        return snap.exists()
+    }
 
     private suspend fun getCollection(collectionName: String): List<DocumentSnapshot> {
         return try {
@@ -33,15 +45,6 @@ class FirestoreClient(
             throw e
         }
     }
-    private suspend fun collectionExists(collectionRef: CollectionReference): Boolean {
-        val snap = collectionRef.get().await()
-        return !snap.isEmpty
-    }
-
-    private suspend fun documentExists(documentRef: DocumentReference): Boolean {
-        val snap = documentRef.get().await()
-        return snap.exists()
-    }
 
     private suspend fun addDocument(
         documentId: String,
@@ -51,7 +54,7 @@ class FirestoreClient(
         try {
             firestore.collection(collectionName)
                 .document(documentId)
-                .set(data)
+                .set(data, SetOptions.merge())
                 .await()
 
         } catch (e: Exception) {
@@ -114,8 +117,7 @@ class FirestoreClient(
             .collection(FAVORITE_COLLECTION)
 
         return try {
-            if (collectionExists(favoriteRecipeCollection)
-            ) {
+            if (collectionExists(favoriteRecipeCollection)) {
                 favoriteRecipeCollection
                     .get()
                     .await()
@@ -174,14 +176,15 @@ class FirestoreClient(
             .document(recipeId)
 
         return try {
-            if (documentExists(docRef)) {
                 docRef
                     .delete()
                     .await()
                 true
-            } else false
         } catch (e: Exception) {
-            throw e
+            throw FirebaseFirestoreException(
+                e.message ?: "Failed to delete recipe from favorites",
+                FirebaseFirestoreException.Code.UNKNOWN
+            )
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  14/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -10,6 +10,7 @@ package com.cook.easypan.easypan.data.repository
 
 import android.content.Context
 import android.util.Log
+import com.cook.easypan.app.dataStore
 import com.cook.easypan.core.domain.AuthResponse
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
@@ -22,10 +23,12 @@ import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.model.UserData
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class DefaultUserRepository(
     private val firestoreDataSource: FirestoreClient,
-    private val googleAuthClient: AuthClient
+    private val googleAuthClient: AuthClient,
+    private val context: Context
 ) : UserRepository {
 
     override suspend fun getUserData(userId: String): UserData {
@@ -101,6 +104,17 @@ class DefaultUserRepository(
             ?: throw IllegalStateException("User not logged in")
         return firestoreDataSource.isRecipeFavorite(userId = userId, recipeId = recipeId)
     }
+
+    override suspend fun updateKeepScreenOnDataStore(value: Boolean) {
+        context.dataStore.updateData { settings ->
+            settings.copy(
+                keepScreenOn = value
+            )
+        }
+    }
+
+    override suspend fun getKeepScreenOnDataStore(): Flow<Boolean> =
+        context.dataStore.data.map { it.keepScreenOn }
 
     override suspend fun getCurrentUser(): User? {
         val baseUser = googleAuthClient.getSignedInUser() ?: return null

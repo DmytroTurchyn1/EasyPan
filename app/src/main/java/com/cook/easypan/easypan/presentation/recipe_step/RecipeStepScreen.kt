@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  14/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -121,7 +121,10 @@ private fun RecipeStepScreen(
             }
         ) { innerPadding ->
 
-            KeepScreenOn()
+            if (state.keepScreenOn) {
+                KeepScreenOn()
+            }
+
 
             AnimatedContent(
                 modifier = Modifier

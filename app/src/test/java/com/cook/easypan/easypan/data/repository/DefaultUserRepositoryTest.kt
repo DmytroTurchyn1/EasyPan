@@ -1,3 +1,11 @@
+/*
+ * Created  14/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 @file:Suppress("UnusedFlow")
 
 package com.cook.easypan.easypan.data.repository
@@ -46,7 +54,8 @@ class DefaultUserRepositoryTest {
 
         defaultUserRepository = DefaultUserRepository(
             firestoreDataSource = firestoreDataSource,
-            googleAuthClient = googleAuthClient
+            googleAuthClient = googleAuthClient,
+            context = mockk<Context>(relaxed = true)
         )
     }
 

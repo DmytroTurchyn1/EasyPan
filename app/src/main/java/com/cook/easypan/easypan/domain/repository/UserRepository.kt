@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  14/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -22,6 +22,9 @@ interface UserRepository {
     suspend fun addRecipeToFavorites(recipe: Recipe): AuthResponse
     suspend fun deleteRecipeFromFavorites(recipeId: String): AuthResponse
     suspend fun isRecipeFavorite(recipeId: String): Boolean
+    suspend fun updateKeepScreenOnDataStore(value: Boolean)
+    suspend fun getKeepScreenOnDataStore(): Flow<Boolean>
+
     suspend fun getCurrentUser(): User?
     suspend fun signInWithGoogle(activityContext: Context): Flow<AuthResponse>
     fun isUserSignedIn(): Boolean
