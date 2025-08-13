@@ -47,27 +47,27 @@ class RecipeFinishViewModel(
 
 
     private suspend fun updateCookedRecipes() {
-        try {
-            val user = userRepository.getCurrentUser()
-            val recipesCooked = user?.data?.recipesCooked ?: 0
-            _state.update {
-                it.copy(
-                    userFinishedRecipes = recipesCooked + 1
+        viewModelScope.launch {
+            try {
+                val user = userRepository.getCurrentUser()
+                val recipesCooked = user?.data?.recipesCooked ?: 0
+                _state.update {
+                    it.copy(
+                        userFinishedRecipes = recipesCooked + 1
+                    )
+                }
+                userRepository.updateUserData(
+                    userId = user?.userId ?: throw IllegalStateException("User not signed in"),
+                    userData = UserData(
+                        recipesCooked = recipesCooked + 1,
+                    )
                 )
+
+            } catch (e: Exception) {
+                Log.e("Recipe Finish Screen", "Error updating user data: ${e.message}")
+                _state.update { it.copy(isLoading = false) }
             }
-            userRepository.updateUserData(
-                userId = user?.userId ?: throw IllegalStateException("User not signed in"),
-                userData = UserData(
-                    recipesCooked = recipesCooked + 1,
-                )
-            )
-
-        } catch (e: Exception) {
-            Log.e("Recipe Finish Screen", "Error updating user data: ${e.message}")
-            _state.update { it.copy(isLoading = false) }
         }
-
-
     }
 
     private val recipeId = savedStateHandle.toRoute<Route.RecipeFinish>().id
@@ -81,7 +81,6 @@ class RecipeFinishViewModel(
                 )
             }
         }
-
     }
 
     fun onAction(action: RecipeFinishAction) {

@@ -14,6 +14,7 @@ import com.cook.easypan.core.util.USER_DATA_COLLECTION
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -35,6 +36,11 @@ class FirestoreClient(
     private suspend fun collectionExists(collectionRef: CollectionReference): Boolean {
         val snap = collectionRef.get().await()
         return !snap.isEmpty
+    }
+
+    private suspend fun documentExists(documentRef: DocumentReference): Boolean {
+        val snap = documentRef.get().await()
+        return snap.exists()
     }
 
     private suspend fun addDocument(
@@ -66,11 +72,10 @@ class FirestoreClient(
 
     suspend fun getUserData(userId: String): UserDto {
         return try {
-            val user = firestore.collection(USER_DATA_COLLECTION)
-                .document(userId)
-                .get()
-                .await()
-            if (!user.exists()) {
+
+            val user = firestore.collection(USER_DATA_COLLECTION).document(userId)
+
+            if (!documentExists(user)) {
                 addDocument(
                     documentId = userId,
                     collectionName = USER_DATA_COLLECTION,
@@ -78,7 +83,10 @@ class FirestoreClient(
                 )
                 return UserDto(0)
             } else {
-                user.toObject(UserDto::class.java) ?: UserDto(0)
+                user
+                    .get()
+                    .await()
+                    .toObject(UserDto::class.java) ?: UserDto(0)
             }
         } catch (e: Exception) {
             throw e
@@ -101,15 +109,14 @@ class FirestoreClient(
     }
 
     suspend fun getFavoriteRecipes(userId: String): List<RecipeDto> {
+
+        val favoriteRecipeCollection = firestore.collection(USER_DATA_COLLECTION).document(userId)
+            .collection(FAVORITE_COLLECTION)
+
         return try {
-            if (collectionExists(
-                    firestore.collection(USER_DATA_COLLECTION).document(userId)
-                        .collection(FAVORITE_COLLECTION)
-                )
+            if (collectionExists(favoriteRecipeCollection)
             ) {
-                firestore.collection(USER_DATA_COLLECTION)
-                    .document(userId)
-                    .collection(FAVORITE_COLLECTION)
+                favoriteRecipeCollection
                     .get()
                     .await()
                     .documents
@@ -117,6 +124,22 @@ class FirestoreClient(
                         document.toObject(RecipeDto::class.java)?.copy(id = document.id)
                     }
             } else emptyList()
+
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun isRecipeFavorite(userId: String, recipeId: String): Boolean {
+        val favoriteCollectionRef = firestore.collection(USER_DATA_COLLECTION)
+            .document(userId)
+            .collection(FAVORITE_COLLECTION)
+
+        return try {
+            if (collectionExists(favoriteCollectionRef)
+            ) {
+                documentExists(favoriteCollectionRef.document(recipeId))
+            } else false
 
         } catch (e: Exception) {
             throw e
@@ -131,6 +154,7 @@ class FirestoreClient(
             val favoriteCollection = firestore.collection(USER_DATA_COLLECTION)
                 .document(userId)
                 .collection(FAVORITE_COLLECTION)
+
             favoriteCollection
                 .document(recipe.id)
                 .set(recipe)
@@ -150,18 +174,12 @@ class FirestoreClient(
             .document(recipeId)
 
         return try {
-            // Check if the document exists before attempting to delete
-            val snap = docRef.get().await()
-
-            if (snap.exists()) {
+            if (documentExists(docRef)) {
                 docRef
                     .delete()
                     .await()
                 true
-            } else {
-
-                false
-            }
+            } else false
         } catch (e: Exception) {
             throw e
         }

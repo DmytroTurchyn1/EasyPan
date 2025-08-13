@@ -99,10 +99,7 @@ class DefaultUserRepository(
     override suspend fun isRecipeFavorite(recipeId: String): Boolean {
         val userId = googleAuthClient.getSignedInUser()?.userId
             ?: throw IllegalStateException("User not logged in")
-        val favoriteRecipes = firestoreDataSource.getFavoriteRecipes(userId = userId)
-        val result = favoriteRecipes.map { it.toRecipe() }.any { it.id == recipeId }
-        Log.d("DefaultUserRepository", "isRecipeFavorite: $result")
-        return result
+        return firestoreDataSource.isRecipeFavorite(userId = userId, recipeId = recipeId)
     }
 
     override suspend fun getCurrentUser(): User? {

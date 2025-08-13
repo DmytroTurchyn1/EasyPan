@@ -53,7 +53,6 @@ class RecipeDetailViewModel(
                 )
             }
         }
-
     }
 
     fun onAction(action: RecipeDetailAction) {
@@ -79,6 +78,7 @@ class RecipeDetailViewModel(
                     )
                 }
             }
+
             is RecipeDetailAction.OnFavoriteButtonClick -> {
                 viewModelScope.launch {
                     state.value.recipe?.let { recipe ->
