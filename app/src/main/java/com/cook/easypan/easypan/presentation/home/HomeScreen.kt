@@ -1,3 +1,11 @@
+/*
+ * Created  14/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.home
 
 import android.Manifest.permission.POST_NOTIFICATIONS
@@ -26,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
 import com.cook.easypan.easypan.domain.model.Recipe
+import com.cook.easypan.easypan.presentation.home.components.RecipeFilterBar
 import com.cook.easypan.easypan.presentation.home.components.RecipeList
 import com.cook.easypan.ui.theme.EasyPanTheme
 
@@ -69,6 +78,7 @@ fun HomeRoot(
 
                     onRecipeClick(action.recipe)
                 }
+                else -> Unit
             }
             viewModel.onAction(action)
         }
@@ -97,7 +107,6 @@ private fun HomeScreen(
             }
 
         } else if (state.recipes.isNotEmpty()) {
-            Column {
                 Text(
                     text = stringResource(R.string.home_title),
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
@@ -108,18 +117,24 @@ private fun HomeScreen(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 )
+            RecipeFilterBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 6.dp),
+                onFilterSelected = { onAction(HomeAction.OnFilterSelected(it)) },
+                filters = state.filterList,
+                selected = state.selectedFilter
+            )
                 RecipeList(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 16.dp),
+                        .padding(top = 10.dp),
                     recipes = state.recipes,
                     onRecipeClick = { recipe ->
                         onAction(HomeAction.OnRecipeClick(recipe))
                     },
                     scrollState = state.recipeListState
                 )
-            }
-
         } else {
             Box(
                 modifier = Modifier
