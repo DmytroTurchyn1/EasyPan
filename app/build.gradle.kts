@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  14/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -34,8 +34,8 @@ android {
         applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 36
-        versionCode = 16
-        versionName = "v1.0.0-beta.3"
+        versionCode = 17
+        versionName = "v1.0.0-beta.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "CLIENT_ID", "${keystoreProperties.getProperty("clientId")}")
