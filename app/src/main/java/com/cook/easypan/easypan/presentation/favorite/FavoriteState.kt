@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -8,11 +8,9 @@
 
 package com.cook.easypan.easypan.presentation.favorite
 
-import androidx.compose.foundation.lazy.LazyListState
 import com.cook.easypan.easypan.domain.model.Recipe
 
 data class FavoriteState(
     val favoriteRecipes: List<Recipe> = emptyList(),
-    val isLoading: Boolean = true,
-    val recipeListState: LazyListState = LazyListState()
+    val isLoading: Boolean = true
 )

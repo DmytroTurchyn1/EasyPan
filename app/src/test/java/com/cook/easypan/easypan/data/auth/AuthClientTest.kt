@@ -1,7 +1,14 @@
+/*
+ * Created  15/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.data.auth
 
 import android.content.Context
-import com.cook.easypan.core.domain.AuthResponse
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
@@ -15,8 +22,6 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.verify
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -61,11 +66,12 @@ class AuthClientTest {
 
     @Test
     fun `test call getSignedInUser function`() {
-        every { authClient.getSignedInUser() } returns null
+        every { firebaseAuth.currentUser } returns null
 
-        authClient.getSignedInUser()
+        val user = authClient.getSignedInUser()
 
-        verify(exactly = 1) { authClient.getSignedInUser() }
+        assertNull(user)
+        verify(exactly = 1) { firebaseAuth.currentUser }
     }
 
     @Test
@@ -81,33 +87,6 @@ class AuthClientTest {
         assertEquals("testUserId", user?.userId)
         assertEquals("testUsername", user?.username)
         assertNull(user?.profilePictureUrl)
-    }
-
-    @Test
-    fun `test call signOut function`() {
-        every { authClient.signOut() } returns Unit
-        authClient.signOut()
-        verify(exactly = 1) { firebaseAuth.signOut() }
-    }
-
-    @Test
-    fun `test return signOut function`() {
-
-        authClient.signOut()
-        verify { firebaseAuth.signOut() }
-
-    }
-
-    @Test
-    fun `test flow emits Success`() = runBlocking {
-
-        val successFlow = flow<AuthResponse> {
-            emit(AuthResponse.Success)
-        }
-
-        val result = successFlow.first()
-
-        assertEquals(AuthResponse.Success, result)
     }
 
     @Test

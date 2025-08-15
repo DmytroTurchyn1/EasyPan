@@ -1,3 +1,11 @@
+/*
+ * Created  15/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.data.dto
 
 import com.google.firebase.firestore.PropertyName
@@ -60,10 +68,19 @@ class StepDescriptionDtoTest {
         )
 
         expectedMappings.forEach { (fieldName, expectedValue) ->
-            val propertyAnnotation = StepDescriptionDto::class.java
-                .getDeclaredField(fieldName)
-                .getAnnotation(PropertyName::class.java)
+            val fieldAnn = try {
+                StepDescriptionDto::class.java
+                    .getDeclaredField(fieldName)
+                    .getAnnotation(PropertyName::class.java)
+            } catch (e: NoSuchFieldException) {
+                null
+            }
+            val getterName = "get" + fieldName.replaceFirstChar { it.titlecase() }
+            val getterAnn = StepDescriptionDto::class.java.methods
+                .firstOrNull { it.name == getterName }
+                ?.getAnnotation(PropertyName::class.java)
 
+            val propertyAnnotation = fieldAnn ?: getterAnn
             assertNotNull("PropertyName annotation missing for $fieldName", propertyAnnotation)
             assertEquals(
                 "PropertyName value incorrect for $fieldName",

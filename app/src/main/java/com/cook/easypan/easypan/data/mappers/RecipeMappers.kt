@@ -1,3 +1,11 @@
+/*
+ * Created  15/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.data.mappers
 
 import com.cook.easypan.core.domain.StepType
@@ -55,11 +63,7 @@ fun StepDescriptionDto.toStepDescription(): StepDescription {
             "TIMER" -> StepType.TIMER
             else -> throw IllegalArgumentException("Unknown step type: $stepType")
         },
-        durationSec = when {
-            durationSec == null -> 0
-            (durationSec < 0) -> throw IllegalArgumentException("Duration cannot be negative: $durationSec")
-            else -> durationSec
-        }
+        durationSec = durationSec?.also { require(it >= 0) { "Duration cannot be negative $it" } }
     )
 }
 

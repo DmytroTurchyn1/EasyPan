@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -12,5 +12,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AppSettings(
-    val keepScreenOn: Boolean = false
+    val keepScreenOn: Boolean = true
 )

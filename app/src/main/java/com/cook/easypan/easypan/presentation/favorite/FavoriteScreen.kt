@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -102,7 +103,7 @@ private fun FavoriteScreen(
                 onRecipeClick = { recipe ->
                     onAction(FavoriteAction.OnRecipeClick(recipe))
                 },
-                scrollState = state.recipeListState
+                scrollState = rememberLazyListState()
             )
 
         }

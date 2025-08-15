@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -46,14 +46,16 @@ class RecipeFinishViewModel(
         )
 
 
-    private suspend fun updateCookedRecipes() {
+    private val recipeId = savedStateHandle.toRoute<Route.RecipeFinish>().id
+    private fun updateCookedRecipes() {
         viewModelScope.launch {
             try {
                 val user = userRepository.getCurrentUser()
                 val recipesCooked = user?.data?.recipesCooked ?: 0
                 _state.update {
                     it.copy(
-                        userFinishedRecipes = recipesCooked + 1
+                        userFinishedRecipes = recipesCooked + 1,
+                        isLoading = false
                     )
                 }
                 userRepository.updateUserData(
@@ -70,9 +72,7 @@ class RecipeFinishViewModel(
         }
     }
 
-    private val recipeId = savedStateHandle.toRoute<Route.RecipeFinish>().id
-
-    private fun observeFavoriteStatus() {
+    private fun observeFavoriteStatus(recipeId: String = this.recipeId) {
         viewModelScope.launch {
             val isFavorite = userRepository.isRecipeFavorite(recipeId = recipeId)
             _state.update {
@@ -92,6 +92,7 @@ class RecipeFinishViewModel(
                         isLoading = false
                     )
                 }
+                observeFavoriteStatus(action.recipe.id)
             }
 
             is RecipeFinishAction.OnFavoriteClick -> {

@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -126,7 +126,9 @@ private fun RecipeDetailScreen(
                         Icon(
                             imageVector = if (state.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             tint = Color.Red,
-                            contentDescription = stringResource(R.string.go_back),
+                            contentDescription = if (state.isFavorite) stringResource(R.string.delete_from_favorite_button_description) else stringResource(
+                                R.string.add_to_favorite_button_description
+                            ),
                         )
                     }
                 }

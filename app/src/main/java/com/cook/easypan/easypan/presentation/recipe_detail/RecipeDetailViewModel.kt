@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -8,6 +8,7 @@
 
 package com.cook.easypan.easypan.presentation.recipe_detail
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -46,10 +47,18 @@ class RecipeDetailViewModel(
 
     private fun observeFavoriteStatus() {
         viewModelScope.launch {
-            val isFavorite = userRepository.isRecipeFavorite(recipeId = recipeId)
-            _state.update {
-                it.copy(
-                    isFavorite = isFavorite
+            runCatching {
+                userRepository.isRecipeFavorite(recipeId = recipeId)
+            }.onSuccess { isFavorite ->
+                _state.update {
+                    it.copy(
+                        isFavorite = isFavorite
+                    )
+                }
+            }.onFailure {
+                Log.e(
+                    "RecipeDetailViewModel",
+                    "Error observing favorite status: ${it.message}"
                 )
             }
         }
@@ -81,23 +90,30 @@ class RecipeDetailViewModel(
 
             is RecipeDetailAction.OnFavoriteButtonClick -> {
                 viewModelScope.launch {
-                    state.value.recipe?.let { recipe ->
-                        if (state.value.isFavorite) {
-                            userRepository.deleteRecipeFromFavorites(recipeId = recipe.id)
-                            _state.update {
-                                it.copy(
-                                    isFavorite = false
-                                )
-                            }
+                    val currentIsFavorite = state.value.isFavorite
+                    runCatching {
+                        if (currentIsFavorite) {
+                            userRepository.deleteRecipeFromFavorites(recipeId = recipeId)
+                            false
 
                         } else {
-                            userRepository.addRecipeToFavorites(recipe)
-                            _state.update {
-                                it.copy(
-                                    isFavorite = true
-                                )
-                            }
+                            userRepository.addRecipeToFavorites(
+                                state.value.recipe ?: throw IllegalStateException("Recipe is null")
+                            )
+                            true
                         }
+
+                    }.onSuccess { isFavorite ->
+                        _state.update {
+                            it.copy(
+                                isFavorite = isFavorite
+                            )
+                        }
+                    }.onFailure {
+                        Log.e(
+                            "RecipeDetailViewModel",
+                            "Error updating favorite status: ${it.message}"
+                        )
                     }
                 }
             }

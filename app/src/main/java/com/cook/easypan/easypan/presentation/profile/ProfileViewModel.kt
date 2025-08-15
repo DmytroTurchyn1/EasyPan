@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -8,14 +8,14 @@
 
 package com.cook.easypan.easypan.presentation.profile
 
-import ProfileAction
-import ProfileState
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -54,12 +54,19 @@ class ProfileViewModel(
 
     private fun getKeepScreenOn() {
         viewModelScope.launch {
-            userRepository.getKeepScreenOnDataStore().collectLatest { toggleState ->
-                _state.update { currentState ->
-                    currentState.copy(
-                        keepScreenOn = toggleState
-                    )
-                }
+            try {
+                userRepository.getKeepScreenOnDataStore()
+                    .distinctUntilChanged()
+                    .collectLatest { toggleState ->
+                        _state.update { currentState ->
+                            currentState.copy(
+                                keepScreenOn = toggleState
+                            )
+                        }
+                    }
+
+            } catch (_: Throwable) {
+                Log.e("ProfileViewModel", "Error getting keep screen on state")
             }
         }
     }
@@ -73,14 +80,17 @@ class ProfileViewModel(
                 }
             }
             ProfileAction.OnKeepScreenOnToggle -> {
-
                 viewModelScope.launch {
-                    userRepository.updateKeepScreenOnDataStore(!state.value.keepScreenOn)
-                }
-                _state.update { currentState ->
-                    currentState.copy(
-                        keepScreenOn = !currentState.keepScreenOn
-                    )
+                    runCatching {
+                        val newState = !state.value.keepScreenOn
+                        userRepository.updateKeepScreenOnDataStore(newState)
+                    }.onSuccess { newState ->
+                        _state.update { currentState ->
+                            currentState.copy(
+                                keepScreenOn = newState
+                            )
+                        }
+                    }
                 }
             }
             else -> Unit

@@ -1,3 +1,11 @@
+/*
+ * Created  15/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.data.mappers
 
 import com.cook.easypan.core.domain.StepType
@@ -171,7 +179,7 @@ class RecipeMappersTest {
         assertEquals("", emptyStepDescription.description)
         assertEquals(0, emptyStepDescription.step)
         assertNull(emptyStepDescription.imageUrl)
-        assertEquals(0, emptyStepDescription.durationSec)
+        assertNull(emptyStepDescription.durationSec)
     }
 
     @Test
@@ -224,15 +232,16 @@ class RecipeMappersTest {
 
     @Test
     fun `toStepDescription with durationSec as zero or negative for TIMER type`() {
-        val stepDescriptionDtoZero = StepDescriptionDto().copy(durationSec = 0)
-        val negativeDurationStepDescriptionDto = StepDescriptionDto().copy(durationSec = -10)
-        val stepDescriptionDtoNull = StepDescriptionDto().copy(durationSec = null)
+        val stepDescriptionDtoZero = StepDescriptionDto(stepType = "TIMER").copy(durationSec = 0)
+        val negativeDurationStepDescriptionDto =
+            StepDescriptionDto(stepType = "TIMER").copy(durationSec = -10)
+        val stepDescriptionDtoNull = StepDescriptionDto(stepType = "TIMER").copy(durationSec = null)
 
         val stepDescriptionZero = stepDescriptionDtoZero.toStepDescription()
         val stepDescriptionNull = stepDescriptionDtoNull.toStepDescription()
 
         assertEquals(0, stepDescriptionZero.durationSec)
-        assertEquals(0, stepDescriptionNull.durationSec)
+        assertNull(stepDescriptionNull.durationSec)
         assertFailsWith<IllegalArgumentException> {
             negativeDurationStepDescriptionDto.toStepDescription()
         }

@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -8,6 +8,8 @@
 
 package com.cook.easypan.easypan.data.database
 
+import android.util.Log
+import com.cook.easypan.core.util.USER_DATA_COLLECTION
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import com.google.android.gms.tasks.Task
@@ -22,10 +24,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.slot
 import io.mockk.spyk
+import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import kotlin.test.Test
@@ -50,8 +55,14 @@ class FirestoreClientTest {
     fun setUp() {
         MockKAnnotations.init(this)
         firestoreClient = FirestoreClient(firebaseFirestore)
+        mockkStatic(Log::class)
+        every { Log.e(any(), any()) } returns 0
     }
 
+    @After
+    fun tearDown() {
+        unmockkAll()
+    }
 
     @Test
     fun `getRecipes should return mapped RecipeDto list`() = runBlocking {
@@ -62,7 +73,7 @@ class FirestoreClientTest {
         every { mockDocument.id } returns "abc123"
         every { mockDocument.toObject(RecipeDto::class.java) } returns expectedRecipe
 
-        val firestoreClientSpy = spyk(firestoreClient)
+        val firestoreClientSpy = spyk(firestoreClient, recordPrivateCalls = true)
 
         coEvery { firestoreClientSpy["getCollection"]("Recipes") } returns listOf(mockDocument)
 
@@ -76,7 +87,6 @@ class FirestoreClientTest {
 
     @Test
     fun `getUserData should return mapped UserDto when user exists`() = runBlocking {
-        // Given
         val userId = "testUserId"
         val expectedUser = UserDto(recipesCooked = 3)
         val completedTask = mockk<Task<DocumentSnapshot>>(relaxed = true) {
@@ -87,7 +97,7 @@ class FirestoreClientTest {
             every { exception } returns null
         }
 
-        every { firebaseFirestore.collection("Users") } returns mockCollectionRef
+        every { firebaseFirestore.collection(USER_DATA_COLLECTION) } returns mockCollectionRef
         every { mockCollectionRef.document(userId) } returns mockDocumentRef
         every { mockDocumentRef.get() } returns completedTask
         every { mockDocument.exists() } returns true
@@ -120,7 +130,7 @@ class FirestoreClientTest {
         val capturedUser = slot<UserDto>()
         val capturedOptions = slot<SetOptions>()
 
-        every { firebaseFirestore.collection("Users") } returns mockCollectionRef
+        every { firebaseFirestore.collection(USER_DATA_COLLECTION) } returns mockCollectionRef
         every { mockCollectionRef.document(userId) } returns mockDocumentRef
         every { mockDocumentRef.get() } returns completedGetTask
         every { mockDocument.exists() } returns false
@@ -155,7 +165,7 @@ class FirestoreClientTest {
         val capturedUser = slot<UserDto>()
         val capturedOptions = slot<SetOptions>()
 
-        every { firebaseFirestore.collection("Users") } returns mockCollectionRef
+        every { firebaseFirestore.collection(USER_DATA_COLLECTION) } returns mockCollectionRef
         every { mockCollectionRef.document(userId) } returns mockDocumentRef
         every {
             mockDocumentRef.set(
@@ -167,7 +177,7 @@ class FirestoreClientTest {
         firestoreClient.updateUserData(userId, userData)
 
         assertEquals(userData, capturedUser.captured)
-        verify(exactly = 1) { firebaseFirestore.collection("Users") }
+        verify(exactly = 1) { firebaseFirestore.collection(USER_DATA_COLLECTION) }
         verify(exactly = 1) { mockCollectionRef.document(userId) }
         verify(exactly = 1) { mockDocumentRef.set(any<UserDto>(), any<SetOptions>()) }
     }

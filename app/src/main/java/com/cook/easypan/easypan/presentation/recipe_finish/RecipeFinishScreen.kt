@@ -1,5 +1,5 @@
 /*
- * Created  11/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -85,7 +85,7 @@ private fun RecipeFinishScreen(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = "This is your ${state.userFinishedRecipes} cooked recipe!",
+                text = stringResource(R.string.cooked_recipes_count, state.userFinishedRecipes),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier

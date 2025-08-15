@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -8,28 +8,21 @@
 
 package com.cook.easypan.easypan.data.database
 
+import android.util.Log
 import com.cook.easypan.core.util.FAVORITE_COLLECTION
 import com.cook.easypan.core.util.RECIPES_COLLECTION
 import com.cook.easypan.core.util.USER_DATA_COLLECTION
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 
 class FirestoreClient(
     private val firestore: FirebaseFirestore
 ) {
-
-    private suspend fun collectionExists(collectionRef: CollectionReference): Boolean {
-        val snap = collectionRef.limit(1).get().await()
-        return !snap.isEmpty
-    }
-
     private suspend fun documentExists(documentRef: DocumentReference): Boolean {
         val snap = documentRef.get().await()
         return snap.exists()
@@ -61,6 +54,7 @@ class FirestoreClient(
             throw e
         }
     }
+
     suspend fun getRecipes(): List<RecipeDto> {
         return try {
             getCollection(RECIPES_COLLECTION)
@@ -74,25 +68,21 @@ class FirestoreClient(
     }
 
     suspend fun getUserData(userId: String): UserDto {
+        val user = firestore.collection(USER_DATA_COLLECTION).document(userId)
         return try {
+            user
+                .get()
+                .await()
+                .toObject(UserDto::class.java) ?: UserDto(0)
 
-            val user = firestore.collection(USER_DATA_COLLECTION).document(userId)
-
-            if (!documentExists(user)) {
-                addDocument(
-                    documentId = userId,
-                    collectionName = USER_DATA_COLLECTION,
-                    data = UserDto(0)
-                )
-                return UserDto(0)
-            } else {
-                user
-                    .get()
-                    .await()
-                    .toObject(UserDto::class.java) ?: UserDto(0)
-            }
         } catch (e: Exception) {
-            throw e
+            Log.e("FirestoreClient", "Error getting user data: ${e.message}")
+            addDocument(
+                documentId = userId,
+                collectionName = USER_DATA_COLLECTION,
+                data = UserDto(0)
+            )
+            return UserDto(0)
         }
     }
 
@@ -107,44 +97,41 @@ class FirestoreClient(
                 data = userData
             )
         } catch (e: Exception) {
+            Log.e("FirestoreClient", "Error updating user data: ${e.message}")
             throw e
         }
     }
 
     suspend fun getFavoriteRecipes(userId: String): List<RecipeDto> {
 
-        val favoriteRecipeCollection = firestore.collection(USER_DATA_COLLECTION).document(userId)
-            .collection(FAVORITE_COLLECTION)
-
-        return try {
-            if (collectionExists(favoriteRecipeCollection)) {
-                favoriteRecipeCollection
-                    .get()
-                    .await()
-                    .documents
-                    .mapNotNull { document ->
-                        document.toObject(RecipeDto::class.java)?.copy(id = document.id)
-                    }
-            } else emptyList()
-
-        } catch (e: Exception) {
-            throw e
-        }
-    }
-
-    suspend fun isRecipeFavorite(userId: String, recipeId: String): Boolean {
-        val favoriteCollectionRef = firestore.collection(USER_DATA_COLLECTION)
+        val favoriteRecipeCollection = firestore.collection(USER_DATA_COLLECTION)
             .document(userId)
             .collection(FAVORITE_COLLECTION)
 
         return try {
-            if (collectionExists(favoriteCollectionRef)
-            ) {
-                documentExists(favoriteCollectionRef.document(recipeId))
-            } else false
-
+            favoriteRecipeCollection
+                .get()
+                .await()
+                .documents
+                .mapNotNull { document ->
+                    document.toObject(RecipeDto::class.java)?.copy(id = document.id)
+                }
         } catch (e: Exception) {
-            throw e
+            Log.e("FirestoreClient", "Error getting favorite recipes: ${e.message}")
+            emptyList()
+        }
+    }
+
+    suspend fun isRecipeFavorite(userId: String, recipeId: String): Boolean {
+        val favoriteDocumentRef = firestore.collection(USER_DATA_COLLECTION)
+            .document(userId)
+            .collection(FAVORITE_COLLECTION)
+            .document(recipeId)
+        return try {
+            documentExists(favoriteDocumentRef)
+        } catch (e: Exception) {
+            Log.e("FirestoreClient", "Error checking if recipe is favorite: ${e.message}")
+            false
         }
     }
 
@@ -176,15 +163,13 @@ class FirestoreClient(
             .document(recipeId)
 
         return try {
-                docRef
-                    .delete()
-                    .await()
-                true
+            docRef
+                .delete()
+                .await()
+            true
         } catch (e: Exception) {
-            throw FirebaseFirestoreException(
-                e.message ?: "Failed to delete recipe from favorites",
-                FirebaseFirestoreException.Code.UNKNOWN
-            )
+            Log.e("FirestoreClient", "Error deleting recipe from favorites: ${e.message}")
+            false
         }
     }
 

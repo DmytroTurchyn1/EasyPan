@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -12,10 +12,16 @@ package com.cook.easypan.easypan.data.repository
 
 import android.content.Context
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import com.cook.easypan.app.dataStore
 import com.cook.easypan.core.domain.AuthResponse
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
+import com.cook.easypan.easypan.data.datastore.AppSettings
+import com.cook.easypan.easypan.data.datastore.AppSettingsSerializer
 import com.cook.easypan.easypan.data.dto.UserDto
+import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.model.UserData
 import io.mockk.MockKAnnotations
@@ -24,12 +30,19 @@ import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import io.mockk.verify
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
@@ -44,6 +57,9 @@ class DefaultUserRepositoryTest {
     @RelaxedMockK
     private lateinit var googleAuthClient: AuthClient
 
+    @RelaxedMockK
+    private lateinit var context: Context
+
     private lateinit var defaultUserRepository: DefaultUserRepository
 
     @Before
@@ -55,8 +71,13 @@ class DefaultUserRepositoryTest {
         defaultUserRepository = DefaultUserRepository(
             firestoreDataSource = firestoreDataSource,
             googleAuthClient = googleAuthClient,
-            context = mockk<Context>(relaxed = true)
+            context = context
         )
+    }
+
+    @After
+    fun tearDown() {
+        unmockkAll()
     }
 
     @Test
@@ -209,48 +230,46 @@ class DefaultUserRepositoryTest {
 
     @Test
     fun `signInWithGoogle successfully initiates sign in flow`() = runBlocking {
-        val mockContext = mockk<Context>()
+
         val authResponseFlow = flowOf(AuthResponse.Success)
 
-        every { googleAuthClient.signInWithGoogle(mockContext) } returns authResponseFlow
+        every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
 
-        val result = defaultUserRepository.signInWithGoogle(mockContext)
+        val result = defaultUserRepository.signInWithGoogle(context)
 
         assertEquals(AuthResponse.Success, result.first())
     }
 
     @Test
     fun `signInWithGoogle flow emits AuthResponse Success`() = runBlocking {
-        val mockContext = mockk<Context>()
+
         val authResponseFlow = flowOf(AuthResponse.Success)
 
-        every { googleAuthClient.signInWithGoogle(mockContext) } returns authResponseFlow
+        every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
 
-        val result = defaultUserRepository.signInWithGoogle(mockContext)
+        val result = defaultUserRepository.signInWithGoogle(context)
 
         assertEquals(AuthResponse.Success, result.first())
     }
 
     @Test
     fun `signInWithGoogle flow emits AuthResponse Failure`() = runBlocking {
-        val mockContext = mockk<Context>()
         val authResponseFlow = flowOf(AuthResponse.Failure("Sign in failed"))
 
-        every { googleAuthClient.signInWithGoogle(mockContext) } returns authResponseFlow
+        every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
 
-        val result = defaultUserRepository.signInWithGoogle(mockContext)
+        val result = defaultUserRepository.signInWithGoogle(context)
 
         assertEquals(AuthResponse.Failure("Sign in failed"), result.first())
     }
 
     @Test
     fun `signInWithGoogle handles exceptions from googleAuthClient`(): Unit = runBlocking {
-        val mockContext = mockk<Context>()
 
-        every { googleAuthClient.signInWithGoogle(mockContext) } throws Exception("Auth configuration error")
+        every { googleAuthClient.signInWithGoogle(context) } throws Exception("Auth configuration error")
 
         assertFailsWith<Exception> {
-            defaultUserRepository.signInWithGoogle(mockContext)
+            defaultUserRepository.signInWithGoogle(context)
         }
     }
 
@@ -265,4 +284,137 @@ class DefaultUserRepositoryTest {
         }
     }
 
+
+    @Test
+    fun `updateKeepScreenOnDataStore updates value and flow emits updated value`() = runBlocking {
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
+
+        defaultUserRepository =
+            DefaultUserRepository(firestoreDataSource, googleAuthClient, context)
+
+        val result = defaultUserRepository.updateKeepScreenOnDataStore(false)
+        assertFalse(result)
+        val flowValue = defaultUserRepository.getKeepScreenOnDataStore().first()
+        assertFalse(flowValue)
+        scope.cancel()
+    }
+
+    @Test
+    fun `getKeepScreenOnDataStore emits default true initially`() = runBlocking {
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_default", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
+        defaultUserRepository =
+            DefaultUserRepository(firestoreDataSource, googleAuthClient, context)
+
+        val initial = defaultUserRepository.getKeepScreenOnDataStore().first()
+        assertTrue(initial)
+        scope.cancel()
+    }
+
+
+    @Test
+    fun `getFavoriteRecipes throws when user not logged in`() {
+        runBlocking {
+            every { googleAuthClient.getSignedInUser() } returns null
+            assertFailsWith<IllegalStateException> { defaultUserRepository.getFavoriteRecipes() }
+        }
+    }
+
+    @Test
+    fun `addRecipeToFavorites succeeds and returns Success`() = runBlocking {
+        val user = User(userId = "user1", username = "tester")
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.addRecipeToFavorite("user1", any()) } returns Unit
+        val recipe = mockk<Recipe>(relaxed = true) {
+            every { difficulty } returns "Easy"
+        }
+        val result = defaultUserRepository.addRecipeToFavorites(recipe)
+        assertEquals(AuthResponse.Success, result)
+    }
+
+    @Test
+    fun `addRecipeToFavorites throws when user not logged in`() {
+        runBlocking {
+            every { googleAuthClient.getSignedInUser() } returns null
+            val recipe = mockk<Recipe>(relaxed = true).copy(difficulty = "Easy")
+            assertFailsWith<IllegalStateException> {
+                defaultUserRepository.addRecipeToFavorites(
+                    recipe
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `deleteRecipeFromFavorites returns Success when Firestore returns true`() = runBlocking {
+        val user = User(userId = "user1", username = "tester")
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.deleteRecipeFromFavorite("user1", "r1") } returns true
+
+        val result = defaultUserRepository.deleteRecipeFromFavorites("r1")
+        assertEquals(AuthResponse.Success, result)
+    }
+
+    @Test
+    fun `deleteRecipeFromFavorites returns Failure when Firestore returns false`() = runBlocking {
+        val user = User(userId = "user1", username = "tester")
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.deleteRecipeFromFavorite("user1", "r1") } returns false
+
+        val result = defaultUserRepository.deleteRecipeFromFavorites("r1")
+        assertEquals(AuthResponse.Failure("Failed to delete recipe from favorites"), result)
+    }
+
+    @Test
+    fun `deleteRecipeFromFavorites throws when user not logged in`() {
+        runBlocking {
+            every { googleAuthClient.getSignedInUser() } returns null
+            assertFailsWith<IllegalStateException> {
+                defaultUserRepository.deleteRecipeFromFavorites(
+                    "r1"
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `isRecipeFavorite returns true when Firestore reports favorite`() = runBlocking {
+        val user = User(userId = "user1", username = "tester")
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.isRecipeFavorite("user1", "r1") } returns true
+
+        val result = defaultUserRepository.isRecipeFavorite("r1")
+        assertTrue(result)
+    }
+
+    @Test
+    fun `isRecipeFavorite returns false when Firestore reports not favorite`() = runBlocking {
+        val user = User(userId = "user1", username = "tester")
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.isRecipeFavorite("user1", "r1") } returns false
+
+        val result = defaultUserRepository.isRecipeFavorite("r1")
+        assertFalse(result)
+    }
+
+    @Test
+    fun `isRecipeFavorite throws when user not logged in`() {
+        runBlocking {
+            every { googleAuthClient.getSignedInUser() } returns null
+            assertFailsWith<IllegalStateException> { defaultUserRepository.isRecipeFavorite("r1") }
+        }
+    }
 }

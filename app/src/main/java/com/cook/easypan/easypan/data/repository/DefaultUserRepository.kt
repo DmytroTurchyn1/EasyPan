@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -105,15 +105,16 @@ class DefaultUserRepository(
         return firestoreDataSource.isRecipeFavorite(userId = userId, recipeId = recipeId)
     }
 
-    override suspend fun updateKeepScreenOnDataStore(value: Boolean) {
+    override suspend fun updateKeepScreenOnDataStore(value: Boolean): Boolean {
         context.dataStore.updateData { settings ->
             settings.copy(
                 keepScreenOn = value
             )
         }
+        return value
     }
 
-    override suspend fun getKeepScreenOnDataStore(): Flow<Boolean> =
+    override fun getKeepScreenOnDataStore(): Flow<Boolean> =
         context.dataStore.data.map { it.keepScreenOn }
 
     override suspend fun getCurrentUser(): User? {
@@ -137,6 +138,6 @@ class DefaultUserRepository(
         return googleAuthClient.getSignedInUser() != null
     }
 
-    override suspend fun signInWithGoogle(activityContext: Context): Flow<AuthResponse> =
+    override fun signInWithGoogle(activityContext: Context): Flow<AuthResponse> =
         googleAuthClient.signInWithGoogle(activityContext)
 }

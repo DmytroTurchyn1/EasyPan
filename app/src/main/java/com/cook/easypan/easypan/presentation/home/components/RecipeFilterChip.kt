@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -9,10 +9,10 @@
 package com.cook.easypan.easypan.presentation.home.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +26,6 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun RecipeFilterChip(
-    modifier: Modifier = Modifier,
     filter: String,
     onClick: () -> Unit,
     selected: Boolean = false
@@ -36,15 +35,15 @@ fun RecipeFilterChip(
             .clip(
                 RoundedCornerShape(16.dp)
             )
-            .clickable(onClick = onClick)
+            .selectable(selected = selected, onClick = onClick)
             .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Text(
             text = filter,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            color = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            modifier = modifier
+            modifier = Modifier
                 .widthIn(
                     min = 40.dp
                 )
@@ -64,7 +63,6 @@ private fun RecipeFilterChipPreview() {
         RecipeFilterChip(
             filter = "Vegetarian",
             onClick = {},
-            modifier = Modifier.padding(8.dp)
         )
     }
 }

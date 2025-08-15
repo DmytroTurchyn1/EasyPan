@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  15/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -26,7 +26,7 @@ class ExampleStartupBenchmark {
     fun startup() = benchmarkRule.measureRepeated(
         packageName = "com.cook.easypan",
         metrics = listOf(StartupTimingMetric()),
-        iterations = 5,
+        iterations = 10,
         startupMode = StartupMode.COLD
     ) {
         pressHome()
