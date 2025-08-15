@@ -1,3 +1,11 @@
+<!--
+  ~ Created  15/8/2025
+  ~
+  ~ Copyright (c) 2025 . All rights reserved.
+  ~ Licensed under the MIT License.
+  ~ See LICENSE file in the project root for details.
+  -->
+
 <resources>
     <string name="app_name">EasyPan</string>
     <string name="auth_title">Master Your Craft</string>
@@ -48,4 +56,12 @@
     <string name="confirm_button">Confirm</string>
     <string name="dismiss_button">Dismiss</string>
     <string name="information_icon_description">Information Icon</string>
+    <string name="countdown_timer_title">Countdown Timer</string>
+    <string name="add_to_favorite_button">Add to favorite</string>
+    <string name="delete_favorite_button">Delete recipe</string>
+    <string name="added_to_favorite_button">Added to favorite</string>
+    <string name="keep_screen_on_title">Keep screen on</string>
+    <string name="add_to_favorite_button_description">Add to favorite</string>
+    <string name="delete_from_favorite_button_description">Delete from favorite</string>
+    <string name="cooked_recipes_count">This is your %d cooked recipe!</string>
 </resources>

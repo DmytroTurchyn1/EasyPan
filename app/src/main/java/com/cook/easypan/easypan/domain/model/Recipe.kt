@@ -1,5 +1,4 @@
-package com.cook.easypan.easypan.domain
-
+package com.cook.easypan.easypan.domain.model
 
 data class Recipe(
     val id: String,

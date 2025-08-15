@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.cook.easypan.easypan.domain.UserRepository
+import com.cook.easypan.easypan.domain.repository.UserRepository
 import org.koin.java.KoinJavaComponent.inject
 
 

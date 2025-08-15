@@ -14,15 +14,15 @@ composeBom = "2025.07.00"
 uiTextGoogleFonts = "1.8.3"
 compose-material-icons-extended = "1.7.8"
 nav_version = "2.9.3"
-firebaseAuth = "24.0.0"
+firebaseAuth = "24.0.1"
 playServicesAuth = "21.4.0"
 koin = "4.1.0"
 coil3 = "3.3.0"
 ktor = "3.2.3"
 credentials = "1.5.0"
 googleid = "1.1.1"
-crashlytics = "3.0.5"
-firebasePerfPlugin = "2.0.0"
+crashlytics = "3.0.6"
+firebasePerfPlugin = "2.0.1"
 uiTestJunit4Android = "1.8.3"
 mockk = "1.14.5"
 playIntegrity = "1.4.0"
@@ -30,6 +30,12 @@ appCheckDebug = "19.0.0"
 firebasePerf = "22.0.0"
 inappMessaging = "22.0.0"
 messaging = "25.0.0"
+coroutinesTest = "1.10.2"
+kotlinxSerializationJson = "1.9.0"
+uiautomator = "2.3.0"
+benchmarkMacroJunit4 = "1.4.0"
+profileinstaller = "1.4.1"
+datastore = "1.1.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +54,9 @@ compose-material-icons-extended = { group = "androidx.compose.material", name = 
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "nav_version" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
@@ -91,6 +100,9 @@ coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
 
 
@@ -102,7 +114,7 @@ google-services = {id = "com.google.gms.google-services", version.ref = "gms" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
-
+android-test = { id = "com.android.test", version.ref = "agp" }
 
 [bundles]
 
@@ -119,14 +131,19 @@ compose = [
     "androidx-credentials",
     "credentials-play-services-auth",
     "identity-googleid",
-    "androidx-ui-text-google-fonts"
+    "androidx-ui-text-google-fonts",
+    "kotlinx-serialization-json",
+    "androidx-profileinstaller",
+    "androidx-datastore"
 ]
 
 test = [
     "mockk",
     "junit",
-    "kotlin-test"
+    "kotlin-test",
+    "kotlinx-coroutines-test"
 ]
+
 android-test = [
     "mockk-android",
     "androidx-junit",

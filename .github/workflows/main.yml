@@ -28,6 +28,10 @@ jobs:
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > ${{ github.workspace }}/app/google-services.json
 
+      - name: Decode KeyStore
+        run: |
+          echo "${{ secrets.KEYSTORE }}" | base64 -d > ${{ github.workspace }}/keystore.properties
+
       - name: Build with Gradle
         run: ./gradlew build
 

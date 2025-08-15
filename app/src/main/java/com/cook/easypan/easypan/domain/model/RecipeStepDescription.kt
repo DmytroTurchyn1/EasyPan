@@ -1,4 +1,6 @@
-package com.cook.easypan.easypan.domain
+package com.cook.easypan.easypan.domain.model
+
+import com.cook.easypan.core.domain.StepType
 
 data class StepDescription(
     val step: Int,

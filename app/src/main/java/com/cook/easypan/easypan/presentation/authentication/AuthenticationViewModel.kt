@@ -2,8 +2,8 @@ package com.cook.easypan.easypan.presentation.authentication
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cook.easypan.easypan.domain.AuthResponse
-import com.cook.easypan.easypan.domain.UserRepository
+import com.cook.easypan.core.domain.AuthResponse
+import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

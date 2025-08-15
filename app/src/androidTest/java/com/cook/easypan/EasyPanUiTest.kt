@@ -8,7 +8,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.repository.DefaultUserRepository
-import com.cook.easypan.easypan.domain.UserRepository
+import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationRoot
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewModel
 import io.mockk.mockk
@@ -43,6 +43,7 @@ class EasyPanUiTest {
         assertEquals("com.cook.easypan", appContext.packageName)
     }
 
+    @Suppress("UnusedFlow")
     @Test
     fun testAuthenticationScreen() {
         rule.setContent {

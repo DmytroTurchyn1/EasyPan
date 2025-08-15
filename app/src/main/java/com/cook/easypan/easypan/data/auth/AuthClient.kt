@@ -5,14 +5,13 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.cook.easypan.BuildConfig
-import com.cook.easypan.easypan.domain.AuthResponse
-import com.cook.easypan.easypan.domain.User
+import com.cook.easypan.core.domain.AuthResponse
+import com.cook.easypan.easypan.domain.model.User
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.auth
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -22,11 +21,12 @@ import java.util.UUID
 
 class AuthClient(
     private val applicationContext: Context,
+    private val auth: FirebaseAuth
 ) {
-    private val auth = Firebase.auth
+
     private val clientId = BuildConfig.CLIENT_ID
 
-    private fun createNonce(): String {
+    fun createNonce(): String {
         val rawNonce = UUID.randomUUID().toString()
         val bytes = rawNonce.toByteArray()
         val md = MessageDigest.getInstance("SHA-256")

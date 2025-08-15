@@ -1,3 +1,11 @@
+/*
+ * Created  13/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.navigation
 
 import android.content.ContentValues.TAG
@@ -28,6 +36,7 @@ import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailAction
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailRoot
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
+import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishAction
 import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishRoot
 import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishViewModel
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
@@ -117,7 +126,11 @@ fun HomeNavGraph(
             }
             LaunchedEffect(state.isFinishButtonEnabled) {
                 if (!state.isFinishButtonEnabled) {
-                    navController.navigate(Route.RecipeFinish) {
+                    navController.navigate(
+                        Route.RecipeFinish(
+                            state.recipe?.id ?: throw IllegalStateException("Recipe not found")
+                        )
+                    ) {
                         popUpTo(Route.RecipeStep) {
                             inclusive = true
                         }
@@ -134,11 +147,19 @@ fun HomeNavGraph(
 
         composable<Route.RecipeFinish> {
             val viewModel = koinViewModel<RecipeFinishViewModel>()
+            val selectedRecipeViewModel =
+                it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            val selectedRecipe by selectedRecipeViewModel.selectedRecipe.collectAsStateWithLifecycle()
+            LaunchedEffect(selectedRecipe) {
+                selectedRecipe?.let { recipe ->
+                    viewModel.onAction(RecipeFinishAction.OnRecipeChange(recipe))
+                }
+            }
             RecipeFinishRoot(
                 viewModel = viewModel,
                 onFinishClick = {
                     navController.navigate(Route.Home) {
-                        popUpTo(Route.RecipeFinish) {
+                        popUpTo(Route.RecipeFinish(it.id)) {
                             inclusive = true
                         }
                     }
@@ -155,9 +176,19 @@ fun HomeNavGraph(
             )
         }
         composable<Route.Favorite> {
-            val viewModel = FavoriteViewModel()
+            val viewModel = koinViewModel<FavoriteViewModel>()
+            val selectedRecipeViewModel =
+                it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            LaunchedEffect(Unit) {
+                selectedRecipeViewModel.onSelectRecipe(null)
+            }
+
             FavoriteRoot(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onRecipeClick = { recipe ->
+                    selectedRecipeViewModel.onSelectRecipe(recipe)
+                    navController.navigate(Route.RecipeDetail(recipe.id))
+                }
             )
         }
     }

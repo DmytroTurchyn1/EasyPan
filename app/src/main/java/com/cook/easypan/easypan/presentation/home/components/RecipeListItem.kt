@@ -28,9 +28,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
-import com.cook.easypan.easypan.domain.Recipe
-import com.cook.easypan.easypan.domain.StepDescription
-import com.cook.easypan.easypan.domain.StepType
+import com.cook.easypan.core.domain.StepType
+import com.cook.easypan.easypan.domain.model.Recipe
+import com.cook.easypan.easypan.domain.model.StepDescription
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 

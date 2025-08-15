@@ -1,3 +1,11 @@
+/*
+ * Created  14/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.home
 
 import android.Manifest.permission.POST_NOTIFICATIONS
@@ -10,7 +18,8 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cook.easypan.core.util.NOTIFICATION_TOPIC
-import com.cook.easypan.easypan.domain.RecipeRepository
+import com.cook.easypan.easypan.domain.model.Recipe
+import com.cook.easypan.easypan.domain.repository.RecipeRepository
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,13 +34,14 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
+    private var allRecipes: List<Recipe> = emptyList()
 
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                loadRecipes()
+                loadData()
                 hasLoadedInitialData = true
             }
         }
@@ -41,11 +51,17 @@ class HomeViewModel(
             initialValue = HomeState()
         )
 
-    private fun loadRecipes() {
+    private fun loadData() {
         viewModelScope.launch {
+            val recipes = recipeRepository.getRecipes()
+            allRecipes = recipes
+            val filters = recipes.map { recipe ->
+                recipe.chips
+            }.flatten().distinct().sorted()
             _state.update {
                 it.copy(
-                    recipes = recipeRepository.getRecipes(),
+                    recipes = recipes,
+                    filterList = filters,
                     isLoading = false
                 )
             }
@@ -102,6 +118,21 @@ class HomeViewModel(
         when (action) {
             is HomeAction.OnRecipeClick -> {
 
+            }
+            is HomeAction.OnFilterSelected -> {
+                val newFilter =
+                    if (state.value.selectedFilter == action.filter) "" else action.filter
+                val newRecipeList = if (newFilter.isEmpty()) {
+                    allRecipes
+                } else {
+                    allRecipes.filter { it.chips.contains(newFilter) }
+                }
+                _state.update { st ->
+                    st.copy(
+                        selectedFilter = newFilter,
+                        recipes = newRecipeList
+                    )
+                }
             }
         }
     }

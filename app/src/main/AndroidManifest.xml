@@ -1,4 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Created  15/8/2025
+  ~
+  ~ Copyright (c) 2025 . All rights reserved.
+  ~ Licensed under the MIT License.
+  ~ See LICENSE file in the project root for details.
+  -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,6 +21,7 @@
         android:roundIcon="@mipmap/ic_app_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyPan">
+
         <activity
             android:name=".app.MainActivity"
             android:exported="true"
@@ -23,8 +31,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
         </activity>
 
         <service
@@ -34,7 +40,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>

@@ -1,3 +1,11 @@
+/*
+ * Created  14/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.recipe_step
 
 import androidx.compose.animation.AnimatedContent
@@ -34,7 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
-import com.cook.easypan.easypan.domain.StepType
+import com.cook.easypan.core.domain.StepType
+import com.cook.easypan.core.presentation.KeepScreenOn
 import com.cook.easypan.easypan.presentation.recipe_step.components.AlertCancelRecipeDialog
 import com.cook.easypan.easypan.presentation.recipe_step.components.BottomBarRecipeStep
 import com.cook.easypan.easypan.presentation.recipe_step.components.ContentStepRecipe
@@ -111,6 +120,12 @@ private fun RecipeStepScreen(
                 )
             }
         ) { innerPadding ->
+
+            if (state.keepScreenOn) {
+                KeepScreenOn()
+            }
+
+
             AnimatedContent(
                 modifier = Modifier
                     .padding(innerPadding)

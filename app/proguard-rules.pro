@@ -27,21 +27,14 @@
 # Keep all DTO classes for Firebase serialization
 -keep class com.cook.easypan.easypan.data.dto.** { *; }
 
-# Keep all public constructors and getters/setters for DTO classes
--keepclassmembers class com.cook.easypan.easypan.data.dto.** {
-    public <init>();
-    public <init>(...);
-    public *;
-}
-
 # Keep serialization annotations
 -keepattributes *Annotation*
 -keepattributes Signature
 -keep class kotlinx.serialization.** { *; }
 
-# Keep data class properties
+# Keep data class properties annotated with SerialName
 -keepclassmembers class * {
-    @kotlinx.serialization.SerialName <fields>;
+    @kotlinx.serialization.SerialName *;
 }
 
 # Prevent obfuscation of classes used with Firebase

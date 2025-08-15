@@ -9,6 +9,6 @@ data class StepDescriptionDto(
     @PropertyName("imageUrl") val imageUrl: String? = null,
     @PropertyName("title") val title: String = "",
     @PropertyName("description") val description: String = "",
-    @PropertyName("stepType") val stepType: String = "",
+    @PropertyName("stepType") val stepType: String = "text",
     @PropertyName("durationSec") val durationSec: Int? = null
 )

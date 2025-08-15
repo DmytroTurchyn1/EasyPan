@@ -1,14 +1,27 @@
+/*
+ * Created  14/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.recipe_step
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class RecipeStepViewModel : ViewModel() {
+class RecipeStepViewModel(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     private var hasLoadedInitialData = false
 
@@ -19,12 +32,7 @@ class RecipeStepViewModel : ViewModel() {
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                _state.update {
-                    it.copy(
-                        isLoading = true,
-                    )
-                }
-
+                getKeepScreenOn()
                 hasLoadedInitialData = true
             }
         }
@@ -34,6 +42,17 @@ class RecipeStepViewModel : ViewModel() {
             initialValue = RecipeStepState()
         )
 
+    private fun getKeepScreenOn() {
+        viewModelScope.launch {
+            userRepository.getKeepScreenOnDataStore().collectLatest { toggleState ->
+                _state.update { currentState ->
+                    currentState.copy(
+                        keepScreenOn = toggleState
+                    )
+                }
+            }
+        }
+    }
 
     fun onAction(action: RecipeStepAction) {
         val step = _state.value.recipe?.instructions?.size.let { size ->
