@@ -81,15 +81,20 @@ class ProfileViewModel(
             }
             ProfileAction.OnKeepScreenOnToggle -> {
                 viewModelScope.launch {
+                    val newState = !state.value.keepScreenOn
                     runCatching {
-                        val newState = !state.value.keepScreenOn
                         userRepository.updateKeepScreenOnDataStore(newState)
                     }.onSuccess { newState ->
-                        _state.update { currentState ->
-                            currentState.copy(
+                        _state.update {
+                            it.copy(
                                 keepScreenOn = newState
                             )
                         }
+                    }.onFailure {
+                        Log.e(
+                            "ProfileViewModel",
+                            "Error updating keep screen on state: ${it.message}"
+                        )
                     }
                 }
             }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -179,7 +180,7 @@ private fun ProfileScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.padding(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.settings_title),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -193,6 +194,7 @@ private fun ProfileScreen(
                     text = stringResource(R.string.keep_screen_on_title),
                     icon = Icons.Filled.ScreenLockPortrait,
                     onClick = { onAction(ProfileAction.OnKeepScreenOnToggle) },
+                    clickable = false
                 ) {
 
                     Switch(
@@ -229,7 +231,7 @@ private fun ProfileScreen(
                             .padding(end = 6.dp)
                     )
                 }
-                Spacer(modifier = Modifier.padding(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 EasyPanButtonPrimary(
                     onClick = { onAction(ProfileAction.OnSignOut) }
                 ) {

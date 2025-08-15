@@ -26,6 +26,7 @@ import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.model.UserData
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
@@ -123,6 +124,12 @@ class DefaultUserRepositoryTest {
         val result = defaultUserRepository.updateUserData("testUserId", testUserData)
 
         assertEquals(AuthResponse.Success, result)
+        coVerify {
+            firestoreDataSource.updateUserData(
+                "testUserId",
+                UserDto(recipesCooked = 10)
+            )
+        }
     }
 
     @Test
@@ -349,7 +356,9 @@ class DefaultUserRepositoryTest {
     fun `addRecipeToFavorites throws when user not logged in`() {
         runBlocking {
             every { googleAuthClient.getSignedInUser() } returns null
-            val recipe = mockk<Recipe>(relaxed = true).copy(difficulty = "Easy")
+            val recipe = mockk<Recipe>(relaxed = true) {
+                every { difficulty } returns "Easy"
+            }
             assertFailsWith<IllegalStateException> {
                 defaultUserRepository.addRecipeToFavorites(
                     recipe
