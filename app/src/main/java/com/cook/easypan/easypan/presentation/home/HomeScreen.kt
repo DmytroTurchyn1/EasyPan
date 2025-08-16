@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  16/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,9 +50,9 @@ fun HomeRoot(
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
-                viewModel.onPermissionResult(
-                    isGranted = isGranted
-                )
+            viewModel.onPermissionResult(
+                isGranted = isGranted
+            )
         }
     )
 
@@ -78,6 +79,7 @@ fun HomeRoot(
 
                     onRecipeClick(action.recipe)
                 }
+
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -107,16 +109,18 @@ private fun HomeScreen(
             }
 
         } else if (state.recipes.isNotEmpty()) {
-                Text(
-                    text = stringResource(R.string.home_title),
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
+            val scope = rememberCoroutineScope()
+            Text(
+                text = stringResource(R.string.home_title),
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
+
             RecipeFilterBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,16 +129,16 @@ private fun HomeScreen(
                 filters = state.filterList,
                 selected = state.selectedFilter
             )
-                RecipeList(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    recipes = state.recipes,
-                    onRecipeClick = { recipe ->
-                        onAction(HomeAction.OnRecipeClick(recipe))
-                    },
-                    scrollState = state.recipeListState
-                )
+            RecipeList(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 10.dp),
+                recipes = state.recipes,
+                onRecipeClick = { recipe ->
+                    onAction(HomeAction.OnRecipeClick(recipe))
+                },
+                scrollState = state.recipeListState
+            )
         } else {
             Box(
                 modifier = Modifier

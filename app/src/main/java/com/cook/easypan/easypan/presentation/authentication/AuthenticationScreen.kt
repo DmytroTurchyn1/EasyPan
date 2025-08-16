@@ -1,6 +1,13 @@
+/*
+ * Created  16/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.authentication
 
-import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -38,7 +46,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.core.presentation.EasyPanText
+import com.cook.easypan.core.presentation.snackBar.SnackBarController
+import com.cook.easypan.core.presentation.snackBar.SnackBarEvent
 import com.cook.easypan.ui.theme.EasyPanTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun AuthenticationRoot(
@@ -109,10 +120,16 @@ private fun AuthenticationScreen(
 
         }
     ) { innerPadding ->
-
+        val scope = rememberCoroutineScope()
         LaunchedEffect(state.signInError, context) {
             if (state.signInError != null) {
-                Toast.makeText(context, state.signInError, Toast.LENGTH_SHORT).show()
+                scope.launch {
+                    SnackBarController.sendEvent(
+                        event = SnackBarEvent(
+                            message = state.signInError
+                        )
+                    )
+                }
             }
         }
 
