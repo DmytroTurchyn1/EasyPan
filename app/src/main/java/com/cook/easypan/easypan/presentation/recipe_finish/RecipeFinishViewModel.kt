@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  18/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -59,7 +59,6 @@ class RecipeFinishViewModel(
                     )
                 }
                 userRepository.updateUserData(
-                    userId = user?.userId ?: throw IllegalStateException("User not signed in"),
                     userData = UserData(
                         recipesCooked = recipesCooked + 1,
                     )

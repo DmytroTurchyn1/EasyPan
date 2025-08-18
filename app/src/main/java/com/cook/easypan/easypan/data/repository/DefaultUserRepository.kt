@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  18/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -11,7 +11,7 @@ package com.cook.easypan.easypan.data.repository
 import android.content.Context
 import android.util.Log
 import com.cook.easypan.app.dataStore
-import com.cook.easypan.core.domain.AuthResponse
+import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.mappers.toRecipe
@@ -38,27 +38,27 @@ class DefaultUserRepository(
     }
 
     override suspend fun updateUserData(
-        userId: String,
         userData: UserData
-    ): AuthResponse {
+    ): Result {
+        val userId = googleAuthClient.getSignedInUser()?.userId
+            ?: throw IllegalStateException("User not logged in")
         return try {
             firestoreDataSource.updateUserData(
                 userId = userId,
                 userData = userData
                     .toUserDto()
             )
-            AuthResponse.Success
+            Result.Success
         } catch (e: Exception) {
-            AuthResponse.Failure(e.message ?: "Unknown error")
+            Result.Failure(e.message ?: "Unknown error")
         }
     }
 
     override suspend fun getFavoriteRecipes(): List<Recipe> {
+        val userId = googleAuthClient.getSignedInUser()?.userId
+            ?: throw IllegalStateException("User not logged in")
         return try {
-            firestoreDataSource.getFavoriteRecipes(
-                googleAuthClient.getSignedInUser()?.userId
-                    ?: throw IllegalStateException("User not logged in")
-            )
+            firestoreDataSource.getFavoriteRecipes(userId)
                 .map { it.toRecipe() }
         } catch (e: Exception) {
             throw e
@@ -67,35 +67,37 @@ class DefaultUserRepository(
 
     override suspend fun addRecipeToFavorites(
         recipe: Recipe
-    ): AuthResponse {
+    ): Result {
+        val userId = googleAuthClient.getSignedInUser()?.userId
+            ?: throw IllegalStateException("User not logged in")
         return try {
             firestoreDataSource.addRecipeToFavorite(
-                userId = googleAuthClient.getSignedInUser()?.userId
-                    ?: throw IllegalStateException("User not logged in"),
+                userId = userId,
                 recipe = recipe.toRecipeDto()
             )
-            AuthResponse.Success
+            Result.Success
         } catch (e: Exception) {
-            throw e
+            Result.Failure(e.message ?: "Unknown error")
         }
     }
 
-    override suspend fun deleteRecipeFromFavorites(recipeId: String): AuthResponse {
+    override suspend fun deleteRecipeFromFavorites(recipeId: String): Result {
         return try {
+            val userId = googleAuthClient.getSignedInUser()?.userId
+                ?: throw IllegalStateException("User not logged in")
             val deleteFavoriteRecipe = firestoreDataSource.deleteRecipeFromFavorite(
-                userId = googleAuthClient.getSignedInUser()?.userId
-                    ?: throw IllegalStateException("User not logged in"),
+                userId = userId,
                 recipeId = recipeId
             )
             if (deleteFavoriteRecipe) {
-                AuthResponse.Success
+                Result.Success
             } else {
-                AuthResponse.Failure("Failed to delete recipe from favorites")
+                Result.Failure("Failed to delete recipe from favorites")
             }
 
 
         } catch (e: Exception) {
-            throw e
+            Result.Failure(e.message ?: "Unknown error")
         }
     }
 
@@ -134,10 +136,9 @@ class DefaultUserRepository(
 
     override fun signOut() = googleAuthClient.signOut()
 
-    override fun isUserSignedIn(): Boolean {
-        return googleAuthClient.getSignedInUser() != null
-    }
+    override fun isUserSignedIn(): Boolean = googleAuthClient.getSignedInUser() != null
 
-    override fun signInWithGoogle(activityContext: Context): Flow<AuthResponse> =
+
+    override fun signInWithGoogle(activityContext: Context): Flow<Result> =
         googleAuthClient.signInWithGoogle(activityContext)
 }

@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  18/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -15,7 +15,7 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import com.cook.easypan.app.dataStore
-import com.cook.easypan.core.domain.AuthResponse
+import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.datastore.AppSettings
@@ -119,14 +119,14 @@ class DefaultUserRepositoryTest {
     @Test
     fun `updateUserData successfully updates user data`() = runBlocking {
         val testUserData = UserData(recipesCooked = 10)
-        coEvery { firestoreDataSource.updateUserData("testUserId", any()) } returns Unit
+        coEvery { firestoreDataSource.updateUserData(any(), any()) } returns Unit
 
-        val result = defaultUserRepository.updateUserData("testUserId", testUserData)
+        val result = defaultUserRepository.updateUserData(testUserData)
 
-        assertEquals(AuthResponse.Success, result)
+        assertEquals(Result.Success, result)
         coVerify {
             firestoreDataSource.updateUserData(
-                "testUserId",
+                any(),
                 UserDto(recipesCooked = 10)
             )
         }
@@ -137,14 +137,14 @@ class DefaultUserRepositoryTest {
         val testUserData = UserData(recipesCooked = 10)
         coEvery {
             firestoreDataSource.updateUserData(
-                "testUserId",
+                any(),
                 any()
             )
         } throws Exception("Permission denied")
 
-        val result = defaultUserRepository.updateUserData("testUserId", testUserData)
+        val result = defaultUserRepository.updateUserData(testUserData)
 
-        assertEquals(AuthResponse.Failure("Permission denied"), result)
+        assertEquals(Result.Failure("Permission denied"), result)
     }
 
     @Test
@@ -152,14 +152,14 @@ class DefaultUserRepositoryTest {
         val testUserData = UserData(recipesCooked = 10)
         coEvery {
             firestoreDataSource.updateUserData(
-                "testUserId",
+                any(),
                 any()
             )
         } throws Exception("Unknown error")
 
-        val result = defaultUserRepository.updateUserData("testUserId", testUserData)
+        val result = defaultUserRepository.updateUserData(testUserData)
 
-        assertEquals(AuthResponse.Failure("Unknown error"), result)
+        assertEquals(Result.Failure("Unknown error"), result)
     }
 
     @Test
@@ -238,36 +238,36 @@ class DefaultUserRepositoryTest {
     @Test
     fun `signInWithGoogle successfully initiates sign in flow`() = runBlocking {
 
-        val authResponseFlow = flowOf(AuthResponse.Success)
+        val authResponseFlow = flowOf(Result.Success)
 
         every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
 
         val result = defaultUserRepository.signInWithGoogle(context)
 
-        assertEquals(AuthResponse.Success, result.first())
+        assertEquals(Result.Success, result.first())
     }
 
     @Test
-    fun `signInWithGoogle flow emits AuthResponse Success`() = runBlocking {
+    fun `signInWithGoogle flow emits Result Success`() = runBlocking {
 
-        val authResponseFlow = flowOf(AuthResponse.Success)
+        val resultFlow = flowOf(Result.Success)
 
-        every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
+        every { googleAuthClient.signInWithGoogle(context) } returns resultFlow
 
         val result = defaultUserRepository.signInWithGoogle(context)
 
-        assertEquals(AuthResponse.Success, result.first())
+        assertEquals(Result.Success, result.first())
     }
 
     @Test
-    fun `signInWithGoogle flow emits AuthResponse Failure`() = runBlocking {
-        val authResponseFlow = flowOf(AuthResponse.Failure("Sign in failed"))
+    fun `signInWithGoogle flow emits Result Failure`() = runBlocking {
+        val resultFlow = flowOf(Result.Failure("Sign in failed"))
 
-        every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
+        every { googleAuthClient.signInWithGoogle(context) } returns resultFlow
 
         val result = defaultUserRepository.signInWithGoogle(context)
 
-        assertEquals(AuthResponse.Failure("Sign in failed"), result.first())
+        assertEquals(Result.Failure("Sign in failed"), result.first())
     }
 
     @Test
@@ -349,7 +349,7 @@ class DefaultUserRepositoryTest {
             every { difficulty } returns "Easy"
         }
         val result = defaultUserRepository.addRecipeToFavorites(recipe)
-        assertEquals(AuthResponse.Success, result)
+        assertEquals(Result.Success, result)
     }
 
     @Test
@@ -374,7 +374,7 @@ class DefaultUserRepositoryTest {
         coEvery { firestoreDataSource.deleteRecipeFromFavorite("user1", "r1") } returns true
 
         val result = defaultUserRepository.deleteRecipeFromFavorites("r1")
-        assertEquals(AuthResponse.Success, result)
+        assertEquals(Result.Success, result)
     }
 
     @Test
@@ -384,18 +384,18 @@ class DefaultUserRepositoryTest {
         coEvery { firestoreDataSource.deleteRecipeFromFavorite("user1", "r1") } returns false
 
         val result = defaultUserRepository.deleteRecipeFromFavorites("r1")
-        assertEquals(AuthResponse.Failure("Failed to delete recipe from favorites"), result)
+        assertEquals(Result.Failure("Failed to delete recipe from favorites"), result)
     }
 
     @Test
     fun `deleteRecipeFromFavorites throws when user not logged in`() {
         runBlocking {
             every { googleAuthClient.getSignedInUser() } returns null
-            assertFailsWith<IllegalStateException> {
-                defaultUserRepository.deleteRecipeFromFavorites(
-                    "r1"
-                )
-            }
+            val result = defaultUserRepository.deleteRecipeFromFavorites(
+                "r1"
+            )
+            assertEquals(Result.Failure("User not logged in"), result)
+
         }
     }
 

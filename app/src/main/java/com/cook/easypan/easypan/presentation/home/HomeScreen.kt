@@ -1,5 +1,5 @@
 /*
- * Created  16/8/2025
+ * Created  18/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -109,7 +108,6 @@ private fun HomeScreen(
             }
 
         } else if (state.recipes.isNotEmpty()) {
-            val scope = rememberCoroutineScope()
             Text(
                 text = stringResource(R.string.home_title),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
