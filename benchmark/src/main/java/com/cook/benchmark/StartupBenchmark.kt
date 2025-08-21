@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  21/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
 
 
 @RunWith(AndroidJUnit4::class)
-class ExampleStartupBenchmark {
+class StartupBenchmark {
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 

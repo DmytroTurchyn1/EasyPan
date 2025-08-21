@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  21/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +45,7 @@ import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.core.domain.StepType
 import com.cook.easypan.core.presentation.KeepScreenOn
+import com.cook.easypan.core.util.Launcher.stopTimerService
 import com.cook.easypan.easypan.presentation.recipe_step.components.AlertCancelRecipeDialog
 import com.cook.easypan.easypan.presentation.recipe_step.components.BottomBarRecipeStep
 import com.cook.easypan.easypan.presentation.recipe_step.components.ContentStepRecipe
@@ -75,7 +77,7 @@ private fun RecipeStepScreen(
     state: RecipeStepState,
     onAction: (RecipeStepAction) -> Unit,
 ) {
-
+    val context = LocalContext.current
     if (state.isDialogShowing) {
         AlertCancelRecipeDialog(
             icon = Icons.Default.Info,
@@ -103,6 +105,9 @@ private fun RecipeStepScreen(
                 var isFinishEnabled by remember { mutableStateOf(true) }
                 BottomBarRecipeStep(
                     onNextClick = {
+                        if (state.recipe.instructions[state.step].stepType == StepType.TIMER) {
+                            stopTimerService(context)
+                        }
                         if (state.step < state.recipe.instructions.size - 1) {
                             onAction(RecipeStepAction.OnNextClick)
                         } else {

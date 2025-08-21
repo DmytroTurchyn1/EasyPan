@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  21/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -180,7 +180,7 @@ private fun ProfileScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = stringResource(R.string.settings_title),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,

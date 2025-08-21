@@ -1,5 +1,5 @@
 <!--
-  ~ Created  15/8/2025
+  ~ Created  21/8/2025
   ~
   ~ Copyright (c) 2025 . All rights reserved.
   ~ Licensed under the MIT License.
@@ -64,4 +64,6 @@
     <string name="add_to_favorite_button_description">Add to favorite</string>
     <string name="delete_from_favorite_button_description">Delete from favorite</string>
     <string name="cooked_recipes_count">This is your %d cooked recipe!</string>
+    <string name="countdown_timer_notification_finished">00:00 Countdown Timer finished you can move to the next step</string>
+    <string name="countdown_timer_notification_title">Countdown Timer</string>
 </resources>
