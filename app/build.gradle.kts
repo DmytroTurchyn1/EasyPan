@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  22/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -115,6 +115,9 @@ dependencies {
     implementation(libs.bundles.coil)
 
     debugImplementation(libs.bundles.compose.debug)
+
+    implementation(libs.firebase.appdistribution.api.ktx)
+    implementation(libs.firebase.appdistribution)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.android.test)

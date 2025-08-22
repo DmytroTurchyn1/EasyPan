@@ -1,5 +1,5 @@
 /*
- * Created  18/8/2025
+ * Created  22/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -52,6 +52,7 @@ class DefaultUserRepository(
         } catch (e: Exception) {
             Result.Failure(e.message ?: "Unknown error")
         }
+
     }
 
     override suspend fun getFavoriteRecipes(): List<Recipe> {
@@ -63,6 +64,7 @@ class DefaultUserRepository(
         } catch (e: Exception) {
             throw e
         }
+
     }
 
     override suspend fun addRecipeToFavorites(
@@ -79,6 +81,7 @@ class DefaultUserRepository(
         } catch (e: Exception) {
             Result.Failure(e.message ?: "Unknown error")
         }
+
     }
 
     override suspend fun deleteRecipeFromFavorites(recipeId: String): Result {
@@ -99,20 +102,24 @@ class DefaultUserRepository(
         } catch (e: Exception) {
             Result.Failure(e.message ?: "Unknown error")
         }
+
     }
 
     override suspend fun isRecipeFavorite(recipeId: String): Boolean {
         val userId = googleAuthClient.getSignedInUser()?.userId
             ?: throw IllegalStateException("User not logged in")
         return firestoreDataSource.isRecipeFavorite(userId = userId, recipeId = recipeId)
+
     }
 
     override suspend fun updateKeepScreenOnDataStore(value: Boolean): Boolean {
+
         context.dataStore.updateData { settings ->
             settings.copy(
                 keepScreenOn = value
             )
         }
+
         return value
     }
 
@@ -131,6 +138,7 @@ class DefaultUserRepository(
             )
             baseUser
         }
+
     }
 
 

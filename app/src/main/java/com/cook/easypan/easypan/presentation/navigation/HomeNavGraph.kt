@@ -1,5 +1,5 @@
 /*
- * Created  13/8/2025
+ * Created  22/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -18,6 +18,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -74,7 +76,11 @@ fun HomeNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Route.Home
+        startDestination = Route.Home,
+        modifier = Modifier
+            .semantics {
+                testTagsAsResourceId = true
+            }
     ) {
         composable<Route.Home> {
             val viewModel = koinViewModel<HomeViewModel>()

@@ -1,5 +1,7 @@
 [versions]
 agp = "8.12.1"
+firebaseAppdistribution = "16.0.0-beta16"
+firebaseAppdistributionApiKtx = "16.0.0-beta15"
 kotlin = "2.2.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -68,6 +70,9 @@ firebase-crashlytics-ndk = { group = "com.google.firebase", name = "firebase-cra
 firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
 firebase-inapp-messaging = { module = "com.google.firebase:firebase-inappmessaging-display", version.ref = "inappMessaging" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "messaging" }
+firebase-appdistribution = { module = "com.google.firebase:firebase-appdistribution", version.ref = "firebaseAppdistribution" }
+firebase-appdistribution-api-ktx = { module = "com.google.firebase:firebase-appdistribution-api-ktx", version.ref = "firebaseAppdistributionApiKtx" }
+
 
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
