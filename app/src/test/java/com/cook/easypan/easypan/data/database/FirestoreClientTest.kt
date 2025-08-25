@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -174,7 +174,7 @@ class FirestoreClientTest {
             )
         } returns completedSetTask
 
-        firestoreClient.updateUserData(userId, userData)
+        firestoreClient.incrementCookedRecipes(userId)
 
         assertEquals(userData, capturedUser.captured)
         verify(exactly = 1) { firebaseFirestore.collection(USER_DATA_COLLECTION) }

@@ -1,5 +1,5 @@
 /*
- * Created  18/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -119,15 +119,14 @@ class DefaultUserRepositoryTest {
     @Test
     fun `updateUserData successfully updates user data`() = runBlocking {
         val testUserData = UserData(recipesCooked = 10)
-        coEvery { firestoreDataSource.updateUserData(any(), any()) } returns Unit
+        coEvery { firestoreDataSource.incrementCookedRecipes(any(), any()) } returns Unit
 
-        val result = defaultUserRepository.updateUserData(testUserData)
+        val result = defaultUserRepository.updateUserData()
 
         assertEquals(Result.Success, result)
         coVerify {
-            firestoreDataSource.updateUserData(
-                any(),
-                UserDto(recipesCooked = 10)
+            firestoreDataSource.incrementCookedRecipes(
+                any()
             )
         }
     }
@@ -136,7 +135,7 @@ class DefaultUserRepositoryTest {
     fun `updateUserData handles Firestore error during update`() = runBlocking {
         val testUserData = UserData(recipesCooked = 10)
         coEvery {
-            firestoreDataSource.updateUserData(
+            firestoreDataSource.incrementCookedRecipes(
                 any(),
                 any()
             )
@@ -151,7 +150,7 @@ class DefaultUserRepositoryTest {
     fun `updateUserData handles unknown error during update`() = runBlocking {
         val testUserData = UserData(recipesCooked = 10)
         coEvery {
-            firestoreDataSource.updateUserData(
+            firestoreDataSource.incrementCookedRecipes(
                 any(),
                 any()
             )

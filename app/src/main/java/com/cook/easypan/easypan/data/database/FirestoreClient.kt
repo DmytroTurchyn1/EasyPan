@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -16,6 +16,7 @@ import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
@@ -24,35 +25,16 @@ class FirestoreClient(
     private val firestore: FirebaseFirestore
 ) {
     private suspend fun documentExists(documentRef: DocumentReference): Boolean {
-        val snap = documentRef.get().await()
-        return snap.exists()
+        val snapshot = documentRef.get().await()
+        return snapshot.exists()
     }
 
     private suspend fun getCollection(collectionName: String): List<DocumentSnapshot> {
-        return try {
-            firestore.collection(collectionName)
-                .get()
-                .await()
-                .documents
-        } catch (e: Exception) {
-            throw e
-        }
-    }
+        return firestore.collection(collectionName)
+            .get()
+            .await()
+            .documents
 
-    private suspend fun addDocument(
-        documentId: String,
-        collectionName: String,
-        data: UserDto
-    ) {
-        try {
-            firestore.collection(collectionName)
-                .document(documentId)
-                .set(data, SetOptions.merge())
-                .await()
-
-        } catch (e: Exception) {
-            throw e
-        }
     }
 
     suspend fun getRecipes(): List<RecipeDto> {
@@ -68,38 +50,24 @@ class FirestoreClient(
     }
 
     suspend fun getUserData(userId: String): UserDto {
-        val user = firestore.collection(USER_DATA_COLLECTION).document(userId)
-        return try {
-            user
-                .get()
-                .await()
-                .toObject(UserDto::class.java) ?: UserDto(0)
-
-        } catch (e: Exception) {
-            Log.e("FirestoreClient", "Error getting user data: ${e.message}")
-            addDocument(
-                documentId = userId,
-                collectionName = USER_DATA_COLLECTION,
-                data = UserDto(0)
-            )
-            return UserDto(0)
-        }
+        val userRef = firestore.collection(USER_DATA_COLLECTION).document(userId)
+        return firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(userRef)
+            if (!snapshot.exists()) {
+                val newUser = UserDto(0)
+                transaction.set(userRef, newUser, SetOptions.merge())
+                newUser
+            } else {
+                snapshot.toObject(UserDto::class.java) ?: UserDto(0)
+            }
+        }.await()
     }
 
-    suspend fun updateUserData(
-        userId: String,
-        userData: UserDto
-    ) {
-        return try {
-            addDocument(
-                documentId = userId,
-                collectionName = USER_DATA_COLLECTION,
-                data = userData
-            )
-        } catch (e: Exception) {
-            Log.e("FirestoreClient", "Error updating user data: ${e.message}")
-            throw e
-        }
+    suspend fun incrementCookedRecipes(userId: String) {
+        firestore.collection(USER_DATA_COLLECTION)
+            .document(userId)
+            .update("recipesCooked", FieldValue.increment(1))
+            .await()
     }
 
     suspend fun getFavoriteRecipes(userId: String): List<RecipeDto> {

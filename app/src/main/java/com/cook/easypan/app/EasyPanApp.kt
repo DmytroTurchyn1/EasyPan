@@ -1,5 +1,5 @@
 /*
- * Created  22/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -37,16 +37,14 @@ class EasyPanApp : Application() {
 
         Firebase.initialize(this)
         if (BuildConfig.DEBUG) {
+            Firebase.appDistribution.updateIfNewReleaseAvailable()
+            Firebase.appDistribution.showFeedbackNotification(
+                "Send feedback",
+                InterruptionLevel.DEFAULT
+            )
             Firebase.appCheck.installAppCheckProviderFactory(
                 DebugAppCheckProviderFactory.getInstance()
             )
-            if (Firebase.appDistribution.isTesterSignedIn) {
-                Firebase.appDistribution.updateIfNewReleaseAvailable()
-                Firebase.appDistribution.showFeedbackNotification(
-                    "Send feedback",
-                    InterruptionLevel.DEFAULT
-                )
-            }
         } else {
             Firebase.appCheck.installAppCheckProviderFactory(
                 PlayIntegrityAppCheckProviderFactory.getInstance(),

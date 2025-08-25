@@ -1,5 +1,5 @@
 <!--
-  ~ Created  21/8/2025
+  ~ Created  25/8/2025
   ~
   ~ Copyright (c) 2025 . All rights reserved.
   ~ Licensed under the MIT License.
@@ -66,4 +66,5 @@
     <string name="cooked_recipes_count">This is your %d cooked recipe!</string>
     <string name="countdown_timer_notification_finished">00:00 Countdown Timer finished you can move to the next step</string>
     <string name="countdown_timer_notification_title">Countdown Timer</string>
+    <string name="user_image_description">User Image</string>
 </resources>

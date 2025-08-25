@@ -1,5 +1,5 @@
 /*
- * Created  22/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -12,10 +12,13 @@ import android.content.Context
 import android.util.Log
 import com.cook.easypan.app.dataStore
 import com.cook.easypan.core.domain.Result
+import com.cook.easypan.core.util.FAVORITES_CACHE_TIMEOUT
+import com.cook.easypan.core.util.USER_DATA_CACHE_TIMEOUT
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.mappers.toRecipe
 import com.cook.easypan.easypan.data.mappers.toRecipeDto
+import com.cook.easypan.easypan.data.mappers.toUser
 import com.cook.easypan.easypan.data.mappers.toUserData
 import com.cook.easypan.easypan.data.mappers.toUserDto
 import com.cook.easypan.easypan.domain.model.Recipe
@@ -23,6 +26,7 @@ import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.model.UserData
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class DefaultUserRepository(
@@ -30,24 +34,22 @@ class DefaultUserRepository(
     private val googleAuthClient: AuthClient,
     private val context: Context
 ) : UserRepository {
-
     override suspend fun getUserData(userId: String): UserData {
         return firestoreDataSource
             .getUserData(userId)
             .toUserData()
     }
 
-    override suspend fun updateUserData(
-        userData: UserData
-    ): Result {
+    override suspend fun updateUserData(): Result {
         val userId = googleAuthClient.getSignedInUser()?.userId
             ?: throw IllegalStateException("User not logged in")
         return try {
-            firestoreDataSource.updateUserData(
-                userId = userId,
-                userData = userData
-                    .toUserDto()
-            )
+            firestoreDataSource.incrementCookedRecipes(userId = userId)
+            context.dataStore.updateData { appSettings ->
+                appSettings.copy(
+                    lastCacheTimeUserData = 0L
+                )
+            }
             Result.Success
         } catch (e: Exception) {
             Result.Failure(e.message ?: "Unknown error")
@@ -58,9 +60,24 @@ class DefaultUserRepository(
     override suspend fun getFavoriteRecipes(): List<Recipe> {
         val userId = googleAuthClient.getSignedInUser()?.userId
             ?: throw IllegalStateException("User not logged in")
+        val lastCacheTimeFavorites = context.dataStore.data.first().lastCacheTimeFavorites
+        if (System.currentTimeMillis() - lastCacheTimeFavorites < FAVORITES_CACHE_TIMEOUT) {
+            val cachedRecipes = context.dataStore.data.first().cacheFavoriteRecipes
+            if (cachedRecipes.isNotEmpty()) {
+                Log.d("DefaultUserRepository", "Returning recently cached favorite recipes")
+                return cachedRecipes.map { it.toRecipe() }
+            }
+        }
         return try {
-            firestoreDataSource.getFavoriteRecipes(userId)
-                .map { it.toRecipe() }
+            val favoriteList = firestoreDataSource.getFavoriteRecipes(userId)
+            context.dataStore.updateData { appSettings ->
+                appSettings.copy(
+                    cacheFavoriteRecipes = favoriteList,
+                    lastCacheTimeFavorites = System.currentTimeMillis()
+                )
+            }
+            Log.d("DefaultUserRepository", "Caching favorite recipes")
+            favoriteList.map { it.toRecipe() }
         } catch (e: Exception) {
             throw e
         }
@@ -77,6 +94,11 @@ class DefaultUserRepository(
                 userId = userId,
                 recipe = recipe.toRecipeDto()
             )
+            context.dataStore.updateData { appSettings ->
+                appSettings.copy(
+                    lastCacheTimeFavorites = 0L
+                )
+            }
             Result.Success
         } catch (e: Exception) {
             Result.Failure(e.message ?: "Unknown error")
@@ -93,6 +115,11 @@ class DefaultUserRepository(
                 recipeId = recipeId
             )
             if (deleteFavoriteRecipe) {
+                context.dataStore.updateData { appSettings ->
+                    appSettings.copy(
+                        lastCacheTimeFavorites = 0L
+                    )
+                }
                 Result.Success
             } else {
                 Result.Failure("Failed to delete recipe from favorites")
@@ -128,9 +155,28 @@ class DefaultUserRepository(
 
     override suspend fun getCurrentUser(): User? {
         val baseUser = googleAuthClient.getSignedInUser() ?: return null
+        val lastCacheTimeUserData = context.dataStore.data.first().lastCacheTimeUserData
+        val currentTime = System.currentTimeMillis()
+        if (System.currentTimeMillis() - lastCacheTimeUserData < USER_DATA_CACHE_TIMEOUT) {
+            val cachedUser = context.dataStore.data.first().toUser()
+            if (cachedUser.userId == baseUser.userId) {
+                Log.d("DefaultUserRepository", "Returning recently cached user: $cachedUser")
+                return cachedUser
+            }
+        }
+
         return try {
             val userData = getUserData(baseUser.userId)
-            baseUser.copy(data = userData)
+            val userWithData = baseUser.copy(data = userData)
+            context.dataStore.updateData { appSettings ->
+                appSettings.copy(
+                    userName = userWithData.username,
+                    userPhotoUrl = userWithData.profilePictureUrl,
+                    cachedUserData = userData.toUserDto(),
+                    lastCacheTimeUserData = currentTime
+                )
+            }
+            userWithData
         } catch (e: Exception) {
             Log.e(
                 "DefaultUserRepository",

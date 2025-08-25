@@ -1,5 +1,5 @@
 /*
- * Created  18/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -13,7 +13,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.cook.easypan.easypan.domain.model.UserData
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.cook.easypan.easypan.presentation.navigation.Route
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,11 +57,7 @@ class RecipeFinishViewModel(
                         isLoading = false
                     )
                 }
-                userRepository.updateUserData(
-                    userData = UserData(
-                        recipesCooked = recipesCooked + 1,
-                    )
-                )
+                launch { userRepository.updateUserData() }
 
             } catch (e: Exception) {
                 Log.e("Recipe Finish Screen", "Error updating user data: ${e.message}")

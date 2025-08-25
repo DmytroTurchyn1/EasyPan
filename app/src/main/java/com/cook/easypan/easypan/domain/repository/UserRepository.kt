@@ -1,5 +1,5 @@
 /*
- * Created  18/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     suspend fun getUserData(userId: String): UserData
-    suspend fun updateUserData(userData: UserData): Result
+    suspend fun updateUserData(): Result
     suspend fun getFavoriteRecipes(): List<Recipe>
     suspend fun addRecipeToFavorites(recipe: Recipe): Result
     suspend fun deleteRecipeFromFavorites(recipeId: String): Result

@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -63,7 +63,8 @@ class RecipeStepViewModel(
                 _state.update {
                     it.copy(
                         step = it.step + 1,
-                        progressBar = it.progressBar + step
+                        progressBar = it.progressBar + step,
+                        timerRunning = false
                     )
                 }
             }
@@ -73,7 +74,8 @@ class RecipeStepViewModel(
                     _state.update {
                         it.copy(
                             step = it.step - 1,
-                            progressBar = it.progressBar - step
+                            progressBar = it.progressBar - step,
+                            timerRunning = false
                         )
                     }
                 }
