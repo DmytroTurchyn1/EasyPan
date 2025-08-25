@@ -17,7 +17,6 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
@@ -25,7 +24,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.unmockkAll
 import io.mockk.verify
@@ -89,72 +87,58 @@ class FirestoreClientTest {
     fun `getUserData should return mapped UserDto when user exists`() = runBlocking {
         val userId = "testUserId"
         val expectedUser = UserDto(recipesCooked = 3)
-        val completedTask = mockk<Task<DocumentSnapshot>>(relaxed = true) {
+
+        val completedTransactionTask = mockk<Task<UserDto>>(relaxed = true) {
             every { isComplete } returns true
             every { isSuccessful } returns true
-            every { result } returns mockDocument
+            every { result } returns expectedUser
             every { isCanceled } returns false
             every { exception } returns null
         }
 
         every { firebaseFirestore.collection(USER_DATA_COLLECTION) } returns mockCollectionRef
         every { mockCollectionRef.document(userId) } returns mockDocumentRef
-        every { mockDocumentRef.get() } returns completedTask
-        every { mockDocument.exists() } returns true
-        every { mockDocument.toObject(UserDto::class.java) } returns expectedUser
+        every { firebaseFirestore.runTransaction<UserDto>(any()) } returns completedTransactionTask
 
         val result = firestoreClient.getUserData(userId)
 
         assertEquals(3, result.recipesCooked)
+        verify(exactly = 1) { firebaseFirestore.collection(USER_DATA_COLLECTION) }
+        verify(exactly = 1) { mockCollectionRef.document(userId) }
+        verify(exactly = 1) { firebaseFirestore.runTransaction<UserDto>(any()) }
     }
 
     @Test
     fun `getUserData should create new user when user does not exist`() = runBlocking {
         val userId = "missingUser"
+        val newUser = UserDto(recipesCooked = 0)
 
-        val completedGetTask = mockk<Task<DocumentSnapshot>>(relaxed = true) {
+        val completedTransactionTask = mockk<Task<UserDto>>(relaxed = true) {
             every { isComplete } returns true
             every { isSuccessful } returns true
-            every { result } returns mockDocument
-            every { isCanceled } returns false
-            every { exception } returns null
-        }
-        val completedSetTask = mockk<Task<Void>>(relaxed = true) {
-            every { isComplete } returns true
-            every { isSuccessful } returns true
-            every { result } returns null
+            every { result } returns newUser
             every { isCanceled } returns false
             every { exception } returns null
         }
 
-        val capturedUser = slot<UserDto>()
-        val capturedOptions = slot<SetOptions>()
-
+        // Mock the collection and document calls that happen before runTransaction
         every { firebaseFirestore.collection(USER_DATA_COLLECTION) } returns mockCollectionRef
         every { mockCollectionRef.document(userId) } returns mockDocumentRef
-        every { mockDocumentRef.get() } returns completedGetTask
-        every { mockDocument.exists() } returns false
-        every {
-            mockDocumentRef.set(
-                capture(capturedUser),
-                capture(capturedOptions)
-            )
-        } returns completedSetTask
+        every { firebaseFirestore.runTransaction<UserDto>(any()) } returns completedTransactionTask
 
         val result = firestoreClient.getUserData(userId)
 
         assertEquals(0, result.recipesCooked)
-        assertEquals(UserDto(0), capturedUser.captured)
-        verify(exactly = 1) { mockDocumentRef.get() }
-        verify(exactly = 1) { mockDocumentRef.set(any<UserDto>(), any<SetOptions>()) }
+        verify(exactly = 1) { firebaseFirestore.collection(USER_DATA_COLLECTION) }
+        verify(exactly = 1) { mockCollectionRef.document(userId) }
+        verify(exactly = 1) { firebaseFirestore.runTransaction<UserDto>(any()) }
     }
 
     @Test
     fun `writes to Users collection with correct Id and Data`() = runBlocking {
         val userId = "user123"
-        val userData = UserDto(recipesCooked = 7)
 
-        val completedSetTask = mockk<Task<Void>>(relaxed = true) {
+        val completedUpdateTask = mockk<Task<Void>>(relaxed = true) {
             every { isComplete } returns true
             every { isSuccessful } returns true
             every { result } returns null
@@ -162,24 +146,15 @@ class FirestoreClientTest {
             every { exception } returns null
         }
 
-        val capturedUser = slot<UserDto>()
-        val capturedOptions = slot<SetOptions>()
-
         every { firebaseFirestore.collection(USER_DATA_COLLECTION) } returns mockCollectionRef
         every { mockCollectionRef.document(userId) } returns mockDocumentRef
-        every {
-            mockDocumentRef.set(
-                capture(capturedUser),
-                capture(capturedOptions)
-            )
-        } returns completedSetTask
+        every { mockDocumentRef.update("recipesCooked", any()) } returns completedUpdateTask
 
         firestoreClient.incrementCookedRecipes(userId)
 
-        assertEquals(userData, capturedUser.captured)
         verify(exactly = 1) { firebaseFirestore.collection(USER_DATA_COLLECTION) }
         verify(exactly = 1) { mockCollectionRef.document(userId) }
-        verify(exactly = 1) { mockDocumentRef.set(any<UserDto>(), any<SetOptions>()) }
+        verify(exactly = 1) { mockDocumentRef.update("recipesCooked", any()) }
     }
 
 }
