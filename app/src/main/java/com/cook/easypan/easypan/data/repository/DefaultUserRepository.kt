@@ -1,5 +1,5 @@
 /*
- * Created  25/8/2025
+ * Created  26/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -45,9 +45,15 @@ class DefaultUserRepository(
             ?: throw IllegalStateException("User not logged in")
         return try {
             firestoreDataSource.incrementCookedRecipes(userId = userId)
+
+            val currentSettings = context.dataStore.data.first()
+            val updatedUserData = currentSettings.cachedUserData?.copy(
+                recipesCooked = currentSettings.cachedUserData.recipesCooked + 1
+            )
+
             context.dataStore.updateData { appSettings ->
                 appSettings.copy(
-                    lastCacheTimeUserData = 0L
+                    cachedUserData = updatedUserData
                 )
             }
             Result.Success
@@ -96,7 +102,7 @@ class DefaultUserRepository(
             )
             context.dataStore.updateData { appSettings ->
                 appSettings.copy(
-                    lastCacheTimeFavorites = 0L
+                    cacheFavoriteRecipes = appSettings.cacheFavoriteRecipes + recipe.toRecipeDto(),
                 )
             }
             Result.Success
@@ -117,7 +123,7 @@ class DefaultUserRepository(
             if (deleteFavoriteRecipe) {
                 context.dataStore.updateData { appSettings ->
                     appSettings.copy(
-                        lastCacheTimeFavorites = 0L
+                        cacheFavoriteRecipes = appSettings.cacheFavoriteRecipes.filterNot { it.id == recipeId },
                     )
                 }
                 Result.Success
@@ -166,10 +172,12 @@ class DefaultUserRepository(
         }
 
         return try {
+            Log.d("DefaultUserRepository", "Returning fetched user")
             val userData = getUserData(baseUser.userId)
             val userWithData = baseUser.copy(data = userData)
             context.dataStore.updateData { appSettings ->
                 appSettings.copy(
+                    userId = userWithData.userId,
                     userName = userWithData.username,
                     userPhotoUrl = userWithData.profilePictureUrl,
                     cachedUserData = userData.toUserDto(),

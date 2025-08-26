@@ -1,5 +1,5 @@
 /*
- * Created  25/8/2025
+ * Created  26/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -15,6 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AppSettings(
     val keepScreenOn: Boolean = true,
+    val userId: String? = null,
     val userName: String? = null,
     val userPhotoUrl: String? = null,
     val cachedUserData: UserDto? = null,
