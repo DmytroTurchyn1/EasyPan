@@ -1,5 +1,5 @@
 /*
- * Created  25/8/2025
+ * Created  8/9/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -105,7 +105,7 @@ private fun RecipeStepScreen(
                 var isFinishEnabled by remember { mutableStateOf(true) }
                 BottomBarRecipeStep(
                     onNextClick = {
-                        if (state.recipe.instructions[state.step].stepType == StepType.TIMER && state.timerRunning) {
+                        if (state.recipe.instructions[state.step].stepType == StepType.TIMER) {
                             stopTimerService(context)
                         }
                         if (state.step < state.recipe.instructions.size - 1) {

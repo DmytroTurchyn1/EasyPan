@@ -1,5 +1,5 @@
 /*
- * Created  21/8/2025
+ * Created  8/9/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -15,37 +15,29 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.os.PowerManager
-import android.os.SystemClock
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.cook.easypan.R
+import com.cook.easypan.core.CountdownTimer
 import com.cook.easypan.core.util.CHANNEL_ID_TIMER_SERVICE
 import com.cook.easypan.core.util.CHANNEL_NAME_TIMER_SERVICE
 import com.cook.easypan.core.util.formatMsToMS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-
 class CountdownTimerService : Service() {
 
     companion object {
-        const val EXTRA_DURATION_MS = "extra_duration_ms" // pass duration in milliseconds
+        const val EXTRA_DURATION_MS = "extra_duration_ms"
+        private const val TAG = "CountdownTimerService"
     }
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private var timerJob: Job? = null
-
-    // countdown state
-    private var totalDurationMs: Long = 0L      // initial duration (optional)
-    private var remainingMs: Long = 0L          // remaining ms to count down
-    private var endTime: Long = 0L      // SystemClock.elapsedRealtime() + remainingMs
-    private var running = false
-
-    // wakelock
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private lateinit var wakeLock: PowerManager.WakeLock
 
     override fun onBind(p0: Intent?): IBinder? = null
@@ -57,6 +49,11 @@ class CountdownTimerService : Service() {
             PowerManager.PARTIAL_WAKE_LOCK,
             "${packageName}:CountdownTimer"
         )
+        createNotificationChannel()
+        listenToTimer()
+    }
+
+    private fun createNotificationChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID_TIMER_SERVICE,
             CHANNEL_NAME_TIMER_SERVICE,
@@ -66,22 +63,45 @@ class CountdownTimerService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
+    private fun listenToTimer() {
+        scope.launch {
+            var lastTick: Long? = null
+            CountdownTimer.globalTimerFlow()
+                .onEach { remainingSeconds ->
+                    lastTick = remainingSeconds
+                    val remainingMs = remainingSeconds * 1000L
+                    // Here is the logging you requested
+                    Log.d(TAG, "Remaining time: ${formatMsToMS(remainingMs)}")
+                    updateNotification(formatMsToMS(remainingMs))
+                }
+                .onCompletion {
+                    // Only treat as finished if the flow reached 0 naturally
+                    val finishedNaturally = (lastTick == 0L)
+                    Log.d(TAG, "Timer completed. finishedNaturally=${'$'}finishedNaturally")
+                    if (finishedNaturally) {
+                        onTimerFinished()
+                    }
+                }
+                .catch { e ->
+                    Log.e(TAG, "Error in timer flow", e)
+                }
+                .collect {} // Start collecting the flow
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             Actions.START.name -> {
                 val duration = intent.getLongExtra(EXTRA_DURATION_MS, -1L)
-                if (duration >= 0L) {
-                    totalDurationMs = duration
-                    remainingMs = duration
+                if (duration > 0L) {
+                    start(duration)
                 }
-
-                start(duration)
             }
 
-            Actions.PAUSE.name -> pause()
+            Actions.PAUSE.name -> pause() // Note: CountdownTimer just stops.
             Actions.STOP.name -> stop()
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     private fun buildNotification(contentText: String): Notification {
@@ -94,66 +114,37 @@ class CountdownTimerService : Service() {
             .build()
     }
 
-    private fun start(requestedDurationMs: Long = -1L) {
-        if (running) return
+    private fun start(requestedDurationMs: Long) {
+        if (CountdownTimer.isRunning.value) return
 
-        if (remainingMs <= 0L) return
-
-
-        // compute absolute end time in elapsedRealtime domain
-        endTime = SystemClock.elapsedRealtime() + remainingMs
-        running = true
-
-        // acquire wakelock (short timeout to avoid leaks). adjust timeout as needed.
-        if (!wakeLock.isHeld) wakeLock.acquire(requestedDurationMs)
-
-        // start foreground with initial notification
-        startForeground(1, buildNotification(formatMsToMS(remainingMs)))
-
-        // update loop
-        timerJob?.cancel()
-        timerJob = scope.launch {
-            while (isActive && running) {
-                val restTime = endTime - SystemClock.elapsedRealtime()
-                if (restTime <= 0L) {
-                    // finished
-                    updateNotification(getString(R.string.countdown_timer_notification_finished))
-                    onTimerFinished()
-                    break
-                } else {
-                    updateNotification(formatMsToMS(restTime))
-                }
-                delay(1000L)
-            }
+        // Acquire wakelock
+        if (!wakeLock.isHeld) {
+            wakeLock.acquire(requestedDurationMs)
         }
+
+        // Start foreground with initial notification
+        startForeground(1, buildNotification(formatMsToMS(requestedDurationMs)))
+
+        // Start the global timer
+        CountdownTimer.startGlobal(requestedDurationMs)
     }
 
     private fun pause() {
-        if (!running) return
-        // compute remaining and stop loop
-        remainingMs = (endTime - SystemClock.elapsedRealtime()).coerceAtLeast(0L)
-        running = false
-        timerJob?.cancel()
+        // The global timer does not support pause, so we stop it.
+        // A resume would start a new timer.
+        CountdownTimer.stop()
         if (wakeLock.isHeld) wakeLock.release()
-
-        // show paused notification
-        updateNotification("Paused: ${formatMsToMS(remainingMs)}")
+        updateNotification("Paused")
     }
 
     private fun stop() {
-        running = false
-        timerJob?.cancel()
-        remainingMs = 0L
-        totalDurationMs = 0L
-        if (wakeLock.isHeld) wakeLock.release()
+        CountdownTimer.stop()
         stopSelf()
     }
 
     private fun onTimerFinished() {
-        // release wakelock and stop service
         if (wakeLock.isHeld) wakeLock.release()
 
-        // optional: show a final notification or trigger other behavior
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val notification = NotificationCompat.Builder(this, CHANNEL_ID_TIMER_SERVICE)
             .setSmallIcon(R.drawable.notification_ic)
@@ -161,8 +152,11 @@ class CountdownTimerService : Service() {
             .setContentText("00:00")
             .setAutoCancel(true)
             .build()
-        notificationManager.notify(1 + 1, notification)
-
+        notificationManager.notify(
+            2,
+            notification
+        ) // Use a different ID to show a separate completion notification
+        
         stopSelf()
     }
 
@@ -171,9 +165,7 @@ class CountdownTimerService : Service() {
         nm.notify(1, buildNotification(contentText))
     }
 
-
     override fun onDestroy() {
-        timerJob?.cancel()
         scope.cancel()
         if (wakeLock.isHeld) wakeLock.release()
         super.onDestroy()

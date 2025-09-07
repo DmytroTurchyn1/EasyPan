@@ -1,5 +1,5 @@
 /*
- * Created  16/8/2025
+ * Created  8/9/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -61,7 +61,7 @@ fun RootNavGraph() {
             startDestination = if (userRepository.isUserSignedIn()) {
                 Route.AppGraph
             } else {
-                Route.AuthGraph
+                Route.AppGraph
             }
         ) {
             authNavGraph(
