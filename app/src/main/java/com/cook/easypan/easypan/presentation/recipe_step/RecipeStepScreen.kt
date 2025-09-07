@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
+import com.cook.easypan.core.CountdownTimer
 import com.cook.easypan.core.domain.StepType
 import com.cook.easypan.core.presentation.KeepScreenOn
 import com.cook.easypan.core.util.Launcher.stopTimerService
@@ -91,6 +93,7 @@ private fun RecipeStepScreen(
     }
 
     if (state.recipe != null) {
+        val runningTimer by CountdownTimer.isRunning.collectAsState(initial = false)
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -105,7 +108,7 @@ private fun RecipeStepScreen(
                 var isFinishEnabled by remember { mutableStateOf(true) }
                 BottomBarRecipeStep(
                     onNextClick = {
-                        if (state.recipe.instructions[state.step].stepType == StepType.TIMER) {
+                        if (runningTimer) {
                             stopTimerService(context)
                         }
                         if (state.step < state.recipe.instructions.size - 1) {
