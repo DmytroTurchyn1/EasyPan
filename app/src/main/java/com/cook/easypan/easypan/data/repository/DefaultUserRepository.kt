@@ -106,6 +106,7 @@ class DefaultUserRepository(
             context.dataStore.updateData { appSettings ->
                 appSettings.copy(
                     cacheFavoriteRecipes = appSettings.cacheFavoriteRecipes + recipe.toRecipeDto(),
+                    lastCacheTimeFavorites = System.currentTimeMillis()
                 )
             }
             Result.Success
@@ -127,6 +128,7 @@ class DefaultUserRepository(
                 context.dataStore.updateData { appSettings ->
                     appSettings.copy(
                         cacheFavoriteRecipes = appSettings.cacheFavoriteRecipes.filterNot { it.id == recipeId },
+                        lastCacheTimeFavorites = System.currentTimeMillis()
                     )
                 }
                 Result.Success
