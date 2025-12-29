@@ -139,6 +139,8 @@ class CountdownTimerService : Service() {
 
     private fun stop() {
         CountdownTimer.stop()
+        if (wakeLock.isHeld) wakeLock.release()
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
 

@@ -34,8 +34,8 @@ android {
         applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 36
-        versionCode = 17
-        versionName = "v1.0.0-beta.4"
+        versionCode = 18
+        versionName = "v1.0.0-beta.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "CLIENT_ID", "${keystoreProperties.getProperty("clientId")}")
@@ -58,7 +58,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            signingConfigs.findByName("release")?.let { signingConfig = it }
+                ?: logger.warn("Release signingConfig not configured; skipping assignment. Configure keystore.properties to enable signed release builds.")
         }
         getByName("debug") {
             isMinifyEnabled = false

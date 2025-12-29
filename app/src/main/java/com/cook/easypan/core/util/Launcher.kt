@@ -41,7 +41,7 @@ object Launcher {
         val intent = Intent(context, CountdownTimerService::class.java).apply {
             action = CountdownTimerService.Actions.STOP.name
         }
-        context.startForegroundService(intent)
+        context.startService(intent)
     }
 
     fun pauseTimerService(context: Context) {

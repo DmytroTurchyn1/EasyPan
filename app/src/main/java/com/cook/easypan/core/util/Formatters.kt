@@ -16,5 +16,5 @@ fun formatMsToMS(ms: Long): String {
     val s = (ms / 1000).coerceAtLeast(0L)
     val minutes = s / 60
     val seconds = s % 60
-    return String.format(locale = Locale.ENGLISH, "%02d:%02d", minutes, seconds)
+    return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds)
 }

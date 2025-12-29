@@ -31,6 +31,9 @@ import org.koin.java.KoinJavaComponent.inject
 fun RootNavGraph() {
     val navController = rememberNavController()
     val userRepository: UserRepository by inject(UserRepository::class.java)
+    val startDestination = remember {
+        if (userRepository.isUserSignedIn()) Route.AppGraph else Route.AppGraph
+    }
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     ObserveAsEvents(
@@ -58,11 +61,7 @@ fun RootNavGraph() {
         NavHost(
 
             navController = navController,
-            startDestination = if (userRepository.isUserSignedIn()) {
-                Route.AppGraph
-            } else {
-                Route.AppGraph
-            }
+            startDestination = startDestination
         ) {
             authNavGraph(
                 navController = navController,

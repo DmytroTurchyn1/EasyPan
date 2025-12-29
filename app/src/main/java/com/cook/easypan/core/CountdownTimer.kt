@@ -42,14 +42,14 @@ object CountdownTimer {
 
         job?.cancel()
         if (durationMs <= 0L) {
-            scope.launch {
-                _remainingSeconds.value = 0L
-                _remainingSeconds.value = null
-            }
+
+            _remainingSeconds.value = 0L
+            _remainingSeconds.value = null
+
             job = null
             return
         }
-        job = scope.launch {
+        val newJob = scope.launch {
             val end = SystemClock.elapsedRealtime() + durationMs
             while (isActive) {
                 val now = SystemClock.elapsedRealtime()
@@ -61,9 +61,15 @@ object CountdownTimer {
                 val delayMs = if (nextTickRemainder == 0L) 1000L else nextTickRemainder
                 delay(delayMs)
             }
-            _remainingSeconds.value = 0L
-            _remainingSeconds.value = null
         }
+        newJob.invokeOnCompletion { cause ->
+            if (cause == null) {
+                _remainingSeconds.value = 0L
+                _remainingSeconds.value = null
+            }
+        }
+        job = newJob
+
     }
 
     fun stop() {

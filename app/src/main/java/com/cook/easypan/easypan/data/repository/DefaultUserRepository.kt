@@ -47,9 +47,12 @@ class DefaultUserRepository(
             firestoreDataSource.incrementCookedRecipes(userId = userId)
 
             val currentSettings = context.dataStore.data.first()
-            val updatedUserData = currentSettings.cachedUserData?.copy(
-                recipesCooked = currentSettings.cachedUserData.recipesCooked + 1
+            val updatedUserData = currentSettings.cachedUserData?.let {
+                it.copy(
+                    recipesCooked = it.recipesCooked + 1//TODO: check if it works
             )
+            }
+
 
             context.dataStore.updateData { appSettings ->
                 appSettings.copy(

@@ -57,8 +57,8 @@ class RecipeFinishViewModel(
                         isLoading = false
                     )
                 }
-                launch { userRepository.updateUserData() }
-
+                //launch { userRepository.updateUserData() } TODO: Check if this is needed
+                userRepository.updateUserData()
             } catch (e: Exception) {
                 Log.e("Recipe Finish Screen", "Error updating user data: ${e.message}")
                 _state.update { it.copy(isLoading = false) }
