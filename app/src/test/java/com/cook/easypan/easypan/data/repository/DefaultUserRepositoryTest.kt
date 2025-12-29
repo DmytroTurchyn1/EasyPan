@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -15,11 +15,12 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import com.cook.easypan.app.dataStore
-import com.cook.easypan.core.domain.AuthResponse
+import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.datastore.AppSettings
 import com.cook.easypan.easypan.data.datastore.AppSettingsSerializer
+import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.model.User
@@ -68,6 +69,7 @@ class DefaultUserRepositoryTest {
         MockKAnnotations.init(this)
         mockkStatic(Log::class)
         every { Log.e(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
 
         defaultUserRepository = DefaultUserRepository(
             firestoreDataSource = firestoreDataSource,
@@ -118,48 +120,55 @@ class DefaultUserRepositoryTest {
 
     @Test
     fun `updateUserData successfully updates user data`() = runBlocking {
-        val testUserData = UserData(recipesCooked = 10)
-        coEvery { firestoreDataSource.updateUserData("testUserId", any()) } returns Unit
+        val user = User(userId = "testUserId", username = "testUser")
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.incrementCookedRecipes("testUserId") } returns Unit
 
-        val result = defaultUserRepository.updateUserData("testUserId", testUserData)
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
 
-        assertEquals(AuthResponse.Success, result)
-        coVerify {
-            firestoreDataSource.updateUserData(
-                "testUserId",
-                UserDto(recipesCooked = 10)
-            )
+        val result = defaultUserRepository.updateUserData()
+
+        assertEquals(Result.Success, result)
+        coVerify { firestoreDataSource.incrementCookedRecipes("testUserId") }
+        scope.cancel()
+    }
+
+    @Test
+    fun `updateUserData throws when user not logged in`(): Unit = runBlocking {
+        every { googleAuthClient.getSignedInUser() } returns null
+
+        assertFailsWith<IllegalStateException> {
+            defaultUserRepository.updateUserData()
         }
     }
 
     @Test
     fun `updateUserData handles Firestore error during update`() = runBlocking {
-        val testUserData = UserData(recipesCooked = 10)
-        coEvery {
-            firestoreDataSource.updateUserData(
-                "testUserId",
-                any()
-            )
-        } throws Exception("Permission denied")
+        val user = User(userId = "testUserId", username = "testUser")
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.incrementCookedRecipes("testUserId") } throws Exception("Permission denied")
 
-        val result = defaultUserRepository.updateUserData("testUserId", testUserData)
+        val result = defaultUserRepository.updateUserData()
 
-        assertEquals(AuthResponse.Failure("Permission denied"), result)
+        assertEquals(Result.Failure("Permission denied"), result)
     }
 
     @Test
     fun `updateUserData handles unknown error during update`() = runBlocking {
-        val testUserData = UserData(recipesCooked = 10)
-        coEvery {
-            firestoreDataSource.updateUserData(
-                "testUserId",
-                any()
-            )
-        } throws Exception("Unknown error")
+        val user = User(userId = "testUserId", username = "testUser")
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.incrementCookedRecipes("testUserId") } throws Exception()
 
-        val result = defaultUserRepository.updateUserData("testUserId", testUserData)
+        val result = defaultUserRepository.updateUserData()
 
-        assertEquals(AuthResponse.Failure("Unknown error"), result)
+        assertEquals(Result.Failure("Unknown error"), result)
     }
 
     @Test
@@ -171,9 +180,19 @@ class DefaultUserRepositoryTest {
         every { googleAuthClient.getSignedInUser() } returns baseUser
         coEvery { firestoreDataSource.getUserData("testUserId") } returns userDto
 
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
+
         val result = defaultUserRepository.getCurrentUser()
 
         assertEquals(baseUser.copy(data = userData), result)
+        scope.cancel()
     }
 
     @Test
@@ -192,9 +211,19 @@ class DefaultUserRepositoryTest {
         every { googleAuthClient.getSignedInUser() } returns baseUser
         coEvery { firestoreDataSource.getUserData("testUserId") } throws Exception("Failed to fetch data")
 
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
+
         val result = defaultUserRepository.getCurrentUser()
 
         assertEquals(baseUser, result)
+        scope.cancel()
     }
 
     @Test
@@ -237,46 +266,51 @@ class DefaultUserRepositoryTest {
 
     @Test
     fun `signInWithGoogle successfully initiates sign in flow`() = runBlocking {
-
-        val authResponseFlow = flowOf(AuthResponse.Success)
+        val authResponseFlow = flowOf(Result.Success)
 
         every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
 
         val result = defaultUserRepository.signInWithGoogle(context)
 
-        assertEquals(AuthResponse.Success, result.first())
+        assertEquals(Result.Success, result.first())
     }
 
     @Test
-    fun `signInWithGoogle flow emits AuthResponse Success`() = runBlocking {
+    fun `signInWithGoogle flow emits Result Success`() = runBlocking {
+        val resultFlow = flowOf(Result.Success)
 
-        val authResponseFlow = flowOf(AuthResponse.Success)
-
-        every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
+        every { googleAuthClient.signInWithGoogle(context) } returns resultFlow
 
         val result = defaultUserRepository.signInWithGoogle(context)
 
-        assertEquals(AuthResponse.Success, result.first())
+        assertEquals(Result.Success, result.first())
     }
 
     @Test
-    fun `signInWithGoogle flow emits AuthResponse Failure`() = runBlocking {
-        val authResponseFlow = flowOf(AuthResponse.Failure("Sign in failed"))
+    fun `signInWithGoogle flow emits Result Failure`() = runBlocking {
+        val resultFlow = flowOf(Result.Failure("Sign in failed"))
 
-        every { googleAuthClient.signInWithGoogle(context) } returns authResponseFlow
+        every { googleAuthClient.signInWithGoogle(context) } returns resultFlow
 
         val result = defaultUserRepository.signInWithGoogle(context)
 
-        assertEquals(AuthResponse.Failure("Sign in failed"), result.first())
+        assertEquals(Result.Failure("Sign in failed"), result.first())
     }
 
     @Test
     fun `signInWithGoogle handles exceptions from googleAuthClient`(): Unit = runBlocking {
-
         every { googleAuthClient.signInWithGoogle(context) } throws Exception("Auth configuration error")
 
         assertFailsWith<Exception> {
             defaultUserRepository.signInWithGoogle(context)
+        }
+    }
+
+    @Test
+    fun `getFavoriteRecipes throws when user not logged in`() {
+        runBlocking {
+            every { googleAuthClient.getSignedInUser() } returns null
+            assertFailsWith<IllegalStateException> { defaultUserRepository.getFavoriteRecipes() }
         }
     }
 
@@ -290,7 +324,6 @@ class DefaultUserRepositoryTest {
             defaultUserRepository.signInWithGoogle(mockContext)
         }
     }
-
 
     @Test
     fun `updateKeepScreenOnDataStore updates value and flow emits updated value`() = runBlocking {
@@ -331,13 +364,64 @@ class DefaultUserRepositoryTest {
         scope.cancel()
     }
 
+    @Test
+    fun `getFavoriteRecipes returns cached recipes when cache is valid`() = runBlocking {
+        val user = User(userId = "user1", username = "tester")
+        every { googleAuthClient.getSignedInUser() } returns user
+
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+
+        // Set cache with recent timestamp
+        testDataStore.updateData { settings ->
+            settings.copy(
+                lastCacheTimeFavorites = System.currentTimeMillis(),
+                cacheFavoriteRecipes = listOf(
+                    RecipeDto(
+                        id = "recipe1",
+                        title = "Test Recipe",
+                        difficulty = 1
+                    )
+                )
+            )
+        }
+        every { context.dataStore } returns testDataStore
+
+        val result = defaultUserRepository.getFavoriteRecipes()
+
+        assertEquals(1, result.size)
+        assertEquals("recipe1", result[0].id)
+        scope.cancel()
+    }
 
     @Test
-    fun `getFavoriteRecipes throws when user not logged in`() {
-        runBlocking {
-            every { googleAuthClient.getSignedInUser() } returns null
-            assertFailsWith<IllegalStateException> { defaultUserRepository.getFavoriteRecipes() }
-        }
+    fun `getFavoriteRecipes fetches from Firestore when cache is stale`() = runBlocking {
+        val user = User(userId = "user1", username = "tester")
+        every { googleAuthClient.getSignedInUser() } returns user
+
+        val recipeDto = RecipeDto(id = "recipe1", title = "Test Recipe", difficulty = 1)
+        coEvery { firestoreDataSource.getFavoriteRecipes("user1") } returns listOf(recipeDto)
+
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
+
+        val result = defaultUserRepository.getFavoriteRecipes()
+
+        assertEquals(1, result.size)
+        assertEquals("recipe1", result[0].id)
+        coVerify { firestoreDataSource.getFavoriteRecipes("user1") }
+        scope.cancel()
     }
 
     @Test
@@ -345,25 +429,48 @@ class DefaultUserRepositoryTest {
         val user = User(userId = "user1", username = "tester")
         every { googleAuthClient.getSignedInUser() } returns user
         coEvery { firestoreDataSource.addRecipeToFavorite("user1", any()) } returns Unit
-        val recipe = mockk<Recipe>(relaxed = true) {
-            every { difficulty } returns "Easy"
-        }
+
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
+
+        val recipe = Recipe(
+            id = "recipe1",
+            title = "Test Recipe",
+            ingredients = listOf("ingredient1"),
+            preparationMinutes = 10,
+            cookMinutes = 20,
+            difficulty = "Easy",
+            instructions = emptyList(),
+            titleImg = "test.jpg"
+        )
         val result = defaultUserRepository.addRecipeToFavorites(recipe)
-        assertEquals(AuthResponse.Success, result)
+
+        assertEquals(Result.Success, result)
+        scope.cancel()
     }
 
     @Test
-    fun `addRecipeToFavorites throws when user not logged in`() {
-        runBlocking {
-            every { googleAuthClient.getSignedInUser() } returns null
-            val recipe = mockk<Recipe>(relaxed = true) {
-                every { difficulty } returns "Easy"
-            }
-            assertFailsWith<IllegalStateException> {
-                defaultUserRepository.addRecipeToFavorites(
-                    recipe
-                )
-            }
+    fun `addRecipeToFavorites throws when user not logged in`(): Unit = runBlocking {
+        every { googleAuthClient.getSignedInUser() } returns null
+        val recipe = Recipe(
+            id = "recipe1",
+            title = "Test Recipe",
+            ingredients = listOf("ingredient1"),
+            preparationMinutes = 10,
+            cookMinutes = 20,
+            difficulty = "Easy",
+            instructions = emptyList(),
+            titleImg = "test.jpg"
+        )
+
+        assertFailsWith<IllegalStateException> {
+            defaultUserRepository.addRecipeToFavorites(recipe)
         }
     }
 
@@ -373,8 +480,19 @@ class DefaultUserRepositoryTest {
         every { googleAuthClient.getSignedInUser() } returns user
         coEvery { firestoreDataSource.deleteRecipeFromFavorite("user1", "r1") } returns true
 
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
+
         val result = defaultUserRepository.deleteRecipeFromFavorites("r1")
-        assertEquals(AuthResponse.Success, result)
+
+        assertEquals(Result.Success, result)
+        scope.cancel()
     }
 
     @Test
@@ -383,20 +501,28 @@ class DefaultUserRepositoryTest {
         every { googleAuthClient.getSignedInUser() } returns user
         coEvery { firestoreDataSource.deleteRecipeFromFavorite("user1", "r1") } returns false
 
+        mockkStatic("com.cook.easypan.app.EasyPanAppKt")
+        val tmpFile = File.createTempFile("settings_test", ".json")
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        val testDataStore: DataStore<AppSettings> = DataStoreFactory.create(
+            serializer = AppSettingsSerializer,
+            scope = scope
+        ) { tmpFile }
+        every { context.dataStore } returns testDataStore
+
         val result = defaultUserRepository.deleteRecipeFromFavorites("r1")
-        assertEquals(AuthResponse.Failure("Failed to delete recipe from favorites"), result)
+
+        assertEquals(Result.Failure("Failed to delete recipe from favorites"), result)
+        scope.cancel()
     }
 
     @Test
-    fun `deleteRecipeFromFavorites throws when user not logged in`() {
-        runBlocking {
-            every { googleAuthClient.getSignedInUser() } returns null
-            assertFailsWith<IllegalStateException> {
-                defaultUserRepository.deleteRecipeFromFavorites(
-                    "r1"
-                )
-            }
-        }
+    fun `deleteRecipeFromFavorites returns Failure when user not logged in`() = runBlocking {
+        every { googleAuthClient.getSignedInUser() } returns null
+
+        val result = defaultUserRepository.deleteRecipeFromFavorites("r1")
+
+        assertEquals(Result.Failure("User not logged in"), result)
     }
 
     @Test
@@ -406,6 +532,7 @@ class DefaultUserRepositoryTest {
         coEvery { firestoreDataSource.isRecipeFavorite("user1", "r1") } returns true
 
         val result = defaultUserRepository.isRecipeFavorite("r1")
+
         assertTrue(result)
     }
 
@@ -416,14 +543,16 @@ class DefaultUserRepositoryTest {
         coEvery { firestoreDataSource.isRecipeFavorite("user1", "r1") } returns false
 
         val result = defaultUserRepository.isRecipeFavorite("r1")
+
         assertFalse(result)
     }
 
     @Test
-    fun `isRecipeFavorite throws when user not logged in`() {
-        runBlocking {
-            every { googleAuthClient.getSignedInUser() } returns null
-            assertFailsWith<IllegalStateException> { defaultUserRepository.isRecipeFavorite("r1") }
+    fun `isRecipeFavorite throws when user not logged in`(): Unit = runBlocking {
+        every { googleAuthClient.getSignedInUser() } returns null
+
+        assertFailsWith<IllegalStateException> {
+            defaultUserRepository.isRecipeFavorite("r1")
         }
     }
 }

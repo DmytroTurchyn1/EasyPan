@@ -1,3 +1,11 @@
+/*
+ * Created  21/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan
 
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -32,8 +40,10 @@ class EasyPanUiTest {
     @Before
     fun setUp() {
         authClient = mockk(relaxed = true)
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         val firestoreDataSource = mockk<FirestoreClient>(relaxed = true)
-        userRepository = DefaultUserRepository(firestoreDataSource, authClient)
+        userRepository =
+            DefaultUserRepository(firestoreDataSource, authClient, context = appContext)
         viewModel = AuthenticationViewModel(userRepository)
     }
 

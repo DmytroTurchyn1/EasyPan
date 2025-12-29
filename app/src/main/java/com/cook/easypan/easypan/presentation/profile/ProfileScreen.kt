@@ -1,5 +1,5 @@
 /*
- * Created  15/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -142,7 +142,7 @@ private fun ProfileScreen(
                         error = {
                             Icon(
                                 imageVector = Icons.Default.Person,
-                                contentDescription = "User Image",
+                                contentDescription = stringResource(R.string.user_image_description),
                                 tint = MaterialTheme.colorScheme.tertiary,
                             )
                         }
@@ -169,7 +169,7 @@ private fun ProfileScreen(
                 ) {
                     InformationBox {
                         Text(
-                            text = "${state.currentUser?.data?.recipesCooked}",
+                            text = state.currentUser?.data?.recipesCooked.toString(),
                             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -180,7 +180,7 @@ private fun ProfileScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = stringResource(R.string.settings_title),
                     fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -240,7 +240,6 @@ private fun ProfileScreen(
             }
         }
     }
-
 }
 
 @Preview(showSystemUi = true)

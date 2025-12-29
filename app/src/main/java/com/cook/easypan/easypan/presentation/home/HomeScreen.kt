@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  18/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -13,10 +13,13 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -49,9 +52,9 @@ fun HomeRoot(
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
-                viewModel.onPermissionResult(
-                    isGranted = isGranted
-                )
+            viewModel.onPermissionResult(
+                isGranted = isGranted
+            )
         }
     )
 
@@ -78,6 +81,7 @@ fun HomeRoot(
 
                     onRecipeClick(action.recipe)
                 }
+
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -103,20 +107,31 @@ private fun HomeScreen(
                 contentAlignment = Alignment.Center
 
             ) {
-                CircularProgressIndicator()
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "Loading recipes..."
+                    )
+                }
+
             }
 
         } else if (state.recipes.isNotEmpty()) {
-                Text(
-                    text = stringResource(R.string.home_title),
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
+            Text(
+                text = stringResource(R.string.home_title),
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
+
             RecipeFilterBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -125,16 +140,16 @@ private fun HomeScreen(
                 filters = state.filterList,
                 selected = state.selectedFilter
             )
-                RecipeList(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    recipes = state.recipes,
-                    onRecipeClick = { recipe ->
-                        onAction(HomeAction.OnRecipeClick(recipe))
-                    },
-                    scrollState = state.recipeListState
-                )
+            RecipeList(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 10.dp),
+                recipes = state.recipes,
+                onRecipeClick = { recipe ->
+                    onAction(HomeAction.OnRecipeClick(recipe))
+                },
+                scrollState = state.recipeListState
+            )
         } else {
             Box(
                 modifier = Modifier

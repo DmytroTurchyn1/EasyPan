@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  25/8/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -18,5 +18,6 @@ data class RecipeStepState(
     val progressBar: Float = 0f,
     val isDialogShowing: Boolean = false,
     val isFinishButtonEnabled: Boolean = true,
-    val keepScreenOn: Boolean = true
+    val keepScreenOn: Boolean = true,
+    val timerRunning: Boolean = false,
 )

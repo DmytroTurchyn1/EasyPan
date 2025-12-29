@@ -1,3 +1,11 @@
+/*
+ * Created  21/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.services
 
 import android.app.NotificationChannel
@@ -9,13 +17,17 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.cook.easypan.R
 import com.cook.easypan.app.MainActivity
-import com.cook.easypan.core.util.CHANNEL_ID
-import com.cook.easypan.core.util.CHANNEL_NAME
+import com.cook.easypan.core.util.CHANNEL_ID_FIREBASE
+import com.cook.easypan.core.util.CHANNEL_NAME_FIREBASE
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlin.random.Random
 
 class FirebaseCloudMessaging : FirebaseMessagingService() {
+
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+    }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
@@ -35,9 +47,9 @@ class FirebaseCloudMessaging : FirebaseMessagingService() {
 
     private fun showNotification(message: RemoteMessage.Notification) {
 
-        val channelId = CHANNEL_ID
+        val channelId = CHANNEL_ID_FIREBASE
 
-        val channelName = CHANNEL_NAME
+        val channelName = CHANNEL_NAME_FIREBASE
 
         val intent = Intent(this, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -51,7 +63,7 @@ class FirebaseCloudMessaging : FirebaseMessagingService() {
         )
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.ic_app)
+            .setSmallIcon(R.drawable.notification_ic)
             .setContentTitle(message.title)
             .setContentText(message.body)
             .setAutoCancel(true)

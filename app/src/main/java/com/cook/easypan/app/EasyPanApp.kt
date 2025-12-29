@@ -1,5 +1,5 @@
 /*
- * Created  14/8/2025
+ * Created  8/9/2025
  *
  * Copyright (c) 2025 . All rights reserved.
  * Licensed under the MIT License.
@@ -18,6 +18,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.google.firebase.appdistribution.InterruptionLevel
+import com.google.firebase.appdistribution.appDistribution
 import com.google.firebase.initialize
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -35,6 +37,11 @@ class EasyPanApp : Application() {
 
         Firebase.initialize(this)
         if (BuildConfig.DEBUG) {
+            Firebase.appDistribution.updateIfNewReleaseAvailable()
+            Firebase.appDistribution.showFeedbackNotification(
+                "Send feedback",
+                InterruptionLevel.DEFAULT
+            )
             Firebase.appCheck.installAppCheckProviderFactory(
                 DebugAppCheckProviderFactory.getInstance()
             )

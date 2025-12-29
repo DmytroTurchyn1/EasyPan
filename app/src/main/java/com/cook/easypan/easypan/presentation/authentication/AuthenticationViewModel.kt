@@ -1,8 +1,16 @@
+/*
+ * Created  18/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.presentation.authentication
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cook.easypan.core.domain.AuthResponse
+import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +40,7 @@ class AuthenticationViewModel(
                 viewModelScope.launch {
                     userRepository.signInWithGoogle(action.activityContext).collect { response ->
                         when (response) {
-                            is AuthResponse.Success -> {
+                            is Result.Success -> {
                                 _state.update {
                                     it.copy(
                                         isSignInSuccessful = true,
@@ -43,7 +51,7 @@ class AuthenticationViewModel(
                                 }
                             }
 
-                            is AuthResponse.Failure -> {
+                            is Result.Failure -> {
                                 _state.update {
                                     it.copy(
                                         isSignInSuccessful = false,

@@ -1,3 +1,11 @@
+/*
+ * Created  18/8/2025
+ *
+ * Copyright (c) 2025 . All rights reserved.
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for details.
+ */
+
 package com.cook.easypan.easypan.data.auth
 
 import android.content.Context
@@ -5,7 +13,7 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.cook.easypan.BuildConfig
-import com.cook.easypan.core.domain.AuthResponse
+import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.domain.model.User
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -36,7 +44,7 @@ class AuthClient(
         }
     }
 
-    fun signInWithGoogle(activityContext: Context): Flow<AuthResponse> = callbackFlow {
+    fun signInWithGoogle(activityContext: Context): Flow<Result> = callbackFlow {
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
             .setServerClientId(clientId)
@@ -66,11 +74,11 @@ class AuthClient(
                         auth.signInWithCredential(firebaseCredential)
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
-                                    trySend(AuthResponse.Success)
+                                    trySend(Result.Success)
                                 } else {
 
                                     trySend(
-                                        AuthResponse.Failure(
+                                        Result.Failure(
                                             error = it.exception?.message ?: "Unknown error"
                                         )
                                     )
@@ -79,7 +87,7 @@ class AuthClient(
 
                     } catch (e: GoogleIdTokenParsingException) {
                         trySend(
-                            AuthResponse.Failure(
+                            Result.Failure(
                                 error = e.message ?: "Failed to parse Google ID token"
                             )
                         )
@@ -87,7 +95,7 @@ class AuthClient(
                 }
             }
         } catch (e: Exception) {
-            trySend(AuthResponse.Failure(error = e.message ?: "Unknown error"))
+            trySend(Result.Failure(error = e.message ?: "Unknown error"))
         }
         awaitClose()
 
