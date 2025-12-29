@@ -34,7 +34,7 @@ android {
         applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 36
-        versionCode = 18
+        versionCode = 19
         versionName = "v1.0.0-beta.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
