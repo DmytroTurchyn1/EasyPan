@@ -17,8 +17,8 @@
 -keep class com.google.android.libraries.identity.googleid.** { *; }
 
 # Keep all navigation routes
--keepnames class com.cook.easypan.easypan.presentation.navigation.Route { *; }
--keepnames class com.cook.easypan.easypan.presentation.navigation.Route$* { *; }
+-keep class com.cook.easypan.easypan.presentation.navigation.Route { *; }
+-keep class com.cook.easypan.easypan.presentation.navigation.Route$* { *; }
 
 # Suppress warnings
 -dontwarn sun.misc.Unsafe
