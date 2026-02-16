@@ -12,19 +12,23 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
 }
-val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystorePropertiesFile: File? = rootProject.file("keystore.properties")
 val keystoreProperties = Properties()
-if (keystorePropertiesFile.exists()) {
+if (keystorePropertiesFile?.exists() == true) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 } else {
     logger.warn("Keystorefile not found")
+}
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+    }
 }
 android {
     namespace = "com.cook.easypan"
@@ -34,14 +38,14 @@ android {
         applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 36
-        versionCode = 19
-        versionName = "v1.0.0-beta.5"
+        versionCode = 21
+        versionName = "v1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "CLIENT_ID", "${keystoreProperties.getProperty("clientId")}")
     }
     signingConfigs {
-        if (keystorePropertiesFile.exists() && keystoreProperties.getProperty("storeFile") != null) {
+        if (keystorePropertiesFile?.exists() == true && keystoreProperties.getProperty("storeFile") != null) {
             create("release") {
                 storeFile = file(keystoreProperties.getProperty("storeFile"))
                 storePassword = keystoreProperties.getProperty("storePassword")
@@ -78,11 +82,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_11
-        }
     }
 
     buildFeatures {

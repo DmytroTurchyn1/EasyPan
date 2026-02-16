@@ -1,62 +1,26 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
-
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
-
-# Keep Firebase Firestore classes
+# Firestore serialization
 -keep class com.google.firebase.firestore.** { *; }
--keep class com.google.firebase.** { *; }
 
-# Keep all DTO classes for Firebase serialization
+# Your DTOs for Firebase
 -keep class com.cook.easypan.easypan.data.dto.** { *; }
+-keepclassmembers class com.cook.easypan.easypan.data.dto.** { *; }
 
-# Keep serialization annotations
+# Serialization support
 -keepattributes *Annotation*
 -keepattributes Signature
--keep class kotlinx.serialization.** { *; }
 
-# Keep data class properties annotated with SerialName
--keepclassmembers class * {
-    @kotlinx.serialization.SerialName *;
-}
-
-# Prevent obfuscation of classes used with Firebase
--keepnames class com.cook.easypan.easypan.data.dto.**
--keepclassmembernames class com.cook.easypan.easypan.data.dto.** { *; }
-
--dontwarn org.apiguardian.api.API
-
--keep class com.cook.easypan.easypan.data.** { *; }
--keep class com.cook.easypan.easypan.domain.** { *; }
--keep class com.cook.easypan.** { *; }
-
-# Keep credential providers
--keep class androidx.credentials.** { *; }
+# Google Sign-In (minimal)
+-keep class androidx.credentials.CredentialManager { *; }
+-keep class androidx.credentials.GetCredentialRequest** { *; }
+-keep class androidx.credentials.GetCredentialResponse { *; }
+-keep class androidx.credentials.CustomCredential { *; }
 -keep class com.google.android.libraries.identity.googleid.** { *; }
 
+# Keep all navigation routes
+-keepnames class com.cook.easypan.easypan.presentation.navigation.Route { *; }
+-keepnames class com.cook.easypan.easypan.presentation.navigation.Route$* { *; }
 
-# Keep Firebase KTX classes
--keep class com.google.firebase.ktx.** { *; }
--dontwarn com.google.firebase.ktx.**
-
-# Keep classes that R8 couldn't resolve
+# Suppress warnings
 -dontwarn sun.misc.Unsafe
 -dontwarn javax.naming.**
--dontwarn androidx.appcompat.view.ContextThemeWrapper
+-dontwarn org.apiguardian.api.API
