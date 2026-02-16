@@ -2,7 +2,7 @@ package com.cook.easypan.easypan.domain.model
 
 import com.cook.easypan.core.domain.StepType
 import org.junit.Assert
-import kotlin.test.Test
+import org.junit.Test
 
 class StepDescriptionTest {
 

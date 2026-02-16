@@ -1,7 +1,7 @@
 package com.cook.easypan.easypan.domain.model
 
 import com.cook.easypan.core.domain.StepType
-import kotlin.test.Test
+import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
