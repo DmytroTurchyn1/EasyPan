@@ -8,9 +8,15 @@
 
 package com.cook.easypan.easypan.presentation.profile
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cook.easypan.core.domain.AppError
+import com.cook.easypan.core.domain.Result
+import com.cook.easypan.core.presentation.snackBar.SnackBarController
+import com.cook.easypan.core.presentation.snackBar.SnackBarEvent
+import com.cook.easypan.core.presentation.toMessageRes
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -70,6 +76,7 @@ class ProfileViewModel(
             }
         }
     }
+
     fun onAction(action: ProfileAction) {
         when (action) {
             ProfileAction.OnSignOut -> {
@@ -79,6 +86,7 @@ class ProfileViewModel(
                     )
                 }
             }
+
             ProfileAction.OnKeepScreenOnToggle -> {
                 viewModelScope.launch {
                     val newState = !state.value.keepScreenOn
@@ -98,7 +106,44 @@ class ProfileViewModel(
                     }
                 }
             }
+
+            ProfileAction.OnDeleteAccountClick -> {
+                _state.update { it.copy(isDeleteDialogShowing = true) }
+            }
+
+            ProfileAction.OnDeleteAccountDismiss -> {
+                _state.update { it.copy(isDeleteDialogShowing = false) }
+            }
+
+            is ProfileAction.OnDeleteAccountConfirm -> deleteAccount(action.activityContext)
+
             else -> Unit
+        }
+    }
+
+    private fun deleteAccount(activityContext: Context) {
+        if (_state.value.isAccountDeleted) return
+        _state.update {
+            it.copy(
+                isDeleteDialogShowing = false,
+                isLoading = true
+            )
+        }
+        viewModelScope.launch {
+            when (val result = userRepository.deleteAccount(activityContext)) {
+                is Result.Success -> {
+                    _state.update { it.copy(isAccountDeleted = true) }
+                }
+
+                is Result.Failure -> {
+                    _state.update { it.copy(isLoading = false) }
+                    if (result.error != AppError.SIGN_IN_CANCELLED) {
+                        SnackBarController.sendEvent(
+                            SnackBarEvent(messageRes = result.error.toMessageRes())
+                        )
+                    }
+                }
+            }
         }
     }
 }

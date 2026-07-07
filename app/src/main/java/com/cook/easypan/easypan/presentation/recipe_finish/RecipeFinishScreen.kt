@@ -112,7 +112,7 @@ private fun RecipeFinishScreen(
                     error = {
                         Image(
                             painter = painterResource(R.drawable.auth_img),
-                            contentDescription = "Recipe Image",
+                            contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -149,6 +149,7 @@ private fun RecipeFinishScreen(
                         onAction(RecipeFinishAction.OnFavoriteClick(recipe = state.recipe))
                     }
                 },
+                enabled = !state.isFavoriteUpdating,
                 modifier = Modifier
                     .fillMaxWidth()
             ) {

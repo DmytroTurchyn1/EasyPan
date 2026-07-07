@@ -9,23 +9,30 @@
 package com.cook.easypan.app
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStore
-import com.cook.easypan.BuildConfig
+import com.cook.easypan.core.util.CHANNEL_ID_FIREBASE
+import com.cook.easypan.core.util.CHANNEL_ID_TIMER_SERVICE
+import com.cook.easypan.core.util.CHANNEL_NAME_FIREBASE
+import com.cook.easypan.core.util.CHANNEL_NAME_TIMER_SERVICE
 import com.cook.easypan.di.appModule
+import com.cook.easypan.easypan.data.datastore.AppSettings
 import com.cook.easypan.easypan.data.datastore.AppSettingsSerializer
 import com.google.firebase.Firebase
-import com.google.firebase.appcheck.appCheck
-import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
-import com.google.firebase.appdistribution.InterruptionLevel
-import com.google.firebase.appdistribution.appDistribution
 import com.google.firebase.initialize
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
-val Context.dataStore by dataStore("settings.json", AppSettingsSerializer)
+val Context.dataStore by dataStore(
+    fileName = "settings.json",
+    serializer = AppSettingsSerializer,
+    corruptionHandler = ReplaceFileCorruptionHandler { AppSettings() }
+)
+
 class EasyPanApp : Application() {
     override fun onCreate() {
         super.onCreate()
@@ -36,20 +43,25 @@ class EasyPanApp : Application() {
         }
 
         Firebase.initialize(this)
-        if (BuildConfig.DEBUG) {
-            Firebase.appDistribution.updateIfNewReleaseAvailable()
-            Firebase.appDistribution.showFeedbackNotification(
-                "Send feedback",
-                InterruptionLevel.DEFAULT
-            )
-            Firebase.appCheck.installAppCheckProviderFactory(
-                DebugAppCheckProviderFactory.getInstance()
-            )
-        } else {
-            Firebase.appCheck.installAppCheckProviderFactory(
-                PlayIntegrityAppCheckProviderFactory.getInstance(),
-            )
-        }
+        AppCheckInstaller.install()
+        createNotificationChannels()
     }
 
+    private fun createNotificationChannels() {
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ID_FIREBASE,
+                CHANNEL_NAME_FIREBASE,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+        )
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ID_TIMER_SERVICE,
+                CHANNEL_NAME_TIMER_SERVICE,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+        )
+    }
 }

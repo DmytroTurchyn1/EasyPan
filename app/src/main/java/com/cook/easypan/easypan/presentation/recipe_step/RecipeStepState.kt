@@ -19,5 +19,8 @@ data class RecipeStepState(
     val isDialogShowing: Boolean = false,
     val isFinishButtonEnabled: Boolean = true,
     val keepScreenOn: Boolean = true,
+    // Mirrors the global CountdownTimer so the UI can render it per step.
+    val timerRemainingSeconds: Long? = null,
+    val timerOwnerStep: Int? = null,
     val timerRunning: Boolean = false,
 )

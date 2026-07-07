@@ -32,17 +32,22 @@ kotlin {
 }
 android {
     namespace = "com.cook.easypan"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.cook.easypan"
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 21
         versionName = "v1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "CLIENT_ID", "${keystoreProperties.getProperty("clientId")}")
+        // Works whether the properties value is quoted or not; missing file yields "".
+        buildConfigField(
+            "String",
+            "CLIENT_ID",
+            "\"${keystoreProperties.getProperty("clientId")?.trim('"') ?: ""}\""
+        )
     }
     signingConfigs {
         if (keystorePropertiesFile?.exists() == true && keystoreProperties.getProperty("storeFile") != null) {
@@ -77,6 +82,14 @@ android {
             initWith(buildTypes.getByName("release"))
             matchingFallbacks += listOf("release")
             isDebuggable = false
+        }
+    }
+    sourceSets {
+        // The benchmark build type mimics release; reuse its variant sources
+        // (e.g. AppCheckInstaller with the Play Integrity provider).
+        getByName("benchmark") {
+            java.srcDirs("src/release/java")
+            kotlin.srcDirs("src/release/java")
         }
     }
     compileOptions {
@@ -115,9 +128,8 @@ dependencies {
     implementation(libs.bundles.coil)
 
     debugImplementation(libs.bundles.compose.debug)
-
-    implementation(libs.firebase.appdistribution.api.ktx)
-    implementation(libs.firebase.appdistribution)
+    // App Check debug provider must never ship in release builds.
+    debugImplementation(libs.firebase.appcheck.debug)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.android.test)

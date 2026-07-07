@@ -8,26 +8,23 @@
 
 package com.cook.easypan.services
 
-import android.app.NotificationChannel
+import android.Manifest
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Intent
-import android.util.Log
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.cook.easypan.R
 import com.cook.easypan.app.MainActivity
 import com.cook.easypan.core.util.CHANNEL_ID_FIREBASE
-import com.cook.easypan.core.util.CHANNEL_NAME_FIREBASE
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlin.random.Random
 
 class FirebaseCloudMessaging : FirebaseMessagingService() {
-
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-    }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
@@ -35,21 +32,10 @@ class FirebaseCloudMessaging : FirebaseMessagingService() {
         message.notification?.let {
             showNotification(it)
         }
-
-        if (message.data.isNotEmpty()) {
-            handleDataMessage(message)
-        }
-    }
-
-    private fun handleDataMessage(message: RemoteMessage) {
-        Log.d("FirebaseCloudMessaging", "Data message received: ${message.data}")
     }
 
     private fun showNotification(message: RemoteMessage.Notification) {
-
-        val channelId = CHANNEL_ID_FIREBASE
-
-        val channelName = CHANNEL_NAME_FIREBASE
+        if (!canPostNotifications()) return
 
         val intent = Intent(this, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -62,20 +48,24 @@ class FirebaseCloudMessaging : FirebaseMessagingService() {
             PendingIntent.FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
         )
 
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+        // The channel itself is created at app startup in EasyPanApp.
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID_FIREBASE)
             .setSmallIcon(R.drawable.notification_ic)
             .setContentTitle(message.title)
             .setContentText(message.body)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .build()
+
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(Random.nextInt(), notification)
+    }
 
-        val channel =
-            NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
-
-        manager.createNotificationChannel(channel)
-
-        manager.notify(Random.nextInt(), notificationBuilder)
+    private fun canPostNotifications(): Boolean {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
     }
 }

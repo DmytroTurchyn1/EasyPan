@@ -115,7 +115,7 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 imageVector = screen.icon,
-                contentDescription = "${screen.title} icon",
+                contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )
         }

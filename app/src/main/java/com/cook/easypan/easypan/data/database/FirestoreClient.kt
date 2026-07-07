@@ -8,7 +8,6 @@
 
 package com.cook.easypan.easypan.data.database
 
-import android.util.Log
 import com.cook.easypan.core.util.FAVORITE_COLLECTION
 import com.cook.easypan.core.util.RECIPES_COLLECTION
 import com.cook.easypan.core.util.USER_DATA_COLLECTION
@@ -34,19 +33,13 @@ class FirestoreClient(
             .get()
             .await()
             .documents
-
     }
 
     suspend fun getRecipes(): List<RecipeDto> {
-        return try {
-            getCollection(RECIPES_COLLECTION)
-                .mapNotNull { document ->
-                    document.toObject(RecipeDto::class.java)?.copy(id = document.id)
-                }
-        } catch (e: Exception) {
-            throw e
-        }
-
+        return getCollection(RECIPES_COLLECTION)
+            .mapNotNull { document ->
+                document.toObject(RecipeDto::class.java)?.copy(id = document.id)
+            }
     }
 
     suspend fun getUserData(userId: String): UserDto {
@@ -71,23 +64,15 @@ class FirestoreClient(
     }
 
     suspend fun getFavoriteRecipes(userId: String): List<RecipeDto> {
-
-        val favoriteRecipeCollection = firestore.collection(USER_DATA_COLLECTION)
+        return firestore.collection(USER_DATA_COLLECTION)
             .document(userId)
             .collection(FAVORITE_COLLECTION)
-
-        return try {
-            favoriteRecipeCollection
-                .get()
-                .await()
-                .documents
-                .mapNotNull { document ->
-                    document.toObject(RecipeDto::class.java)?.copy(id = document.id)
-                }
-        } catch (e: Exception) {
-            Log.e("FirestoreClient", "Error getting favorite recipes: ${e.message}")
-            emptyList()
-        }
+            .get()
+            .await()
+            .documents
+            .mapNotNull { document ->
+                document.toObject(RecipeDto::class.java)?.copy(id = document.id)
+            }
     }
 
     suspend fun isRecipeFavorite(userId: String, recipeId: String): Boolean {
@@ -95,50 +80,45 @@ class FirestoreClient(
             .document(userId)
             .collection(FAVORITE_COLLECTION)
             .document(recipeId)
-        return try {
-            documentExists(favoriteDocumentRef)
-        } catch (e: Exception) {
-            Log.e("FirestoreClient", "Error checking if recipe is favorite: ${e.message}")
-            false
-        }
+        return documentExists(favoriteDocumentRef)
     }
 
     suspend fun addRecipeToFavorite(
         userId: String,
         recipe: RecipeDto
     ) {
-        try {
-            val favoriteCollection = firestore.collection(USER_DATA_COLLECTION)
-                .document(userId)
-                .collection(FAVORITE_COLLECTION)
-
-            favoriteCollection
-                .document(recipe.id)
-                .set(recipe)
-                .await()
-        } catch (e: Exception) {
-            throw e
-        }
+        firestore.collection(USER_DATA_COLLECTION)
+            .document(userId)
+            .collection(FAVORITE_COLLECTION)
+            .document(recipe.id)
+            .set(recipe)
+            .await()
     }
 
     suspend fun deleteRecipeFromFavorite(
         userId: String,
         recipeId: String
-    ): Boolean {
-        val docRef = firestore.collection(USER_DATA_COLLECTION)
+    ) {
+        firestore.collection(USER_DATA_COLLECTION)
             .document(userId)
             .collection(FAVORITE_COLLECTION)
             .document(recipeId)
-
-        return try {
-            docRef
-                .delete()
-                .await()
-            true
-        } catch (e: Exception) {
-            Log.e("FirestoreClient", "Error deleting recipe from favorites: ${e.message}")
-            false
-        }
+            .delete()
+            .await()
     }
 
+    suspend fun deleteUserData(userId: String) {
+        val userRef = firestore.collection(USER_DATA_COLLECTION).document(userId)
+        val favoriteDocuments = userRef
+            .collection(FAVORITE_COLLECTION)
+            .get()
+            .await()
+            .documents
+        val batch = firestore.batch()
+        favoriteDocuments.forEach { document ->
+            batch.delete(document.reference)
+        }
+        batch.delete(userRef)
+        batch.commit().await()
+    }
 }

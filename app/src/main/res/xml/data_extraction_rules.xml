@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
+   Backup & device-transfer rules (API 31+).
+   The DataStore file holds per-account cached data (profile, favorites);
+   it must not outlive the device/account it was written on.
    See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
 -->
 <data-extraction-rules>
-    <cloud-backup></cloud-backup>
-    <!--
+    <cloud-backup>
+        <exclude
+            domain="file"
+            path="datastore/settings.json" />
+    </cloud-backup>
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude
+            domain="file"
+            path="datastore/settings.json" />
     </device-transfer>
-    -->
 </data-extraction-rules>

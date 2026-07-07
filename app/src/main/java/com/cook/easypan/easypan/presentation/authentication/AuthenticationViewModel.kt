@@ -8,8 +8,10 @@
 
 package com.cook.easypan.easypan.presentation.authentication
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,36 +33,41 @@ class AuthenticationViewModel(
 
     fun onAction(action: AuthenticationAction) {
         when (action) {
-            is AuthenticationAction.OnAuthButtonClick -> {
-                _state.update {
-                    it.copy(
-                        isLoading = true
-                    )
-                }
-                viewModelScope.launch {
-                    userRepository.signInWithGoogle(action.activityContext).collect { response ->
-                        when (response) {
-                            is Result.Success -> {
-                                _state.update {
-                                    it.copy(
-                                        isSignInSuccessful = true,
-                                        signInError = null,
-                                        currentUser = userRepository.getCurrentUser(),
-                                        isLoading = false
-                                    )
-                                }
-                            }
+            is AuthenticationAction.OnAuthButtonClick -> signIn(action.activityContext)
+        }
+    }
 
-                            is Result.Failure -> {
-                                _state.update {
-                                    it.copy(
-                                        isSignInSuccessful = false,
-                                        signInError = response.error,
-                                        isLoading = false
-                                    )
-                                }
-                            }
-                        }
+    private fun signIn(activityContext: Context) {
+        if (_state.value.isLoading) return
+        _state.update {
+            it.copy(
+                isLoading = true,
+                signInError = null
+            )
+        }
+        viewModelScope.launch {
+            when (val result = userRepository.signInWithGoogle(activityContext)) {
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            isSignInSuccessful = true,
+                            signInError = null,
+                            currentUser = userRepository.getCurrentUser(),
+                            isLoading = false
+                        )
+                    }
+                }
+
+                is Result.Failure -> {
+                    _state.update {
+                        it.copy(
+                            isSignInSuccessful = false,
+                            // A user-initiated cancellation is not an error to show.
+                            signInError = result.error.takeUnless { error ->
+                                error == AppError.SIGN_IN_CANCELLED
+                            },
+                            isLoading = false
+                        )
                     }
                 }
             }

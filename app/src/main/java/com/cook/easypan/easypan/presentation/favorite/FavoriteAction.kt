@@ -12,4 +12,5 @@ import com.cook.easypan.easypan.domain.model.Recipe
 
 sealed interface FavoriteAction {
     data class OnRecipeClick(val recipe: Recipe) : FavoriteAction
+    data object OnRetryClick : FavoriteAction
 }

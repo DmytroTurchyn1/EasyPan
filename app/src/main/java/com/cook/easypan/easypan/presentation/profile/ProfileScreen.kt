@@ -27,14 +27,18 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ScreenLockPortrait
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +67,11 @@ fun ProfileRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    LaunchedEffect(state.isAccountDeleted) {
+        if (state.isAccountDeleted) {
+            onSignOutButton()
+        }
+    }
     ProfileScreen(
         state = state,
         onAction = { action ->
@@ -90,6 +99,31 @@ private fun ProfileScreen(
     state: ProfileState,
     onAction: (ProfileAction) -> Unit,
 ) {
+    val context = LocalContext.current
+    if (state.isDeleteDialogShowing) {
+        AlertDialog(
+            onDismissRequest = { onAction(ProfileAction.OnDeleteAccountDismiss) },
+            title = { Text(text = stringResource(R.string.delete_account_dialog_title)) },
+            text = { Text(text = stringResource(R.string.delete_account_dialog_text)) },
+            confirmButton = {
+                TextButton(
+                    onClick = { onAction(ProfileAction.OnDeleteAccountConfirm(context)) }
+                ) {
+                    Text(
+                        text = stringResource(R.string.delete_account_confirm),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { onAction(ProfileAction.OnDeleteAccountDismiss) }
+                ) {
+                    Text(text = stringResource(R.string.delete_account_cancel))
+                }
+            }
+        )
+    }
     Scaffold(
         topBar = {
             Text(
@@ -226,6 +260,20 @@ private fun ProfileScreen(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = stringResource(R.string.help_image_description),
                         tint = MaterialTheme.colorScheme.inverseSurface,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .padding(end = 6.dp)
+                    )
+                }
+                SettingsItem(
+                    text = stringResource(R.string.delete_account_title),
+                    icon = Icons.Outlined.Delete,
+                    onClick = { onAction(ProfileAction.OnDeleteAccountClick) },
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = stringResource(R.string.delete_account_title),
+                        tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .size(30.dp)
                             .padding(end = 6.dp)

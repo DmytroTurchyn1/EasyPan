@@ -14,20 +14,44 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
+
+      - name: Decode Google Services JSON
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > ${{ github.workspace }}/app/google-services.json
+
+      - name: Decode KeyStore
+        run: |
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > ${{ runner.temp }}/release-key.jks
+
+      - name: Create keystore.properties
+        run: |
+          echo "storeFile=${{ runner.temp }}/release-key.jks" > ${{ github.workspace }}/keystore.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> ${{ github.workspace }}/keystore.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> ${{ github.workspace }}/keystore.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> ${{ github.workspace }}/keystore.properties
+          echo "clientId=\"${{ secrets.CLIENT_ID }}\"" >> ${{ github.workspace }}/keystore.properties
 
       - name: Extract version name using Gradle
         id: tag
         run: |
           VERSION_NAME=$(./gradlew -q printVersion --console=plain)
           echo "tag_name=${VERSION_NAME}" >> $GITHUB_OUTPUT
+
+      # The published APK is built and signed from the checked-out sources,
+      # never taken from a binary committed to the repository.
+      - name: Build signed release APK
+        run: ./gradlew assembleRelease
 
       - name: create GitHub release
         uses: softprops/action-gh-release@v2
@@ -38,6 +62,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            app/release/*.apk
+            app/build/outputs/apk/release/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

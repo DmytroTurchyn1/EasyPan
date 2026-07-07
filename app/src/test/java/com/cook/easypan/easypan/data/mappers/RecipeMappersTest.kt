@@ -14,7 +14,6 @@ import com.cook.easypan.easypan.data.dto.StepDescriptionDto
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 class RecipeMappersTest {
@@ -82,12 +81,10 @@ class RecipeMappersTest {
     }
 
     @Test
-    fun `toRecipe invalid difficulty`() {
-        val recipe = recipeDto.copy(difficulty = 4)
+    fun `toRecipe invalid difficulty falls back to Unknown`() {
+        val recipe = recipeDto.copy(difficulty = 4).toRecipe()
 
-        assertFailsWith<IllegalArgumentException> {
-            recipe.toRecipe()
-        }
+        assertEquals("Unknown", recipe.difficulty)
     }
 
     @Test
@@ -153,12 +150,12 @@ class RecipeMappersTest {
     }
 
     @Test
-    fun `toStepDescription invalid stepType`() {
+    fun `toStepDescription invalid stepType falls back to TEXT`() {
         val recipe = recipeDto.instructions.first().copy(stepType = "INVALID")
 
-        assertFailsWith<IllegalArgumentException> {
-            recipe.toStepDescription()
-        }
+        val stepDescription = recipe.toStepDescription()
+
+        assertEquals(StepType.TEXT, stepDescription.stepType)
     }
 
     @Test
@@ -238,13 +235,12 @@ class RecipeMappersTest {
         val stepDescriptionDtoNull = StepDescriptionDto(stepType = "TIMER").copy(durationSec = null)
 
         val stepDescriptionZero = stepDescriptionDtoZero.toStepDescription()
+        val stepDescriptionNegative = negativeDurationStepDescriptionDto.toStepDescription()
         val stepDescriptionNull = stepDescriptionDtoNull.toStepDescription()
 
         assertEquals(0, stepDescriptionZero.durationSec)
+        assertEquals(0, stepDescriptionNegative.durationSec)
         assertNull(stepDescriptionNull.durationSec)
-        assertFailsWith<IllegalArgumentException> {
-            negativeDurationStepDescriptionDto.toStepDescription()
-        }
     }
 
 }

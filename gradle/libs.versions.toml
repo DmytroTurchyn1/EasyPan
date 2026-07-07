@@ -1,43 +1,36 @@
 [versions]
-agp = "9.0.1"
-firebaseAppdistribution = "16.0.0-beta17"
-firebaseAppdistributionApiKtx = "16.0.0-beta15"
-kotlin = "2.3.10"
-coreKtx = "1.17.0"
+agp = "9.2.1"
+kotlin = "2.4.0"
+coreKtx = "1.19.0"
 junit = "4.13.2"
-gms = "4.4.4"
-firebase = "34.9.0"
+gms = "4.5.0"
+firebase = "34.15.0"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 kotlinTest = "2.2.0"
-lifecycleRuntimeKtx = "2.10.0"
-activityCompose = "1.12.4"
-composeBom = "2026.02.00"
-uiTextGoogleFonts = "1.10.3"
+lifecycleRuntimeKtx = "2.11.0"
+activityCompose = "1.13.0"
+composeBom = "2026.06.01"
+uiTextGoogleFonts = "1.11.4"
 compose-material-icons-extended = "1.7.8"
-nav_version = "2.9.7"
-firebaseAuth = "24.0.1"
-playServicesAuth = "21.5.0"
-koin = "4.1.1"
-coil3 = "3.3.0"
-ktor = "3.4.0"
-credentials = "1.5.0"
+nav_version = "2.9.8"
+koin = "4.2.2"
+coil3 = "3.5.0"
+ktor = "3.5.1"
+credentials = "1.6.0"
 googleid = "1.2.0"
-crashlytics = "3.0.6"
+crashlytics = "3.0.7"
 firebasePerfPlugin = "2.0.2"
-uiTestJunit4Android = "1.10.3"
-mockk = "1.14.9"
+uiTestJunit4Android = "1.11.4"
+mockk = "1.14.11"
 playIntegrity = "1.6.0"
-appCheckDebug = "19.0.2"
-inappMessaging = "22.0.2"
-messaging = "25.0.1"
-coroutinesTest = "1.10.2"
-kotlinxSerializationJson = "1.10.0"
-uiautomator = "2.3.0"
+coroutinesTest = "1.11.0"
+kotlinxSerializationJson = "1.11.0"
+uiautomator = "2.4.0"
 benchmarkMacroJunit4 = "1.4.1"
 profileinstaller = "1.4.1"
-datastore = "1.2.0"
-testManifest = "1.10.3"
+datastore = "1.2.1"
+testManifest = "1.11.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -62,16 +55,13 @@ androidx-datastore = { group = "androidx.datastore", name = "datastore", version
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
-firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 firebase-appcheck-playintegrity = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" }
-firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug", version.ref = "appCheckDebug" }
+firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug" }
 firebase-crashlytics-ndk = { group = "com.google.firebase", name = "firebase-crashlytics-ndk" }
 firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
-firebase-inapp-messaging = { module = "com.google.firebase:firebase-inappmessaging-display", version.ref = "inappMessaging" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "messaging" }
-firebase-appdistribution = { module = "com.google.firebase:firebase-appdistribution", version.ref = "firebaseAppdistribution" }
-firebase-appdistribution-api-ktx = { module = "com.google.firebase:firebase-appdistribution-api-ktx", version.ref = "firebaseAppdistributionApiKtx" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 
 
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
@@ -83,7 +73,6 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 
 
-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
 identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
@@ -161,17 +150,13 @@ compose-debug = [
 ]
 
 firebase = [
-    "firebase-bom",
     "firebase-analytics",
     "firebase-auth",
     "firebase-appcheck-playintegrity",
-    "firebase-appcheck-debug",
     "firebase-firestore",
-    "play-services-auth",
     "firebase-crashlytics-ndk",
     "firebase-perf",
     "play-integrity",
-    "firebase-inapp-messaging",
     "firebase-messaging"
 ]
 

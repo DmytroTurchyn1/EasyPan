@@ -14,5 +14,7 @@ data class ProfileState(
     val favoriteCuisines: Int = 0,
     val isLoading: Boolean = true,
     val currentUser: User? = null,
-    val keepScreenOn: Boolean = true
+    val keepScreenOn: Boolean = true,
+    val isDeleteDialogShowing: Boolean = false,
+    val isAccountDeleted: Boolean = false
 )

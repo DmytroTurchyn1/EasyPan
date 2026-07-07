@@ -59,7 +59,7 @@ fun AlertCancelRecipeDialog(
         dismissButton = {
             TextButton(
                 onClick = {
-                    onConfirmation()
+                    onDismissRequest()
                 }
             ) {
                 Text(stringResource(R.string.dismiss_button))

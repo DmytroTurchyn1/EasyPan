@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -48,8 +47,8 @@ import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.core.presentation.EasyPanText
 import com.cook.easypan.core.presentation.snackBar.SnackBarController
 import com.cook.easypan.core.presentation.snackBar.SnackBarEvent
+import com.cook.easypan.core.presentation.toMessageRes
 import com.cook.easypan.ui.theme.EasyPanTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun AuthenticationRoot(
@@ -120,16 +119,12 @@ private fun AuthenticationScreen(
 
         }
     ) { innerPadding ->
-        val scope = rememberCoroutineScope()
-        LaunchedEffect(state.signInError, context) {
-            if (state.signInError != null) {
-                scope.launch {
-                    SnackBarController.sendEvent(
-                        event = SnackBarEvent(
-                            message = state.signInError
-                        )
-                    )
-                }
+        state.signInError?.let { error ->
+            val errorMessage = stringResource(error.toMessageRes())
+            LaunchedEffect(error) {
+                SnackBarController.sendEvent(
+                    event = SnackBarEvent(message = errorMessage)
+                )
             }
         }
 
@@ -141,7 +136,7 @@ private fun AuthenticationScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.auth_img),
-                contentDescription = "Logo",
+                contentDescription = stringResource(R.string.auth_image_description),
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .fillMaxWidth()

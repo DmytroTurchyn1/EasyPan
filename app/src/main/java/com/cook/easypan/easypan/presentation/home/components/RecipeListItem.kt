@@ -69,7 +69,12 @@ fun RecipeListItem(
                     maxLines = 2
                 )
                 Text(
-                    text = "${recipe.cookMinutes} min · ${recipe.difficulty} · ${recipe.instructions.size} steps",
+                    text = stringResource(
+                        R.string.recipe_meta,
+                        recipe.cookMinutes,
+                        recipe.difficulty,
+                        recipe.instructions.size
+                    ),
                     fontSize = MaterialTheme.typography.labelLarge.fontSize,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2

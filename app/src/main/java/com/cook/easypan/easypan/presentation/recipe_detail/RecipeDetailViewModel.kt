@@ -13,6 +13,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.cook.easypan.R
+import com.cook.easypan.core.domain.AppError
+import com.cook.easypan.core.domain.Result
 import com.cook.easypan.core.presentation.snackBar.SnackBarController
 import com.cook.easypan.core.presentation.snackBar.SnackBarEvent
 import com.cook.easypan.easypan.domain.repository.UserRepository
@@ -90,44 +93,41 @@ class RecipeDetailViewModel(
                 }
             }
 
-            is RecipeDetailAction.OnFavoriteButtonClick -> {
-                viewModelScope.launch {
-                    val currentIsFavorite = state.value.isFavorite
-                    runCatching {
-                        if (currentIsFavorite) {
-                            userRepository.deleteRecipeFromFavorites(recipeId = recipeId)
-                            false
-
-                        } else {
-                            userRepository.addRecipeToFavorites(
-                                state.value.recipe ?: throw IllegalStateException("Recipe is null")
-                            )
-                            true
-                        }
-                    }.onSuccess { isFavorite ->
-                        _state.update {
-                            it.copy(
-                                isFavorite = isFavorite
-                            )
-                        }
-                    }.onFailure { error ->
-                        Log.e(
-                            "RecipeDetailViewModel",
-                            "Error updating favorite status: ${error.message}"
-                        )
-                        viewModelScope.launch {
-                            SnackBarController.sendEvent(
-                                event = SnackBarEvent(
-                                    message = error.message ?: "Error updating favorite status",
-                                )
-                            )
-                        }
-                    }
-                }
-            }
+            is RecipeDetailAction.OnFavoriteButtonClick -> toggleFavorite()
 
             else -> Unit
         }
     }
 
+    private fun toggleFavorite() {
+        if (_state.value.isFavoriteUpdating) return
+        viewModelScope.launch {
+            _state.update { it.copy(isFavoriteUpdating = true) }
+            val wasFavorite = _state.value.isFavorite
+            val result = if (wasFavorite) {
+                userRepository.deleteRecipeFromFavorites(recipeId = recipeId)
+            } else {
+                _state.value.recipe?.let { recipe ->
+                    userRepository.addRecipeToFavorites(recipe)
+                } ?: Result.Failure(AppError.UNKNOWN)
+            }
+            when (result) {
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            isFavorite = !wasFavorite,
+                            isFavoriteUpdating = false
+                        )
+                    }
+                }
+
+                is Result.Failure -> {
+                    _state.update { it.copy(isFavoriteUpdating = false) }
+                    SnackBarController.sendEvent(
+                        SnackBarEvent(messageRes = R.string.error_favorite_update)
+                    )
+                }
+            }
+        }
+    }
 }

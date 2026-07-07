@@ -120,6 +120,7 @@ private fun RecipeDetailScreen(
                 if (state.recipe != null) {
                     IconButton(
                         onClick = { onAction(RecipeDetailAction.OnFavoriteButtonClick(state.recipe.id)) },
+                        enabled = !state.isFavoriteUpdating,
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                     ) {
@@ -162,7 +163,7 @@ private fun RecipeDetailScreen(
                         error = {
                             Image(
                                 painter = painterResource(R.drawable.auth_img),
-                                contentDescription = "Recipe Image",
+                                contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )

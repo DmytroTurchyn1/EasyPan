@@ -17,6 +17,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -24,26 +25,30 @@ import com.cook.easypan.core.presentation.snackBar.SnackBarController
 import com.cook.easypan.core.util.ObserveAsEvents
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.launch
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.compose.koinInject
 
 
 @Composable
 fun RootNavGraph() {
     val navController = rememberNavController()
-    val userRepository: UserRepository by inject(UserRepository::class.java)
+    val userRepository = koinInject<UserRepository>()
     val startDestination = remember {
         if (userRepository.isUserSignedIn()) Route.AppGraph else Route.AuthGraph
     }
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     ObserveAsEvents(
         SnackBarController.events,
         snackBarHostState
     ) { event ->
         scope.launch {
             snackBarHostState.currentSnackbarData?.dismiss()
+            val message = event.message
+                ?: event.messageRes?.let(context::getString)
+                ?: return@launch
             val result = snackBarHostState.showSnackbar(
-                message = event.message,
+                message = message,
                 actionLabel = event.action?.name,
                 duration = SnackbarDuration.Long
             )
@@ -59,7 +64,6 @@ fun RootNavGraph() {
         }
     ) { _ ->
         NavHost(
-
             navController = navController,
             startDestination = startDestination
         ) {
@@ -69,18 +73,17 @@ fun RootNavGraph() {
             composable<Route.AppGraph> {
                 Home(
                     onSignOut = {
-                        navController.navigate(Route.AuthGraph) {
-                            popUpTo(Route.AppGraph) {
-                                inclusive = true
+                        scope.launch {
+                            userRepository.signOut()
+                            navController.navigate(Route.AuthGraph) {
+                                popUpTo(Route.AppGraph) {
+                                    inclusive = true
+                                }
                             }
                         }
-                        userRepository.signOut()
                     }
                 )
             }
         }
     }
-
-
 }
-

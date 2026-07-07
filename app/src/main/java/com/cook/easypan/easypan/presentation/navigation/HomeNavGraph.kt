@@ -8,7 +8,6 @@
 
 package com.cook.easypan.easypan.presentation.navigation
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -165,9 +164,10 @@ fun HomeNavGraph(
                 viewModel = viewModel,
                 onFinishClick = {
                     navController.navigate(Route.Home) {
-                        popUpTo(Route.RecipeFinish(it.id)) {
+                        popUpTo(Route.Home) {
                             inclusive = true
                         }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -209,7 +209,7 @@ private inline fun <reified T : ViewModel> NavBackStackEntry.sharedKoinViewModel
         try {
             navController.getBackStackEntry(Route.Home::class.qualifiedName!!)
         } catch (e: IllegalArgumentException) {
-            Log.e(TAG, e.toString())
+            Log.e("HomeNavGraph", e.toString())
             navController.currentBackStackEntry!!
         }
     }

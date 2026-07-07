@@ -10,5 +10,7 @@ sealed interface RecipeStepAction {
     data object OnShowDialog : RecipeStepAction
     data object OnCancelClick : RecipeStepAction
     data class OnRecipeChange(val recipe: Recipe) : RecipeStepAction
+    data class OnTimerToggleClick(val stepIndex: Int, val totalSeconds: Int) : RecipeStepAction
+    data class OnTimerRestartClick(val stepIndex: Int) : RecipeStepAction
 
 }
