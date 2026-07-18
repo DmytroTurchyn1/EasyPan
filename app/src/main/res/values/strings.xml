@@ -86,4 +86,12 @@
     <string name="delete_account_dialog_text">This permanently deletes your account, your favorites and your cooking stats. This action cannot be undone.</string>
     <string name="delete_account_confirm">Delete</string>
     <string name="delete_account_cancel">Cancel</string>
+    <string name="meal_plan_bar_title">Meal Plan</string>
+    <string name="meal_plan_title">Meal Plan</string>
+    <string name="meal_plan_headline">Plan Your Week</string>
+    <string name="meal_plan_description">Answer five quick questions and EasyPan will cook up a personal meal plan for your whole week.</string>
+    <string name="meal_plan_create_button">Create My Plan</string>
+    <string name="meal_plan_pro_badge">PRO</string>
+    <string name="meal_plan_pro_included">Included in EasyPan Pro</string>
+    <string name="meal_plan_icon_description">Meal plan</string>
 </resources>

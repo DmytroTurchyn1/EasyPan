@@ -32,6 +32,8 @@ import com.cook.easypan.easypan.presentation.favorite.FavoriteRoot
 import com.cook.easypan.easypan.presentation.favorite.FavoriteViewModel
 import com.cook.easypan.easypan.presentation.home.HomeRoot
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
+import com.cook.easypan.easypan.presentation.meal_plan.MealPlanRoot
+import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileRoot
 import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailAction
@@ -179,6 +181,15 @@ fun HomeNavGraph(
             ProfileRoot(
                 onSignOutButton = { onSignOut() },
                 viewModel = viewModel
+            )
+        }
+        composable<Route.MealPlan> {
+            val viewModel = koinViewModel<MealPlanViewModel>()
+            MealPlanRoot(
+                viewModel = viewModel,
+                onCreatePlanClick = {
+                    // TODO: navigate to the meal-plan questionnaire once that flow exists
+                }
             )
         }
         composable<Route.Favorite> {

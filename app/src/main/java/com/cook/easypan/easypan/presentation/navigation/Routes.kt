@@ -22,6 +22,9 @@ sealed class Route {
     data object Favorite : Route()
 
     @Serializable
+    data object MealPlan : Route()
+
+    @Serializable
     data object Profile : Route()
 
     @Serializable

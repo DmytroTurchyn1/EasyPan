@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BakeryDining
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -42,6 +43,11 @@ sealed class BottomBarScreen(
         title = R.string.favorite_bar_title,
         icon = Icons.Default.Favorite
     )
+    object MealPlan : BottomBarScreen(
+        route = Route.MealPlan,
+        title = R.string.meal_plan_bar_title,
+        icon = Icons.Default.BakeryDining
+    )
 
     object Profile : BottomBarScreen(
         route = Route.Profile,
@@ -59,6 +65,7 @@ fun BottomNavigationBar(
 
     val screens = listOf(
         BottomBarScreen.Home,
+        BottomBarScreen.MealPlan,
         BottomBarScreen.Favorite,
         BottomBarScreen.Profile
     )
