@@ -20,6 +20,7 @@ import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewMo
 import com.cook.easypan.easypan.presentation.favorite.FavoriteViewModel
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
+import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
 import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishViewModel
@@ -48,6 +49,7 @@ val appModule = module {
     viewModelOf(::AuthenticationViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::MealPlanViewModel)
+    viewModelOf(::MealPlanWizardViewModel)
     viewModelOf(::RecipeDetailViewModel)
     viewModelOf(::SelectedRecipeViewModel)
     viewModelOf(::RecipeStepViewModel)

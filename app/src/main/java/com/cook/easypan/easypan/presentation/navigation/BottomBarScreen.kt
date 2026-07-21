@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BakeryDining
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -46,7 +46,7 @@ sealed class BottomBarScreen(
     object MealPlan : BottomBarScreen(
         route = Route.MealPlan,
         title = R.string.meal_plan_bar_title,
-        icon = Icons.Default.BakeryDining
+        icon = Icons.Default.RestaurantMenu
     )
 
     object Profile : BottomBarScreen(

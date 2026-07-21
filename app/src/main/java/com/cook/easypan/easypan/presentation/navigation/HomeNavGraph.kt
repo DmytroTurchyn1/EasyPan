@@ -34,6 +34,8 @@ import com.cook.easypan.easypan.presentation.home.HomeRoot
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanRoot
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
+import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardRoot
+import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileRoot
 import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailAction
@@ -188,7 +190,20 @@ fun HomeNavGraph(
             MealPlanRoot(
                 viewModel = viewModel,
                 onCreatePlanClick = {
-                    // TODO: navigate to the meal-plan questionnaire once that flow exists
+                    navController.navigate(Route.MealPlanWizard)
+                }
+            )
+        }
+        composable<Route.MealPlanWizard> {
+            val viewModel = koinViewModel<MealPlanWizardViewModel>()
+            MealPlanWizardRoot(
+                viewModel = viewModel,
+                onExit = {
+                    navController.navigateUp()
+                },
+                onFinish = {
+                    // TODO: navigate to the plan result once that screen is designed
+                    navController.navigateUp()
                 }
             )
         }

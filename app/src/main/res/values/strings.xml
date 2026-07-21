@@ -94,4 +94,26 @@
     <string name="meal_plan_pro_badge">PRO</string>
     <string name="meal_plan_pro_included">Included in EasyPan Pro</string>
     <string name="meal_plan_icon_description">Meal plan</string>
+    <string name="meal_plan_wizard_q1_title">What Do You Love to Eat?</string>
+    <string name="meal_plan_wizard_q1_subtitle">Pick ingredients you want to see often.</string>
+    <string name="meal_plan_wizard_search_hint">Search ingredients</string>
+    <string name="meal_plan_wizard_selected">Selected · %1$d</string>
+    <string name="meal_plan_wizard_suggestions">Suggestions</string>
+    <string name="meal_plan_wizard_continue">Continue</string>
+    <string name="meal_plan_wizard_skip">Skip</string>
+    <string name="meal_plan_wizard_title_step2">Who are you cooking for?</string>
+    <string name="meal_plan_wizard_subtitle_step2">Portions and groceries will match your household.</string>
+    <string name="meal_plan_wizard_portions_cd">%1$d portions</string>
+    <string name="meal_plan_wizard_coming_soon">This step is coming soon.</string>
+    <string name="meal_plan_wizard_title_step3">Any allergies?</string>
+    <string name="meal_plan_wizard_subtitle_step3">These never appear in your plan — in any amount.</string>
+    <string name="meal_plan_wizard_q4_title">Anything you\'d rather skip?</string>
+    <string name="meal_plan_wizard_q4_subtitle">Not an allergy — just not your thing.</string>
+    <string name="meal_plan_wizard_q5_title">How many meals a day?</string>
+    <string name="meal_plan_wizard_q5_subtitle">You can always cook more from the Recipes tab</string>
+    <string name="meal_plan_wizard_meals_count">%1$d Meals</string>
+    <string name="meal_plan_wizard_meals_2_subtitle">Lunch · Dinner</string>
+    <string name="meal_plan_wizard_meals_3_subtitle">Breakfast · Lunch · Dinner</string>
+    <string name="meal_plan_wizard_meals_snack_subtitle">+ Afternoon snack</string>
+    <string name="meal_plan_wizard_create_plan">Create my personal plan</string>
 </resources>

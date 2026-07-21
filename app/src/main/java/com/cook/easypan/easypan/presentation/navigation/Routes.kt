@@ -25,6 +25,9 @@ sealed class Route {
     data object MealPlan : Route()
 
     @Serializable
+    data object MealPlanWizard : Route()
+
+    @Serializable
     data object Profile : Route()
 
     @Serializable
