@@ -27,6 +27,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.cook.easypan.easypan.presentation.SelectedPlanViewModel
 import com.cook.easypan.easypan.presentation.SelectedRecipeViewModel
 import com.cook.easypan.easypan.presentation.favorite.FavoriteRoot
 import com.cook.easypan.easypan.presentation.favorite.FavoriteViewModel
@@ -34,6 +35,9 @@ import com.cook.easypan.easypan.presentation.home.HomeRoot
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanRoot
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
+import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewAction
+import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewRoot
+import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewViewModel
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardRoot
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileRoot
@@ -194,16 +198,55 @@ fun HomeNavGraph(
                 }
             )
         }
+        composable<Route.MealPlanReview> {
+            val viewModel = koinViewModel<MealPlanReviewViewModel>()
+            val selectedPlanViewModel =
+                it.sharedKoinViewModel<SelectedPlanViewModel>(navController)
+            val selectedRecipeViewModel =
+                it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            val preferences by selectedPlanViewModel.preferences.collectAsStateWithLifecycle()
+
+            LaunchedEffect(preferences) {
+                preferences?.let { prefs ->
+                    viewModel.onAction(MealPlanReviewAction.OnGenerate(prefs))
+                }
+            }
+
+            MealPlanReviewRoot(
+                viewModel = viewModel,
+                onDismiss = {
+                    navController.navigate(Route.MealPlan) {
+                        popUpTo(Route.MealPlan) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onEdit = {
+                    navController.navigate(Route.MealPlanWizard) {
+                        popUpTo(Route.MealPlanReview) { inclusive = true }
+                    }
+                },
+                onRecipeClick = { recipe ->
+                    selectedRecipeViewModel.onSelectRecipe(recipe)
+                    navController.navigate(Route.RecipeDetail(recipe.id))
+                },
+            )
+        }
         composable<Route.MealPlanWizard> {
             val viewModel = koinViewModel<MealPlanWizardViewModel>()
+            val selectedPlanViewModel =
+                it.sharedKoinViewModel<SelectedPlanViewModel>(navController)
             MealPlanWizardRoot(
                 viewModel = viewModel,
                 onExit = {
                     navController.navigateUp()
                 },
-                onFinish = {
-                    // TODO: navigate to the plan result once that screen is designed
-                    navController.navigateUp()
+                onFinish = { preferences ->
+                    selectedPlanViewModel.onPlanRequested(preferences)
+                    navController.navigate(Route.MealPlanReview) {
+                        popUpTo(Route.MealPlanWizard) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

@@ -151,7 +151,8 @@ class MealPlanWizardViewModelTest {
 
         viewModel.onAction(MealPlanWizardAction.OnContinueClick)
 
-        assertEquals(listOf<MealPlanWizardEvent>(MealPlanWizardEvent.Finish), events)
+        assertEquals(1, events.size)
+        assertTrue(events.first() is MealPlanWizardEvent.Finish)
         stateJob.cancel()
         eventsJob.cancel()
     }

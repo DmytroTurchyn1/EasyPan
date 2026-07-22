@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.core.util.ObserveAsEvents
+import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.components.AllergiesItem
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.components.IngredientChip
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.components.MealsBox
@@ -50,7 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MealPlanWizardRoot(
     onExit: () -> Unit,
-    onFinish: () -> Unit,
+    onFinish: (MealPlanPreferences) -> Unit,
     viewModel: MealPlanWizardViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -58,7 +59,7 @@ fun MealPlanWizardRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             MealPlanWizardEvent.Exit -> onExit()
-            MealPlanWizardEvent.Finish -> onFinish()
+            is MealPlanWizardEvent.Finish -> onFinish(event.preferences)
         }
     }
 

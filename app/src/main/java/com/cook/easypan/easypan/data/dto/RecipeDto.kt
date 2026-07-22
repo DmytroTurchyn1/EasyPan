@@ -13,5 +13,6 @@ data class RecipeDto(
     @PropertyName("chips") val chips: List<String> = emptyList(),
     @PropertyName("difficulty") val difficulty: Int = 1,
     @PropertyName("instructions") val instructions: List<StepDescriptionDto> = emptyList(),
+    @PropertyName("allergies") val allergies: List<String> = emptyList(),
     @PropertyName("titleImg") val titleImg: String = ""
 )

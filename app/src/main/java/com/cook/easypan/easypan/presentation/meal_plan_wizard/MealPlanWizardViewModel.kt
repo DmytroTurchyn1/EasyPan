@@ -2,6 +2,7 @@ package com.cook.easypan.easypan.presentation.meal_plan_wizard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -86,7 +87,7 @@ class MealPlanWizardViewModel : ViewModel() {
 
             MealPlanWizardAction.OnContinueClick -> {
                 if (_state.value.isLastStep) {
-                    sendEvent(MealPlanWizardEvent.Finish)
+                    sendEvent(MealPlanWizardEvent.Finish(currentPreferences()))
                 } else {
                     _state.update { it.copy(step = it.step + 1) }
                 }
@@ -95,7 +96,7 @@ class MealPlanWizardViewModel : ViewModel() {
             MealPlanWizardAction.OnSkipClick -> {
                 // Skip records no allergies and moves on.
                 if (_state.value.isLastStep) {
-                    sendEvent(MealPlanWizardEvent.Finish)
+                    sendEvent(MealPlanWizardEvent.Finish(currentPreferences()))
                 } else {
                     _state.update {
                         it.copy(step = it.step + 1, selectedAllergies = emptyList())
@@ -113,6 +114,16 @@ class MealPlanWizardViewModel : ViewModel() {
 
             MealPlanWizardAction.OnCancelClick -> sendEvent(MealPlanWizardEvent.Exit)
         }
+    }
+
+    private fun currentPreferences() = _state.value.let { state ->
+        MealPlanPreferences(
+            favoriteProducts = state.selectedIngredients.toList(),
+            skipProducts = state.selectedIngredientsSkip.toList(),
+            allergies = state.selectedAllergies,
+            mealsDay = state.selectedMeals,
+            people = state.portions ?: 1,
+        )
     }
 
     private fun sendEvent(event: MealPlanWizardEvent) {

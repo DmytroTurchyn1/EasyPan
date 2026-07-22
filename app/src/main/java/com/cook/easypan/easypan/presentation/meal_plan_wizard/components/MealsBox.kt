@@ -27,11 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
 
-/**
- * A single-select "meals a day" card. Selected fills with the secondary container and a
- * primary number circle; unselected uses a muted surface. Reads as one radio option to
- * accessibility services.
- */
+
 @Composable
 fun MealsBox(
     number: Int,

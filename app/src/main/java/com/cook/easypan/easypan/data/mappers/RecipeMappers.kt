@@ -31,7 +31,8 @@ fun RecipeDto.toRecipe(): Recipe {
             else -> "Unknown"
         },
         instructions = instructions.map { it.toStepDescription() },
-        titleImg = titleImg
+        titleImg = titleImg,
+        allergies = allergies
     )
 }
 
@@ -43,6 +44,7 @@ fun Recipe.toRecipeDto(): RecipeDto {
         preparationMinutes = preparationMinutes,
         cookMinutes = cookMinutes,
         chips = chips,
+        allergies = allergies,
         difficulty = when (difficulty) {
             "Easy" -> 1
             "Medium" -> 2

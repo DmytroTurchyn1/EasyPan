@@ -37,5 +37,8 @@ sealed class Route {
     data object RecipeStep : Route()
 
     @Serializable
+    data object MealPlanReview : Route()
+
+    @Serializable
     data class RecipeFinish(val id: String) : Route()
 }

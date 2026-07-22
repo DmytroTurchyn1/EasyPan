@@ -116,4 +116,10 @@
     <string name="meal_plan_wizard_meals_3_subtitle">Breakfast · Lunch · Dinner</string>
     <string name="meal_plan_wizard_meals_snack_subtitle">+ Afternoon snack</string>
     <string name="meal_plan_wizard_create_plan">Create my personal plan</string>
+    <string name="meal_plan_review_title">Your Week</string>
+    <string name="meal_plan_review_chip_people">%1$d people</string>
+    <string name="meal_plan_review_chip_meals">%1$d meals/day</string>
+    <string name="meal_plan_review_chip_no_allergy">No %1$s</string>
+    <string name="meal_plan_review_continue">Continue</string>
+    <string name="meal_plan_review_edit">Edit</string>
 </resources>

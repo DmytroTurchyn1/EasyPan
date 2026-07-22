@@ -27,10 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cook.easypan.ui.theme.EasyPanTheme
 
-/**
- * A single allergen row for the allergies step. The whole row is toggleable so it reads as
- * one checkbox to accessibility services; the box itself is purely decorative.
- */
+
 @Composable
 fun AllergiesItem(
     checked: Boolean,

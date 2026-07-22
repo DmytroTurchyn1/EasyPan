@@ -4,6 +4,7 @@ data class Recipe(
     val id: String,
     val title: String,
     val ingredients: List<String>,
+    val allergies: List<String> = emptyList(),
     val preparationMinutes: Int,
     val cookMinutes: Int,
     val chips: List<String> = emptyList(),

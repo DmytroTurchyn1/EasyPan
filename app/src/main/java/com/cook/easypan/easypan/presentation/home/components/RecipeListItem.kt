@@ -135,6 +135,7 @@ private fun RecipeListItemPreview() {
                 ingredients = listOf("bread"),
                 preparationMinutes = 10,
                 chips = listOf("Vegetarian", "Gluten-Free"),
+                allergies = listOf("none")
             ),
             onClick = {}
         )

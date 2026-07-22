@@ -22,10 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.cook.easypan.R
 import com.cook.easypan.ui.theme.EasyPanTheme
 
-/**
- * A single-select number tile for the portions step. Selected fills with the primary
- * colour; unselected uses the muted surface variant.
- */
+
 @Composable
 fun PortionTile(
     number: Int,

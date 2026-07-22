@@ -16,9 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cook.easypan.ui.theme.EasyPanTheme
 
-/**
- * Shared title + subtitle header used by every wizard step so questions look consistent.
- */
+
 @Composable
 fun WizardStepHeader(
     title: String,

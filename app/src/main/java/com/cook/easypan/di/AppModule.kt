@@ -15,11 +15,14 @@ import com.cook.easypan.easypan.data.repository.DefaultRecipeRepository
 import com.cook.easypan.easypan.data.repository.DefaultUserRepository
 import com.cook.easypan.easypan.domain.repository.RecipeRepository
 import com.cook.easypan.easypan.domain.repository.UserRepository
+import com.cook.easypan.easypan.domain.usecase.GenerateMealPlanUseCase
+import com.cook.easypan.easypan.presentation.SelectedPlanViewModel
 import com.cook.easypan.easypan.presentation.SelectedRecipeViewModel
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewModel
 import com.cook.easypan.easypan.presentation.favorite.FavoriteViewModel
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
+import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewViewModel
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
@@ -45,13 +48,16 @@ val appModule = module {
     singleOf(::AuthClient)
     singleOf(::DefaultRecipeRepository).bind<RecipeRepository>()
     singleOf(::DefaultUserRepository).bind<UserRepository>()
+    singleOf(::GenerateMealPlanUseCase)
 
     viewModelOf(::AuthenticationViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::MealPlanViewModel)
     viewModelOf(::MealPlanWizardViewModel)
+    viewModelOf(::MealPlanReviewViewModel)
     viewModelOf(::RecipeDetailViewModel)
     viewModelOf(::SelectedRecipeViewModel)
+    viewModelOf(::SelectedPlanViewModel)
     viewModelOf(::RecipeStepViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::RecipeFinishViewModel)
