@@ -70,7 +70,7 @@ class MealPlanReviewViewModelTest {
     }
 
     @Test
-    fun `continue and dismiss emit Dismiss, edit emits EditPlan`() = runTest {
+    fun `continue, dismiss and edit emit their own events`() = runTest {
         val viewModel = viewModel()
         val events = mutableListOf<MealPlanReviewEvent>()
         val eventsJob = launch(UnconfinedTestDispatcher(testScheduler)) {
@@ -83,7 +83,7 @@ class MealPlanReviewViewModelTest {
 
         assertEquals(
             listOf(
-                MealPlanReviewEvent.Dismiss,
+                MealPlanReviewEvent.Continue,
                 MealPlanReviewEvent.Dismiss,
                 MealPlanReviewEvent.EditPlan,
             ),

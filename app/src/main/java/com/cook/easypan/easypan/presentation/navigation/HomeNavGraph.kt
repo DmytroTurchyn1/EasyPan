@@ -33,6 +33,9 @@ import com.cook.easypan.easypan.presentation.favorite.FavoriteRoot
 import com.cook.easypan.easypan.presentation.favorite.FavoriteViewModel
 import com.cook.easypan.easypan.presentation.home.HomeRoot
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
+import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptAction
+import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptRoot
+import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptViewModel
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanRoot
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
 import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewAction
@@ -51,6 +54,8 @@ import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishViewModel
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepRoot
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -198,6 +203,22 @@ fun HomeNavGraph(
                 }
             )
         }
+        composable<Route.IngredientsReceipt> {
+            val viewModel = koinViewModel<IngredientsReceiptViewModel>()
+            val selectedPlanViewModel =
+                it.sharedKoinViewModel<SelectedPlanViewModel>(navController)
+            val preferences by selectedPlanViewModel.preferences.collectAsStateWithLifecycle()
+
+            LaunchedEffect(preferences) {
+                preferences?.let { prefs ->
+                    viewModel.onAction(IngredientsReceiptAction.OnGenerate(prefs))
+                }
+            }
+
+            IngredientsReceiptRoot(
+                viewModel = viewModel
+            )
+        }
         composable<Route.MealPlanReview> {
             val viewModel = koinViewModel<MealPlanReviewViewModel>()
             val selectedPlanViewModel =
@@ -223,6 +244,19 @@ fun HomeNavGraph(
                 onEdit = {
                     navController.navigate(Route.MealPlanWizard) {
                         popUpTo(Route.MealPlanReview) { inclusive = true }
+                    }
+                },
+                onContinue = {
+                    val showReceiptScreen: Boolean =
+                        Firebase.remoteConfig.getBoolean("receipt_screen")
+                    if (showReceiptScreen) {
+                        navController.navigate(Route.IngredientsReceipt) {
+                            popUpTo(Route.MealPlanReview) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(Route.MealPlan) {
+                            popUpTo(Route.MealPlanReview) { inclusive = true }
+                        }
                     }
                 },
                 onRecipeClick = { recipe ->

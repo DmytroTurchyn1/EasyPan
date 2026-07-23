@@ -38,7 +38,7 @@ class MealPlanReviewViewModel(
             is MealPlanReviewAction.OnRecipeClick ->
                 sendEvent(MealPlanReviewEvent.OpenRecipe(action.recipe))
 
-            MealPlanReviewAction.OnContinueClick,
+            MealPlanReviewAction.OnContinueClick -> sendEvent(MealPlanReviewEvent.Continue)
             MealPlanReviewAction.OnDismissPlanClick -> sendEvent(MealPlanReviewEvent.Dismiss)
 
             MealPlanReviewAction.OnEditClick -> sendEvent(MealPlanReviewEvent.EditPlan)

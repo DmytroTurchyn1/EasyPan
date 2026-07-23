@@ -122,4 +122,17 @@
     <string name="meal_plan_review_chip_no_allergy">No %1$s</string>
     <string name="meal_plan_review_continue">Continue</string>
     <string name="meal_plan_review_edit">Edit</string>
+    <string name="ingredients_list_title">Groceries Shopping List</string>
+    <string name="ingredients_list_subtitle">These are ingredients you will  need to prepare  your meals</string>
+    <string name="ingredients_list_share_button">Share</string>
+    <string name="ingredients_list_continue_button">Continue</string>
+    <string name="ingredients_list_receipt_meta">Weekly Plan · %1$d meals · %2$d people</string>
+    <string name="ingredients_list_receipt_total">Total</string>
+    <string name="ingredients_list_receipt_items">%1$d Items</string>
+    <string name="ingredients_list_receipt_footer">Thank you for cooking with EasyPan</string>
+    <string name="ingredients_list_receipt_cat_produce">Produce</string>
+    <string name="ingredients_list_receipt_cat_meat">Meat &amp; Fish</string>
+    <string name="ingredients_list_receipt_cat_pantry">Pantry</string>
+    <string name="ingredients_list_receipt_cat_dairy">Dairy &amp; Eggs</string>
+    <string name="ingredients_list_receipt_cat_other">Other</string>
 </resources>

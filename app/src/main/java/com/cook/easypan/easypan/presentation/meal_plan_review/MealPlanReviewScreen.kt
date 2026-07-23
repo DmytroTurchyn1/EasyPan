@@ -49,6 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 fun MealPlanReviewRoot(
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
+    onContinue: () -> Unit,
     onRecipeClick: (Recipe) -> Unit,
     viewModel: MealPlanReviewViewModel = koinViewModel(),
 ) {
@@ -56,6 +57,7 @@ fun MealPlanReviewRoot(
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
+            MealPlanReviewEvent.Continue -> onContinue()
             MealPlanReviewEvent.Dismiss -> onDismiss()
             MealPlanReviewEvent.EditPlan -> onEdit()
             is MealPlanReviewEvent.OpenRecipe -> onRecipeClick(event.recipe)
