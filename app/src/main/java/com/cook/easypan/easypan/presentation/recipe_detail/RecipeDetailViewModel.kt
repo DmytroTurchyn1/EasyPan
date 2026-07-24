@@ -78,6 +78,21 @@ class RecipeDetailViewModel(
                     )
                 }
             }
+            is RecipeDetailAction.OnBottomSheetDismiss -> {
+                _state.update {
+                    it.copy(
+                        showBottomSheet = false
+                    )
+                }
+            }
+
+            is RecipeDetailAction.OnIngredientsButtonClick -> {
+                _state.update {
+                    it.copy(
+                        showBottomSheet = true
+                    )
+                }
+            }
 
             is RecipeDetailAction.OnIngredientCheck -> {
                 _state.update {
@@ -87,8 +102,15 @@ class RecipeDetailViewModel(
                         } else {
                             it.onIngredientCheckClicked + action.ingredientIndex
                         }
+                    val selectedIngredients =
+                        if (it.onIngredientCheckClicked.contains(action.ingredientIndex)) {
+                            it.selectedIngredients - 1
+                        } else {
+                            it.selectedIngredients + 1
+                        }
                     it.copy(
-                        onIngredientCheckClicked = updatedSet
+                        onIngredientCheckClicked = updatedSet,
+                        selectedIngredients = selectedIngredients
                     )
                 }
             }

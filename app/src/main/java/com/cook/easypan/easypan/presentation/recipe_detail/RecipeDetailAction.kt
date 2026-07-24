@@ -16,6 +16,8 @@ sealed interface RecipeDetailAction {
     data class OnFavoriteButtonClick(val recipeId: String) : RecipeDetailAction
 
     data object OnStartRecipeClick : RecipeDetailAction
+    data object OnBottomSheetDismiss : RecipeDetailAction
+    data object OnIngredientsButtonClick : RecipeDetailAction
 
     data class OnIngredientCheck(val ingredientIndex: Int) : RecipeDetailAction
 

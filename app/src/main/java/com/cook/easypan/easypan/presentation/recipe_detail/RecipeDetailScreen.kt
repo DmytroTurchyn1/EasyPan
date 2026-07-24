@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,16 +24,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,9 +53,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.easypan.presentation.recipe_detail.components.BottomSheet
+import com.cook.easypan.easypan.presentation.recipe_detail.components.IngredientsButton
 import com.cook.easypan.easypan.presentation.recipe_detail.components.IngredientsItem
 import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeChip
 import com.cook.easypan.easypan.presentation.recipe_detail.components.RecipeItem
+import com.cook.easypan.easypan.presentation.recipe_detail.components.SelectedIngredientsChip
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
@@ -72,6 +82,7 @@ fun RecipeDetailRoot(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RecipeDetailScreen(
     state: RecipeDetailState,
@@ -136,7 +147,11 @@ private fun RecipeDetailScreen(
             }
         }
     ) { innerPadding ->
+        val scope = rememberCoroutineScope()
+
+        val sheetState = rememberModalBottomSheetState()
         if (state.recipe != null) {
+
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -174,7 +189,7 @@ private fun RecipeDetailScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 14.dp, end = 14.dp)
+                        .padding(start = 16.dp, end = 16.dp)
                 ) {
                     Text(
                         text = state.recipe.title,
@@ -210,29 +225,68 @@ private fun RecipeDetailScreen(
                             )
                         }
                     }
-                    Text(
-                        text = stringResource(R.string.ingredients_title),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier
-                            .padding(top = 10.dp, bottom = 10.dp)
-                    )
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        state.recipe.ingredients.forEachIndexed { index, ingredient ->
-                            IngredientsItem(
-                                text = ingredient,
-                                checked = state.onIngredientCheckClicked.contains(index),
-                                onCheckClick = {
-                                    onAction(RecipeDetailAction.OnIngredientCheck(index))
-                                }
-                            )
+                    IngredientsButton(
+                        modifier = Modifier.padding(10.dp),
+                        icon = Icons.AutoMirrored.Outlined.HelpOutline,
+                        text = stringResource(R.string.ingredients_button),
+                        onClick = {
+                            onAction(RecipeDetailAction.OnIngredientsButtonClick)
                         }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = stringResource(R.string.ingredients_button)
+                        )
                     }
+                    if (state.showBottomSheet) {
+                        BottomSheet(
+                            onDismiss = {
+                                onAction(RecipeDetailAction.OnBottomSheetDismiss)
+                            },
+                            sheetState = sheetState
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 20.dp, end = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.ingredients_title),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                        fontWeight = FontWeight.SemiBold,
+                                    )
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    SelectedIngredientsChip(
+                                        modifier = Modifier
+                                            .padding(end = 10.dp),
+                                        selected = state.selectedIngredients,
+                                        total = state.recipe.ingredients.size
+
+                                    )
+                                }
+                                state.recipe.ingredients.forEachIndexed { index, ingredient ->
+                                    IngredientsItem(
+                                        modifier = Modifier
+                                            .padding(start = 20.dp, end = 20.dp, top = 10.dp),
+                                        text = ingredient,
+                                        checked = state.onIngredientCheckClicked.contains(index),
+                                        onCheckClick = {
+                                            onAction(RecipeDetailAction.OnIngredientCheck(index))
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        }
+
                 }
             }
         } else {
@@ -249,7 +303,8 @@ private fun RecipeDetailScreen(
         }
 
     }
-}
+    }
+
 
 @Preview(showSystemUi = true)
 @Composable
