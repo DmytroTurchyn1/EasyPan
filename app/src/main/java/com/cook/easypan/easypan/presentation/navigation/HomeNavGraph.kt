@@ -36,6 +36,7 @@ import com.cook.easypan.easypan.presentation.home.HomeViewModel
 import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptAction
 import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptRoot
 import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptViewModel
+import com.cook.easypan.easypan.presentation.meal_plan.MealPlanAction
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanRoot
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
 import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewAction
@@ -196,11 +197,27 @@ fun HomeNavGraph(
         }
         composable<Route.MealPlan> {
             val viewModel = koinViewModel<MealPlanViewModel>()
+            val selectedPlanViewModel =
+                it.sharedKoinViewModel<SelectedPlanViewModel>(navController)
+            val selectedRecipeViewModel =
+                it.sharedKoinViewModel<SelectedRecipeViewModel>(navController)
+            val preferences by selectedPlanViewModel.preferences.collectAsStateWithLifecycle()
+
+            LaunchedEffect(preferences) {
+                preferences?.let { prefs ->
+                    viewModel.onAction(MealPlanAction.OnGenerate(prefs))
+                }
+            }
+
             MealPlanRoot(
                 viewModel = viewModel,
-                onCreatePlanClick = {
+                onOpenWizard = {
                     navController.navigate(Route.MealPlanWizard)
-                }
+                },
+                onRecipeClick = { recipe ->
+                    selectedRecipeViewModel.onSelectRecipe(recipe)
+                    navController.navigate(Route.RecipeDetail(recipe.id))
+                },
             )
         }
         composable<Route.IngredientsReceipt> {

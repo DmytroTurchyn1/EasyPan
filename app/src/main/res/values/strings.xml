@@ -135,4 +135,8 @@
     <string name="ingredients_list_receipt_cat_pantry">Pantry</string>
     <string name="ingredients_list_receipt_cat_dairy">Dairy &amp; Eggs</string>
     <string name="ingredients_list_receipt_cat_other">Other</string>
+    <string name="meal_plan_tab_title">Your Week</string>
+    <string name="meal_plan_tab_subtitle">%1$s · %2$d people · %3$d meals/day</string>
+    <string name="meal_plan_up_next">Up Next · %1$s</string>
+    <string name="meal_plan_regenerate_description">Regenerate plan</string>
 </resources>
