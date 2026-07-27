@@ -8,12 +8,16 @@
 
 <resources>
     <string name="app_name">EasyPan</string>
-    <string name="auth_title">Master Your Craft</string>
-    <string name="auth_description">Elevate your culinary skills with expert guidance and personalized learning paths.</string>
+    <string name="auth_title">Cook Easy, Eat Well</string>
     <string name="auth_image_description">Dish illustration</string>
+    <string name="auth_feature_guided_cooking">Step-by-step guided cooking</string>
+    <string name="auth_feature_matching_recipes">Recipes that match your taste</string>
+    <string name="auth_feature_meal_plan">A personal meal plan for your week</string>
+    <string name="auth_terms_full">By continuing, you agree to our %1$s and %2$s</string>
+    <string name="auth_terms_link">Terms</string>
+    <string name="auth_privacy_link">Privacy Policy</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="google_icon_description">Google logo</string>
-    <string name="terms_and_conditions">By continuing, you agree to our Terms of Service and Privacy Policy</string>
     <string name="home_title">Recipes</string>
     <string name="loading_recipes">Loading recipes…</string>
     <string name="recipes_cooked">Recipes Cooked</string>
@@ -64,13 +68,13 @@
     <string name="keep_screen_on_title">Keep screen on</string>
     <string name="add_to_favorite_button_description">Add to favorite</string>
     <string name="delete_from_favorite_button_description">Delete from favorite</string>
-    <string name="cooked_recipes_count">This is your %d cooked recipe!</string>
     <string name="countdown_timer_notification_finished">00:00 Countdown Timer finished you can move to the next step</string>
     <string name="countdown_timer_notification_title">Countdown Timer</string>
     <string name="timer_finished_notification_title">Timer finished</string>
     <string name="timer_paused">Paused</string>
     <string name="user_image_description">User Image</string>
     <string name="recipe_meta">%1$d min · %2$s · %3$d steps</string>
+    <string name="recipe_meta_short">%1$d min · %2$s</string>
     <string name="retry_button">Retry</string>
     <string name="error_loading_recipes">Couldn\'t load recipes. Check your connection and try again.</string>
     <string name="error_loading_favorites">Couldn\'t load favorites. Check your connection and try again.</string>
@@ -141,4 +145,5 @@
     <string name="meal_plan_regenerate_description">Regenerate plan</string>
     <string name="ingredients_button">Check Ingredients</string>
     <string name="ingredients_count">%1$d of %2$d</string>
+    <string name="recipe_finish_complete_chip_text">Recipe Complete</string>
 </resources>

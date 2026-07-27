@@ -8,6 +8,7 @@
 
 package com.cook.easypan.easypan.presentation.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +20,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -30,9 +33,11 @@ import androidx.compose.material.icons.filled.ScreenLockPortrait
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -53,7 +58,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
-import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.core.util.GITHUB_REPOSITORY_URL
 import com.cook.easypan.core.util.Launcher
 import com.cook.easypan.easypan.presentation.profile.components.InformationBox
@@ -279,11 +283,27 @@ private fun ProfileScreen(
                             .padding(end = 6.dp)
                     )
                 }
-                Spacer(modifier = Modifier.height(12.dp))
-                EasyPanButtonPrimary(
-                    onClick = { onAction(ProfileAction.OnSignOut) }
+                Spacer(modifier = Modifier.height(20.dp))
+                OutlinedButton(
+                    onClick = { onAction(ProfileAction.OnSignOut) },
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    ),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier
+                        .width(124.dp)
+                        .height(42.dp)
                 ) {
-                    Text(text = stringResource(R.string.logout_button))
+                    Text(
+                        text = stringResource(R.string.logout_button),
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
                 }
             }
         }

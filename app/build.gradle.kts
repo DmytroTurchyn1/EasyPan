@@ -125,6 +125,7 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coil)
+    implementation(libs.bundles.revenueCat)
 
     debugImplementation(libs.bundles.compose.debug)
     // App Check debug provider must never ship in release builds.

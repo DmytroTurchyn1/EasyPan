@@ -1,4 +1,4 @@
-package com.cook.easypan.easypan.presentation.profile.components
+package com.cook.easypan.easypan.presentation.recipe_finish.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,13 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
-fun InformationBox(
+fun CookedRecipesBox(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -35,16 +36,23 @@ fun InformationBox(
     )
 }
 
-@Preview(backgroundColor = 0xFFFFFFFF, showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
-private fun InformationBoxPreview() {
+private fun CookedRecipesBoxPreview() {
     EasyPanTheme {
-        InformationBox() {
+        CookedRecipesBox {
             Text(
-                text = "Information",
-                color = Color.White,
+                text = "1",
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+            Text(
+                text = "Recipes Cooked",
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }
-
 }

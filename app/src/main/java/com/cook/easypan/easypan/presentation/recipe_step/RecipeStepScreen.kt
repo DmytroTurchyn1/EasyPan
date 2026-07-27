@@ -183,7 +183,8 @@ private fun RecipeStepScreen(
                             model = state.recipe.instructions[currentStep].imageUrl,
                             contentDescription = stringResource(R.string.dish_image_description),
                             contentScale = ContentScale.FillBounds,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize(),
                             loading = {
                                 Box(
                                     contentAlignment = Alignment.Center
@@ -200,6 +201,7 @@ private fun RecipeStepScreen(
                                 )
                             }
                         )
+
                     }
                     if (state.recipe.instructions[currentStep].stepType == StepType.TEXT) {
                         Column(

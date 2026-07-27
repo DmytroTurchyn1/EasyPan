@@ -1,5 +1,5 @@
 [versions]
-agp = "9.3.0"
+agp = "9.3.1"
 kotlin = "2.4.0"
 coreKtx = "1.19.0"
 junit = "4.13.2"
@@ -31,6 +31,7 @@ benchmarkMacroJunit4 = "1.4.1"
 profileinstaller = "1.4.1"
 datastore = "1.2.1"
 testManifest = "1.11.4"
+revenueCat = "10.15.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -98,7 +99,7 @@ androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomato
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
-
+revenue-cat = { group = "com.revenuecat.purchases", name = "purchases", version.ref = "revenueCat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -179,4 +180,7 @@ coil = [
 ktor = [
     "ktor-client-core",
     "ktor-client-okhttp"
+]
+revenueCat = [
+    "revenue-cat"
 ]
