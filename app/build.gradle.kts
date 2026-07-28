@@ -48,6 +48,13 @@ android {
             "CLIENT_ID",
             "\"${keystoreProperties.getProperty("clientId")?.trim('"') ?: ""}\""
         )
+        // RevenueCat public SDK key. Public (it ships in the APK) but kept out of VCS so debug and
+        // release can point at different RevenueCat apps. Blank => billing is skipped at runtime.
+        buildConfigField(
+            "String",
+            "REVENUECAT_API_KEY",
+            "\"${keystoreProperties.getProperty("revenueCatApiKey")?.trim('"') ?: ""}\""
+        )
     }
     signingConfigs {
         if (keystorePropertiesFile?.exists() == true && keystoreProperties.getProperty("storeFile") != null) {

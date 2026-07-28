@@ -1,8 +1,13 @@
 package com.cook.easypan.easypan.presentation.meal_plan
 
+import android.content.Context
 import android.util.Log
+import com.cook.easypan.core.domain.Result
+import com.cook.easypan.easypan.domain.model.ChefOffer
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
+import com.cook.easypan.easypan.domain.model.PurchaseOutcome
 import com.cook.easypan.easypan.domain.model.Recipe
+import com.cook.easypan.easypan.domain.repository.BillingRepository
 import com.cook.easypan.easypan.domain.repository.RecipeRepository
 import com.cook.easypan.easypan.domain.usecase.GenerateMealPlanUseCase
 import io.mockk.every
@@ -10,6 +15,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -127,7 +133,20 @@ class MealPlanViewModelTest {
 
     private fun viewModel(repository: RecipeRepository) = MealPlanViewModel(
         GenerateMealPlanUseCase(repository),
+        FakeBillingRepository(),
     )
+
+    private class FakeBillingRepository : BillingRepository {
+        override val isChef = MutableStateFlow(true)
+        override fun startObserving() = Unit
+        override suspend fun getMonthlyOffer(): ChefOffer? = null
+        override suspend fun purchaseChef(activityContext: Context): PurchaseOutcome =
+            PurchaseOutcome.Cancelled
+
+        override suspend fun restorePurchases(): Result = Result.Success
+        override suspend fun logIn(userId: String) = Unit
+        override suspend fun logOut() = Unit
+    }
 
     private fun defaultCatalog(): List<Recipe> = listOf(
         Recipe(

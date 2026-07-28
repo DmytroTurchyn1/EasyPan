@@ -27,6 +27,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.cook.easypan.easypan.domain.repository.BillingRepository
 import com.cook.easypan.easypan.presentation.SelectedPlanViewModel
 import com.cook.easypan.easypan.presentation.SelectedRecipeViewModel
 import com.cook.easypan.easypan.presentation.favorite.FavoriteRoot
@@ -44,6 +45,7 @@ import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewRoot
 import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewViewModel
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardRoot
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardViewModel
+import com.cook.easypan.easypan.presentation.paywall.PaywallRoot
 import com.cook.easypan.easypan.presentation.profile.ProfileRoot
 import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailAction
@@ -58,6 +60,7 @@ import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.remoteConfig
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 
 @Composable
@@ -209,16 +212,21 @@ fun HomeNavGraph(
                 }
             }
 
-            MealPlanRoot(
-                viewModel = viewModel,
-                onOpenWizard = {
-                    navController.navigate(Route.MealPlanWizard)
-                },
-                onRecipeClick = { recipe ->
-                    selectedRecipeViewModel.onSelectRecipe(recipe)
-                    navController.navigate(Route.RecipeDetail(recipe.id))
-                },
-            )
+            val isChef by koinInject<BillingRepository>().isChef.collectAsStateWithLifecycle()
+            if (isChef) {
+                MealPlanRoot(
+                    viewModel = viewModel,
+                    onOpenWizard = {
+                        navController.navigate(Route.MealPlanWizard)
+                    },
+                    onRecipeClick = { recipe ->
+                        selectedRecipeViewModel.onSelectRecipe(recipe)
+                        navController.navigate(Route.RecipeDetail(recipe.id))
+                    },
+                )
+            } else {
+                PaywallRoot()
+            }
         }
         composable<Route.IngredientsReceipt> {
             val viewModel = koinViewModel<IngredientsReceiptViewModel>()
@@ -232,9 +240,14 @@ fun HomeNavGraph(
                 }
             }
 
-            IngredientsReceiptRoot(
-                viewModel = viewModel
-            )
+            val isChef by koinInject<BillingRepository>().isChef.collectAsStateWithLifecycle()
+            if (isChef) {
+                IngredientsReceiptRoot(
+                    viewModel = viewModel
+                )
+            } else {
+                PaywallRoot()
+            }
         }
         composable<Route.MealPlanReview> {
             val viewModel = koinViewModel<MealPlanReviewViewModel>()

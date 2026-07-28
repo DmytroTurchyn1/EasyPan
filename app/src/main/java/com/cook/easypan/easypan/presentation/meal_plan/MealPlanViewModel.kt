@@ -6,11 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.easypan.domain.model.MealPlan
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
+import com.cook.easypan.easypan.domain.repository.BillingRepository
 import com.cook.easypan.easypan.domain.usecase.GenerateMealPlanUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,10 +23,17 @@ import java.util.Locale
 
 class MealPlanViewModel(
     private val generateMealPlan: GenerateMealPlanUseCase,
+    private val billingRepository: BillingRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MealPlanState())
     val state = _state.asStateFlow()
+
+    init {
+        billingRepository.isChef
+            .onEach { isChef -> _state.update { it.copy(isProUser = isChef) } }
+            .launchIn(viewModelScope)
+    }
 
     private val _events = Channel<MealPlanEvent>()
     val events = _events.receiveAsFlow()
@@ -52,7 +62,8 @@ class MealPlanViewModel(
             _state.update { it.copy(isLoading = true, error = null) }
             try {
                 val plan = generateMealPlan(preferences)
-                _state.update { plan.toState() }
+                // toState() builds a fresh state — re-apply the entitlement flag.
+                _state.update { plan.toState().copy(isProUser = billingRepository.isChef.value) }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {

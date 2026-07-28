@@ -14,9 +14,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.cook.easypan.easypan.presentation.navigation.RootNavGraph
 import com.cook.easypan.ui.theme.EasyPanTheme
-import com.revenuecat.purchases.LogLevel
-import com.revenuecat.purchases.Purchases
-import com.revenuecat.purchases.PurchasesConfiguration
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,12 +25,5 @@ class MainActivity : ComponentActivity() {
                 RootNavGraph()
             }
         }
-        Purchases.logLevel = LogLevel.DEBUG
-        Purchases.configure(
-            PurchasesConfiguration.Builder(this, "test_ufAJBANLqDZllwDnupHeFAvFyBt")
-                .build()
-        )
     }
-
-
 }

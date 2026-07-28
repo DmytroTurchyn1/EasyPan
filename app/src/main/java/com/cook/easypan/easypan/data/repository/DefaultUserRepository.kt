@@ -26,6 +26,7 @@ import com.cook.easypan.easypan.data.mappers.toUserDto
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.model.UserData
+import com.cook.easypan.easypan.domain.repository.BillingRepository
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.map
 class DefaultUserRepository(
     private val firestoreDataSource: FirestoreClient,
     private val googleAuthClient: AuthClient,
+    private val billingRepository: BillingRepository,
     private val context: Context
 ) : UserRepository {
 
@@ -192,6 +194,7 @@ class DefaultUserRepository(
 
     override suspend fun signOut() {
         googleAuthClient.signOut()
+        billingRepository.logOut()
         clearLocalCache()
     }
 
@@ -203,6 +206,7 @@ class DefaultUserRepository(
             firestoreDataSource.deleteUserData(userId)
             when (val result = googleAuthClient.deleteAccount(activityContext)) {
                 is Result.Success -> {
+                    billingRepository.logOut()
                     clearLocalCache()
                     Result.Success
                 }
@@ -219,8 +223,15 @@ class DefaultUserRepository(
 
     override fun isUserSignedIn(): Boolean = googleAuthClient.getSignedInUser() != null
 
-    override suspend fun signInWithGoogle(activityContext: Context): Result =
-        googleAuthClient.signInWithGoogle(activityContext)
+    override suspend fun signInWithGoogle(activityContext: Context): Result {
+        val result = googleAuthClient.signInWithGoogle(activityContext)
+        if (result is Result.Success) {
+            // Tie billing identity to the account so purchases follow the user across devices.
+            // logIn never blocks auth: DefaultBillingRepository logs failures internally.
+            googleAuthClient.getSignedInUser()?.let { billingRepository.logIn(it.userId) }
+        }
+        return result
+    }
 
     private suspend fun clearLocalCache() {
         context.dataStore.updateData { AppSettings() }

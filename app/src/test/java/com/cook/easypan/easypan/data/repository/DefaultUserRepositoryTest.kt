@@ -24,6 +24,7 @@ import com.cook.easypan.easypan.data.dto.UserDto
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.model.UserData
+import com.cook.easypan.easypan.domain.repository.BillingRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -57,6 +58,9 @@ class DefaultUserRepositoryTest {
     private lateinit var googleAuthClient: AuthClient
 
     @RelaxedMockK
+    private lateinit var billingRepository: BillingRepository
+
+    @RelaxedMockK
     private lateinit var context: Context
 
     private lateinit var defaultUserRepository: DefaultUserRepository
@@ -72,6 +76,7 @@ class DefaultUserRepositoryTest {
         defaultUserRepository = DefaultUserRepository(
             firestoreDataSource = firestoreDataSource,
             googleAuthClient = googleAuthClient,
+            billingRepository = billingRepository,
             context = context
         )
     }
@@ -298,7 +303,7 @@ class DefaultUserRepositoryTest {
         createTestDataStore(scope)
 
         defaultUserRepository =
-            DefaultUserRepository(firestoreDataSource, googleAuthClient, context)
+            DefaultUserRepository(firestoreDataSource, googleAuthClient, billingRepository, context)
 
         val result = defaultUserRepository.updateKeepScreenOnDataStore(false)
         assertFalse(result)
@@ -312,7 +317,7 @@ class DefaultUserRepositoryTest {
         val scope = CoroutineScope(Dispatchers.IO + Job())
         createTestDataStore(scope)
         defaultUserRepository =
-            DefaultUserRepository(firestoreDataSource, googleAuthClient, context)
+            DefaultUserRepository(firestoreDataSource, googleAuthClient, billingRepository, context)
 
         val initial = defaultUserRepository.getKeepScreenOnDataStore().first()
         assertTrue(initial)
