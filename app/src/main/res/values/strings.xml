@@ -18,17 +18,17 @@
     <string name="auth_privacy_link">Privacy Policy</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="google_icon_description">Google logo</string>
-    <string name="paywall_chip">PRO</string>
-    <string name="paywall_brand">EasyPan Pro</string>
+    <string name="paywall_chip">CHEF</string>
+    <string name="paywall_brand">EasyPan Chef</string>
     <string name="paywall_title">Your Whole Week, Cooked Out for You</string>
     <string name="paywall_subtitle">Tell EasyPan what you love, who you cook for and what to avoid — get a personal 7-day plan with portions and groceries sized to your household.</string>
     <string name="paywall_feature_plan">7-day plan from your favorite ingredients</string>
     <string name="paywall_feature_allergies">Allergies and skipped products respected</string>
     <string name="paywall_feature_swap">Swap any meal, any time</string>
-    <string name="paywall_cta">Get EasyPan Pro</string>
+    <string name="paywall_cta">Get EasyPan Chef</string>
     <plurals name="paywall_cta_trial">
-        <item quantity="one">Try Pro Free for %1$d Day</item>
-        <item quantity="other">Try Pro Free for %1$d Days</item>
+        <item quantity="one">Try Chef Free for %1$d Day</item>
+        <item quantity="other">Try Chef Free for %1$d Days</item>
     </plurals>
     <string name="paywall_plan_monthly">Monthly</string>
     <string name="paywall_plan_yearly">Yearly</string>
@@ -120,8 +120,8 @@
     <string name="meal_plan_headline">Plan Your Week</string>
     <string name="meal_plan_description">Answer five quick questions and EasyPan will cook up a personal meal plan for your whole week.</string>
     <string name="meal_plan_create_button">Create My Plan</string>
-    <string name="meal_plan_pro_badge">PRO</string>
-    <string name="meal_plan_pro_included">Included in EasyPan Pro</string>
+    <string name="meal_plan_pro_badge">CHEF</string>
+    <string name="meal_plan_pro_included">Included in EasyPan Chef</string>
     <string name="meal_plan_icon_description">Meal plan</string>
     <string name="meal_plan_wizard_q1_title">What Do You Love to Eat?</string>
     <string name="meal_plan_wizard_q1_subtitle">Pick ingredients you want to see often.</string>

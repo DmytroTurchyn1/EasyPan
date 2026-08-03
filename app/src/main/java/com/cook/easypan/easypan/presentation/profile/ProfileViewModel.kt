@@ -31,14 +31,18 @@ class ProfileViewModel(
     private val userRepository: UserRepository,
 ) : ViewModel() {
     private var hasLoadedInitialData = false
+    private var hasLoadedUser = false
     private val _state = MutableStateFlow(ProfileState())
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                loadUserData()
                 getKeepScreenOn()
                 hasLoadedInitialData = true
             }
+            // Deliberately outside the guard: loadUserData latches its own flag only once it has
+            // real data, so a failed fetch retries when the tab is reopened instead of leaving the
+            // profile permanently blank.
+            loadUserData()
         }
         .stateIn(
             scope = viewModelScope,
@@ -47,8 +51,12 @@ class ProfileViewModel(
         )
 
     private fun loadUserData() {
+        if (hasLoadedUser) return
         viewModelScope.launch {
             val user = userRepository.getCurrentUser()
+            // getCurrentUser falls back to the bare Firebase session when the data fetch fails, so
+            // a non-null user is not proof of success — the profile stats live in `data`.
+            hasLoadedUser = user?.data != null
             _state.update {
                 it.copy(
                     currentUser = user,

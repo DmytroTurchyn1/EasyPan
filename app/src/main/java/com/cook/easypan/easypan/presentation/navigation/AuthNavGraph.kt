@@ -24,8 +24,14 @@ fun NavGraphBuilder.authNavGraph(
 
             LaunchedEffect(state.isSignInSuccessful) {
                 if (state.isSignInSuccessful) {
-                    navController.popBackStack()
-                    navController.navigate(Route.AppGraph)
+                    // One atomic call: popping first and navigating after is order-dependent, and
+                    // when the pop fails (Authentication is the NavHost start destination) the
+                    // navigate stacks AppGraph on top of a live auth entry, leaving the sign-in
+                    // screen reachable with back from Home.
+                    navController.navigate(Route.AppGraph) {
+                        popUpTo<Route.AuthGraph> { inclusive = true }
+                        launchSingleTop = true
+                    }
                     viewModel.resetState()
                 }
             }

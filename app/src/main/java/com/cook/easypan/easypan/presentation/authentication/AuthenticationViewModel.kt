@@ -49,12 +49,15 @@ class AuthenticationViewModel(
         }
         viewModelScope.launch {
             when (val result = userRepository.signInWithGoogle(activityContext)) {
+                // Published straight away so navigation happens the moment auth succeeds. Loading
+                // the user profile here as well would hold the screen on a spinner through a second
+                // network round-trip, and leaving that screen would cancel it half-done — the
+                // Profile tab fetches the user itself anyway.
                 is Result.Success -> {
                     _state.update {
                         it.copy(
                             isSignInSuccessful = true,
                             signInError = null,
-                            currentUser = userRepository.getCurrentUser(),
                             isLoading = false
                         )
                     }

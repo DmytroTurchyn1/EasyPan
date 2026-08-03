@@ -207,7 +207,9 @@ private fun ProfileScreen(
                 ) {
                     InformationBox {
                         Text(
-                            text = state.currentUser?.data?.recipesCooked.toString(),
+                            // The ?. before toString matters: without it a null renders the
+                            // literal text "null".
+                            text = state.currentUser?.data?.recipesCooked?.toString() ?: "0",
                             fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSecondaryContainer

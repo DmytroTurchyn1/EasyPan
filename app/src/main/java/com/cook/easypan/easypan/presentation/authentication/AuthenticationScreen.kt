@@ -9,6 +9,7 @@
 package com.cook.easypan.easypan.presentation.authentication
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -85,6 +86,11 @@ private fun AuthenticationScreen(
     onAction: (AuthenticationAction) -> Unit,
 ) {
     val context = LocalContext.current
+
+    // Leaving mid-sign-in tears down this ViewModel and cancels the call, which would leave the
+    // user authenticated with Firebase but with none of the follow-up work done.
+    BackHandler(enabled = state.isLoading) { }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,

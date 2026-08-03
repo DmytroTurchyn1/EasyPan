@@ -11,11 +11,11 @@ package com.cook.easypan.easypan.presentation.authentication
 import android.content.Context
 import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.domain.Result
-import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.unmockkAll
@@ -61,14 +61,25 @@ class AuthenticationViewModelTest {
     fun `successful sign in updates state`() = runTest {
         val context = mockk<Context>(relaxed = true)
         coEvery { userRepository.signInWithGoogle(context) } returns Result.Success
-        coEvery { userRepository.getCurrentUser() } returns User(userId = "u1")
 
         viewModel.onAction(AuthenticationAction.OnAuthButtonClick(context))
 
         assertTrue(viewModel.state.value.isSignInSuccessful)
         assertNull(viewModel.state.value.signInError)
         assertFalse(viewModel.state.value.isLoading)
-        assertEquals("u1", viewModel.state.value.currentUser?.userId)
+    }
+
+    @Test
+    fun `success does not wait on a profile fetch before navigating`() = runTest {
+        val context = mockk<Context>(relaxed = true)
+        coEvery { userRepository.signInWithGoogle(context) } returns Result.Success
+
+        viewModel.onAction(AuthenticationAction.OnAuthButtonClick(context))
+
+        // Loading the profile here would hold the screen on a spinner past the point auth is done,
+        // and backing out of that window used to leave a half-signed-in user.
+        coVerify(exactly = 0) { userRepository.getCurrentUser() }
+        assertTrue(viewModel.state.value.isSignInSuccessful)
     }
 
     @Test

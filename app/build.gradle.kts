@@ -38,8 +38,8 @@ android {
         applicationId = "com.cook.easypan"
         minSdk = 28
         targetSdk = 37
-        versionCode = 23
-        versionName = "v1.0.0"
+        versionCode = 24
+        versionName = "v1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // Works whether the properties value is quoted or not; missing file yields "".
@@ -47,13 +47,6 @@ android {
             "String",
             "CLIENT_ID",
             "\"${keystoreProperties.getProperty("clientId")?.trim('"') ?: ""}\""
-        )
-        // RevenueCat public SDK key. Public (it ships in the APK) but kept out of VCS so debug and
-        // release can point at different RevenueCat apps. Blank => billing is skipped at runtime.
-        buildConfigField(
-            "String",
-            "REVENUECAT_API_KEY",
-            "\"${keystoreProperties.getProperty("revenueCatApiKey")?.trim('"') ?: ""}\""
         )
     }
     signingConfigs {
@@ -74,11 +67,21 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField(
+                "String",
+                "REVENUECAT_API_KEY",
+                "\"${keystoreProperties.getProperty("revenueCatApiKeyRelease")?.trim('"') ?: ""}\""
+            )
             signingConfigs.findByName("release")?.let { signingConfig = it }
                 ?: logger.warn("Release signingConfig not configured; skipping assignment. Configure keystore.properties to enable signed release builds.")
         }
         getByName("debug") {
             isMinifyEnabled = false
+            buildConfigField(
+                "String",
+                "REVENUECAT_API_KEY",
+                "\"${keystoreProperties.getProperty("revenueCatApiKeyTest")?.trim('"') ?: ""}\""
+            )
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -135,9 +138,7 @@ dependencies {
     implementation(libs.bundles.revenueCat)
 
     debugImplementation(libs.bundles.compose.debug)
-    // App Check debug provider must never ship in release builds.
     debugImplementation(libs.firebase.appcheck.debug)
-
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.android.test)
     testImplementation(libs.bundles.test)
