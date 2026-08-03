@@ -34,8 +34,18 @@ class IngredientsReceiptViewModel(
             IngredientsReceiptAction.OnContinueClick ->
                 sendEvent(IngredientsReceiptEvent.NavigateToMealPlan)
 
-            // Sharing the receipt is wired up later.
-            IngredientsReceiptAction.OnShareButtonClick -> Unit
+            // Rendering the receipt to an image happens in the UI layer; this only flags that a
+            // capture is pending. Ignored when a render is already running, so a double tap cannot
+            // start two of them, and when there is no receipt to render yet.
+            IngredientsReceiptAction.OnShareButtonClick -> _state.update { state ->
+                if (state.isSharing || state.isLoading || state.error != null) {
+                    state
+                } else {
+                    state.copy(isSharing = true)
+                }
+            }
+
+            IngredientsReceiptAction.OnShareFinished -> _state.update { it.copy(isSharing = false) }
 
             // Checked means "I already have this" — it drops off the receipt, but stays
             // on the checklist so it can be unchecked again.

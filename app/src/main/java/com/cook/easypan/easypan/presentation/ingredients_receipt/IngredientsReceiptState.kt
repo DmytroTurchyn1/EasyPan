@@ -9,6 +9,7 @@ import com.cook.easypan.easypan.domain.model.GroceryItem
  * @param ingredients every ingredient the plan needs, flattened for the checklist screen.
  * @param categories the same ingredients grouped — the source of truth for the receipt.
  * @param checkedIngredients names the user already has at home; excluded from the receipt.
+ * @param isSharing true while the receipt is being rendered to an image for the share sheet.
  */
 @Stable
 data class IngredientsReceiptState(
@@ -20,6 +21,7 @@ data class IngredientsReceiptState(
     val ingredients: List<GroceryItem> = emptyList(),
     val categories: List<GroceryCategory> = emptyList(),
     val checkedIngredients: Set<String> = emptySet(),
+    val isSharing: Boolean = false,
 ) {
     /** [categories] minus the checked ingredients, dropping any category left empty. */
     val receiptCategories: List<GroceryCategory>

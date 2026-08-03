@@ -25,6 +25,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -150,6 +151,50 @@ class IngredientsReceiptViewModelTest {
         viewModel.onAction(IngredientsReceiptAction.OnRetry)
 
         assertTrue(viewModel.state.value.checkedIngredients.isEmpty())
+    }
+
+    @Test
+    fun `OnShareButtonClick flags a pending capture`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+        viewModel.onAction(IngredientsReceiptAction.OnGenerate(MealPlanPreferences()))
+
+        viewModel.onAction(IngredientsReceiptAction.OnShareButtonClick)
+
+        assertTrue(viewModel.state.value.isSharing)
+    }
+
+    @Test
+    fun `OnShareFinished clears the pending capture`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+        viewModel.onAction(IngredientsReceiptAction.OnGenerate(MealPlanPreferences()))
+        viewModel.onAction(IngredientsReceiptAction.OnShareButtonClick)
+
+        viewModel.onAction(IngredientsReceiptAction.OnShareFinished)
+
+        assertFalse(viewModel.state.value.isSharing)
+    }
+
+    @Test
+    fun `tapping share twice does not restart the capture`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+        viewModel.onAction(IngredientsReceiptAction.OnGenerate(MealPlanPreferences()))
+        viewModel.onAction(IngredientsReceiptAction.OnShareButtonClick)
+        val afterFirstTap = viewModel.state.value
+
+        viewModel.onAction(IngredientsReceiptAction.OnShareButtonClick)
+
+        // Same instance means no new state was emitted, so the capture composable is not restarted.
+        assertSame(afterFirstTap, viewModel.state.value)
+    }
+
+    @Test
+    fun `share does nothing while there is no receipt to render`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+
+        // Still loading — OnGenerate has not run.
+        viewModel.onAction(IngredientsReceiptAction.OnShareButtonClick)
+
+        assertFalse(viewModel.state.value.isSharing)
     }
 
     @Test

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,8 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,15 +35,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
 import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.core.presentation.snackBar.SnackBarController
+import com.cook.easypan.core.presentation.snackBar.SnackBarEvent
 import com.cook.easypan.core.presentation.toMessageRes
+import com.cook.easypan.core.util.Launcher
 import com.cook.easypan.core.util.ObserveAsEvents
+import com.cook.easypan.core.util.saveBitmapToCache
 import com.cook.easypan.easypan.domain.model.GroceryCategory
 import com.cook.easypan.easypan.domain.model.GroceryItem
 import com.cook.easypan.easypan.domain.model.IngredientCategory
 import com.cook.easypan.easypan.presentation.ingredients_receipt.components.GroceriesReceipt
+import com.cook.easypan.easypan.presentation.ingredients_receipt.components.ReceiptCapture
 import com.cook.easypan.easypan.presentation.ingredients_receipt.components.ReceiptCategory
 import com.cook.easypan.easypan.presentation.ingredients_receipt.components.ReceiptItem
 import com.cook.easypan.ui.theme.EasyPanTheme
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -63,6 +76,13 @@ fun IngredientsReceiptScreen(
     state: IngredientsReceiptState,
     onAction: (IngredientsReceiptAction) -> Unit,
 ) {
+    // Built once and shared by the visible receipt and the hidden capture, so the image can never
+    // drift from what the user is looking at.
+    val meta = stringResource(R.string.ingredients_receipt_meta, state.mealsCount, state.people)
+    val receiptCategories = state.receiptCategories.toReceiptCategories()
+    val itemCount = stringResource(R.string.ingredients_receipt_items, state.receiptTotalItems)
+    val onShareBitmap = rememberShareBitmapHandler(onAction)
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -103,14 +123,23 @@ fun IngredientsReceiptScreen(
                 EasyPanButtonPrimary(
                     modifier = Modifier
                         .fillMaxWidth(),
+                    enabled = !state.isSharing,
                     onClick = { onAction(IngredientsReceiptAction.OnShareButtonClick) },
                     content = {
-                        Text(
-                            text = stringResource(R.string.ingredients_receipt_share_button),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold
-                        )
+                        if (state.isSharing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                strokeWidth = 2.dp,
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(R.string.ingredients_receipt_share_button),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 )
                 TextButton(onClick = { onAction(IngredientsReceiptAction.OnContinueClick) }) {
@@ -149,23 +178,65 @@ fun IngredientsReceiptScreen(
                         .padding(bottom = 8.dp),
                 ) {
                     GroceriesReceipt(
-                        meta = stringResource(
-                            R.string.ingredients_receipt_meta,
-                            state.mealsCount,
-                            state.people,
-                        ),
-                        categories = state.receiptCategories.toReceiptCategories(),
-                        itemCount = stringResource(
-                            R.string.ingredients_receipt_items,
-                            state.receiptTotalItems,
-                        ),
+                        meta = meta,
+                        categories = receiptCategories,
+                        itemCount = itemCount,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
+
+            // Renders a hidden, fixed-size copy of the receipt only while a share is pending. It
+            // sits outside the scrolling Column on purpose: the capture has to be measured
+            // unbounded so the whole list ends up in the image, not just the visible part.
+            if (state.isSharing) {
+                ReceiptCapture(
+                    meta = meta,
+                    categories = receiptCategories,
+                    itemCount = itemCount,
+                    onCaptured = { bitmap -> onShareBitmap(bitmap) },
+                )
+            }
         }
     }
 }
+
+/**
+ * Writes the captured receipt to the cache and opens the share sheet, reporting failures through the
+ * app-wide snackbar hosted in `RootNavGraph`.
+ */
+@Composable
+private fun rememberShareBitmapHandler(
+    onAction: (IngredientsReceiptAction) -> Unit,
+): (ImageBitmap?) -> Unit {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val chooserTitle = stringResource(R.string.ingredients_receipt_share_chooser)
+    val currentOnAction by rememberUpdatedState(onAction)
+
+    return remember(context, chooserTitle) {
+        { bitmap ->
+            scope.launch {
+                val uri = bitmap?.let {
+                    saveBitmapToCache(
+                        context = context,
+                        bitmap = it.asAndroidBitmap(),
+                        fileName = SHARED_RECEIPT_FILE_NAME,
+                    )
+                }
+                val shared = uri != null && Launcher.shareImage(context, uri, chooserTitle)
+                if (!shared) {
+                    SnackBarController.sendEvent(
+                        SnackBarEvent(messageRes = R.string.ingredients_receipt_share_error)
+                    )
+                }
+                currentOnAction(IngredientsReceiptAction.OnShareFinished)
+            }
+        }
+    }
+}
+
+private const val SHARED_RECEIPT_FILE_NAME = "groceries_receipt.png"
 
 @Composable
 private fun List<GroceryCategory>.toReceiptCategories(): List<ReceiptCategory> = map { group ->
@@ -228,7 +299,7 @@ private fun IngredientsReceiptScreenPreview() {
                     GroceryCategory(
                         category = IngredientCategory.MEAT_FISH,
                         items = listOf(
-                            GroceryItem("Chicken", "500 g + 200 g"),
+                            GroceryItem("Chicken", "700 g"),
                             GroceryItem("Salmon", "2 fillets"),
                         ),
                     ),

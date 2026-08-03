@@ -154,6 +154,8 @@
     <string name="ingredients_receipt_title">Groceries Shopping List</string>
     <string name="ingredients_receipt_subtitle">These are ingredients you will  need to prepare  your meals</string>
     <string name="ingredients_receipt_share_button">Share</string>
+    <string name="ingredients_receipt_share_chooser">Share your shopping list</string>
+    <string name="ingredients_receipt_share_error">Couldn\'t prepare the shopping list image</string>
     <string name="ingredients_receipt_continue_button">Continue</string>
     <string name="ingredients_receipt_meta">Weekly Plan · %1$d meals · %2$d people</string>
     <string name="ingredients_receipt_total">Total</string>

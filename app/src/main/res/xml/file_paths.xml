@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Only the one directory the share flow writes to is exposed. -->
+<paths>
+    <cache-path
+        name="shared_images"
+        path="shared_images/" />
+</paths>

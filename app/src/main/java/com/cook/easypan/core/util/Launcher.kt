@@ -41,6 +41,25 @@ object Launcher {
         }
     }
 
+    /**
+     * Opens the system share sheet for an image [uri], which must come from the app's FileProvider.
+     * Returns false when no app can handle the intent.
+     */
+    fun shareImage(context: Context, uri: Uri, chooserTitle: String): Boolean {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        return try {
+            context.startActivity(Intent.createChooser(intent, chooserTitle))
+            true
+        } catch (e: ActivityNotFoundException) {
+            Log.e(TAG, "No activity found to share an image", e)
+            false
+        }
+    }
+
     fun startTimerService(context: Context, timerDuration: Long, ownerStep: Int) {
         val intent = Intent(context, CountdownTimerService::class.java).apply {
             action = CountdownTimerService.Actions.START.name
