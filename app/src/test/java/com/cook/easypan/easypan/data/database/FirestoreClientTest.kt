@@ -10,9 +10,10 @@ package com.cook.easypan.easypan.data.database
 
 import android.util.Log
 import com.cook.easypan.core.util.USER_DATA_COLLECTION
-import com.cook.easypan.easypan.data.dto.RecipeDto
+import com.cook.easypan.easypan.data.dto.IngredientDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import com.google.android.gms.tasks.Task
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -49,10 +50,13 @@ class FirestoreClientTest {
     @RelaxedMockK
     private lateinit var mockCollectionRef: CollectionReference
 
+    @RelaxedMockK
+    private lateinit var analytics: FirebaseAnalytics
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        firestoreClient = FirestoreClient(firebaseFirestore)
+        firestoreClient = FirestoreClient(firebaseFirestore, analytics)
         mockkStatic(Log::class)
         every { Log.e(any(), any()) } returns 0
     }
@@ -64,12 +68,12 @@ class FirestoreClientTest {
 
     @Test
     fun `getRecipes should return mapped RecipeDto list`() = runBlocking {
-
-        val expectedRecipe =
-            RecipeDto(title = "Test Recipe", ingredients = listOf("Eggs", "Milk"), id = "")
-
-        every { mockDocument.id } returns "abc123"
-        every { mockDocument.toObject(RecipeDto::class.java) } returns expectedRecipe
+        stubRecipeDocument(
+            ingredients = listOf(
+                mapOf("name" to "Eggs", "quantity" to "2"),
+                mapOf("name" to "Milk", "quantity" to "1/2 cup"),
+            )
+        )
 
         val firestoreClientSpy = spyk(firestoreClient, recordPrivateCalls = true)
 
@@ -80,7 +84,37 @@ class FirestoreClientTest {
         assertEquals(1, result.size)
         assertEquals("abc123", result[0].id)
         assertEquals("Test Recipe", result[0].title)
-        assertEquals(listOf("Eggs", "Milk"), result[0].ingredients)
+        assertEquals(
+            listOf(IngredientDto("Eggs", "2"), IngredientDto("Milk", "1/2 cup")),
+            result[0].ingredients
+        )
+    }
+
+    @Test
+    fun `getRecipes should read pre-migration string ingredients`() = runBlocking {
+        // Documents written before scripts/migrate_ingredients.py ran hold plain strings.
+        stubRecipeDocument(ingredients = listOf("Eggs", "Milk"))
+
+        val firestoreClientSpy = spyk(firestoreClient, recordPrivateCalls = true)
+
+        coEvery { firestoreClientSpy["getCollection"]("Recipes") } returns listOf(mockDocument)
+
+        val result = firestoreClientSpy.getRecipes()
+
+        assertEquals(
+            listOf(IngredientDto("Eggs"), IngredientDto("Milk")),
+            result[0].ingredients
+        )
+    }
+
+    private fun stubRecipeDocument(ingredients: List<Any>) {
+        every { mockDocument.exists() } returns true
+        every { mockDocument.id } returns "abc123"
+        every { mockDocument.getString("title") } returns "Test Recipe"
+        every { mockDocument.getString("titleImg") } returns null
+        every { mockDocument.getLong(any()) } returns null
+        every { mockDocument.get(any<String>()) } returns null
+        every { mockDocument.get("ingredients") } returns ingredients
     }
 
     @Test

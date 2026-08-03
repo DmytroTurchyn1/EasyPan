@@ -31,6 +31,9 @@ sealed class Route {
     data object Profile : Route()
 
     @Serializable
+    data object IngredientsList : Route()
+
+    @Serializable
     data object IngredientsReceipt : Route()
 
     @Serializable

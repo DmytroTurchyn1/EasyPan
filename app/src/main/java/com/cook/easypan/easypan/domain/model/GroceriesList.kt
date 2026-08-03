@@ -18,5 +18,17 @@ data class GroceriesList(
 
 data class GroceryCategory(
     val category: IngredientCategory,
-    val items: List<String>,
+    val items: List<GroceryItem>,
+)
+
+/**
+ * One line on the shopping list.
+ *
+ * @param name the ingredient, deduped across the whole plan.
+ * @param quantity every amount the plan calls for, joined (e.g. "1/2 cup + 2 cups"),
+ * or null when no recipe specified one.
+ */
+data class GroceryItem(
+    val name: String,
+    val quantity: String? = null,
 )

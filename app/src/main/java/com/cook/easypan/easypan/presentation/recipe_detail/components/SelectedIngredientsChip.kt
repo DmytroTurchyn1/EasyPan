@@ -22,14 +22,18 @@ fun SelectedIngredientsChip(
     selected: Int,
     total: Int
 ) {
+    val backgroundColor = if (selected == total) MaterialTheme.colorScheme.secondaryContainer
+    else MaterialTheme.colorScheme.surfaceVariant
+    val textColor = if (selected == total) MaterialTheme.colorScheme.onSecondaryContainer
+    else MaterialTheme.colorScheme.onSurfaceVariant
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(color = MaterialTheme.colorScheme.surfaceVariant)
+            .background(color = backgroundColor)
     ) {
         Text(
             text = stringResource(R.string.ingredients_count, selected, total),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = textColor,
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,
             modifier = Modifier
                 .padding(horizontal = 12.dp, vertical = 6.dp),

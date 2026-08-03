@@ -21,6 +21,7 @@ import com.cook.easypan.easypan.data.datastore.AppSettings
 import com.cook.easypan.easypan.data.datastore.AppSettingsSerializer
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.model.User
 import com.cook.easypan.easypan.domain.model.UserData
@@ -28,6 +29,7 @@ import com.cook.easypan.easypan.domain.repository.BillingRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
@@ -290,6 +292,34 @@ class DefaultUserRepositoryTest {
     }
 
     @Test
+    fun `signInWithGoogle sends email and display name to billing after logIn`() = runBlocking {
+        val user = User(userId = "user1", username = "Tester", email = "tester@example.com")
+        coEvery { googleAuthClient.signInWithGoogle(context) } returns Result.Success
+        every { googleAuthClient.getSignedInUser() } returns user
+
+        defaultUserRepository.signInWithGoogle(context)
+
+        // Attributes bind to whichever customer is current, so they must land after logIn.
+        coVerifyOrder {
+            billingRepository.logIn("user1")
+            billingRepository.setUserAttributes(
+                email = "tester@example.com",
+                displayName = "Tester"
+            )
+        }
+    }
+
+    @Test
+    fun `signInWithGoogle does not touch billing attributes when auth fails`() = runBlocking {
+        coEvery { googleAuthClient.signInWithGoogle(context) } returns
+                Result.Failure(AppError.AUTH_FAILED)
+
+        defaultUserRepository.signInWithGoogle(context)
+
+        coVerify(exactly = 0) { billingRepository.setUserAttributes(any(), any()) }
+    }
+
+    @Test
     fun `getFavoriteRecipes throws when user not logged in`() {
         runBlocking {
             every { googleAuthClient.getSignedInUser() } returns null
@@ -414,7 +444,7 @@ class DefaultUserRepositoryTest {
         val recipe = Recipe(
             id = "recipe1",
             title = "Test Recipe",
-            ingredients = listOf("ingredient1"),
+            ingredients = listOf(Ingredient("ingredient1")),
             preparationMinutes = 10,
             cookMinutes = 20,
             difficulty = "Easy",
@@ -445,7 +475,7 @@ class DefaultUserRepositoryTest {
         val recipe = Recipe(
             id = "recipe1",
             title = "Test Recipe",
-            ingredients = listOf("ingredient1"),
+            ingredients = listOf(Ingredient("ingredient1")),
             preparationMinutes = 10,
             cookMinutes = 20,
             difficulty = "Easy",
@@ -466,7 +496,7 @@ class DefaultUserRepositoryTest {
         val recipe = Recipe(
             id = "recipe1",
             title = "Test Recipe",
-            ingredients = listOf("ingredient1"),
+            ingredients = listOf(Ingredient("ingredient1")),
             preparationMinutes = 10,
             cookMinutes = 20,
             difficulty = "Easy",
@@ -539,6 +569,39 @@ class DefaultUserRepositoryTest {
         coVerify { firestoreDataSource.deleteUserData("user1") }
         coVerify { googleAuthClient.deleteAccount(activityContext) }
         assertEquals(AppSettings(), testDataStore.data.first())
+        scope.cancel()
+    }
+
+    @Test
+    fun `deleteAccount clears billing attributes before logging out`() = runBlocking {
+        val user = User(userId = "user1", username = "tester")
+        val activityContext = mockk<Context>(relaxed = true)
+        every { googleAuthClient.getSignedInUser() } returns user
+        coEvery { firestoreDataSource.deleteUserData("user1") } returns Unit
+        coEvery { googleAuthClient.deleteAccount(activityContext) } returns Result.Success
+
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        createTestDataStore(scope)
+
+        defaultUserRepository.deleteAccount(activityContext)
+
+        // Clearing has to happen while RevenueCat still points at the real customer.
+        coVerifyOrder {
+            billingRepository.setUserAttributes(email = null, displayName = null)
+            billingRepository.logOut()
+        }
+        scope.cancel()
+    }
+
+    @Test
+    fun `signOut leaves billing attributes on the customer record`() = runBlocking {
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        createTestDataStore(scope)
+
+        defaultUserRepository.signOut()
+
+        coVerify { billingRepository.logOut() }
+        coVerify(exactly = 0) { billingRepository.setUserAttributes(any(), any()) }
         scope.cancel()
     }
 

@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.presentation.meal_plan_review
 
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.repository.RecipeRepository
@@ -99,7 +100,7 @@ class MealPlanReviewViewModelTest {
         Recipe(
             id = "r$index",
             title = "Recipe $index",
-            ingredients = listOf("Rice"),
+            ingredients = listOf(Ingredient("Rice")),
             allergies = emptyList(),
             preparationMinutes = 10,
             cookMinutes = 20,

@@ -275,8 +275,9 @@ private fun RecipeDetailScreen(
                                 state.recipe.ingredients.forEachIndexed { index, ingredient ->
                                     IngredientsItem(
                                         modifier = Modifier
-                                            .padding(start = 20.dp, end = 20.dp, top = 10.dp),
-                                        text = ingredient,
+                                            .padding(start = 20.dp, end = 20.dp, top = 6.dp),
+                                        text = ingredient.name,
+                                        quantity = ingredient.quantity.ifEmpty { null },
                                         checked = state.onIngredientCheckClicked.contains(index),
                                         onCheckClick = {
                                             onAction(RecipeDetailAction.OnIngredientCheck(index))

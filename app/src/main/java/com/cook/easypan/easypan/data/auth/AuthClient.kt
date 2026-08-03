@@ -124,7 +124,8 @@ class AuthClient(
         User(
             userId = uid,
             username = displayName,
-            profilePictureUrl = photoUrl?.toString()
+            profilePictureUrl = photoUrl?.toString(),
+            email = this.email
         )
     }
 

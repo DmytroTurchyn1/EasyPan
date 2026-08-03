@@ -13,6 +13,9 @@ import com.cook.easypan.core.util.RECIPES_COLLECTION
 import com.cook.easypan.core.util.USER_DATA_COLLECTION
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
+import com.cook.easypan.easypan.data.mappers.toRecipeDto
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -21,7 +24,8 @@ import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 
 class FirestoreClient(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val analytics: FirebaseAnalytics
 ) {
     private suspend fun documentExists(documentRef: DocumentReference): Boolean {
         val snapshot = documentRef.get().await()
@@ -37,9 +41,7 @@ class FirestoreClient(
 
     suspend fun getRecipes(): List<RecipeDto> {
         return getCollection(RECIPES_COLLECTION)
-            .mapNotNull { document ->
-                document.toObject(RecipeDto::class.java)?.copy(id = document.id)
-            }
+            .mapNotNull { document -> document.toRecipeDto() }
     }
 
     suspend fun getUserData(userId: String): UserDto {
@@ -47,6 +49,9 @@ class FirestoreClient(
         return firestore.runTransaction { transaction ->
             val snapshot = transaction.get(userRef)
             if (!snapshot.exists()) {
+                analytics.logEvent(FirebaseAnalytics.Event.SIGN_UP) {
+                    param("user_id", userId)
+                }
                 val newUser = UserDto(0)
                 transaction.set(userRef, newUser, SetOptions.merge())
                 newUser
@@ -54,6 +59,7 @@ class FirestoreClient(
                 snapshot.toObject(UserDto::class.java) ?: UserDto(0)
             }
         }.await()
+
     }
 
     suspend fun incrementCookedRecipes(userId: String) {
@@ -70,9 +76,7 @@ class FirestoreClient(
             .get()
             .await()
             .documents
-            .mapNotNull { document ->
-                document.toObject(RecipeDto::class.java)?.copy(id = document.id)
-            }
+            .mapNotNull { document -> document.toRecipeDto() }
     }
 
     suspend fun isRecipeFavorite(userId: String, recipeId: String): Boolean {

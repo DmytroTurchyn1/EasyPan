@@ -8,6 +8,7 @@
 
 package com.cook.easypan.easypan.presentation.favorite
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -39,7 +40,8 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun FavoriteRoot(
     viewModel: FavoriteViewModel,
-    onRecipeClick: (Recipe) -> Unit
+    onRecipeClick: (Recipe) -> Unit,
+    onHomeButtonClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -49,6 +51,9 @@ fun FavoriteRoot(
             when (action) {
                 is FavoriteAction.OnRecipeClick -> {
                     onRecipeClick(action.recipe)
+                }
+                is FavoriteAction.OnHomeButtonClick -> {
+                    onHomeButtonClick()
                 }
 
                 else -> Unit
@@ -97,11 +102,32 @@ private fun FavoriteScreen(
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = stringResource(R.string.no_favorite_recipes),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_favorite_recipes),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.no_favorite_recipes_description),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    EasyPanButtonPrimary(
+                        onClick = { onAction(FavoriteAction.OnHomeButtonClick) }
+                    ) {
+                        Text(text = stringResource(R.string.go_home_button))
+                    }
+                }
             }
         } else if (state.isLoading) {
             Box(

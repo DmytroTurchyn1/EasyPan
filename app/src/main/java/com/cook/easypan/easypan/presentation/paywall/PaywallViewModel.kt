@@ -14,8 +14,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.domain.Result
+import com.cook.easypan.easypan.domain.model.ChefPlan
 import com.cook.easypan.easypan.domain.model.PurchaseOutcome
 import com.cook.easypan.easypan.domain.repository.BillingRepository
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,45 +26,58 @@ import kotlinx.coroutines.launch
 
 class PaywallViewModel(
     private val billingRepository: BillingRepository,
+    private val analytics: FirebaseAnalytics
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PaywallState())
     val state = _state.asStateFlow()
 
     init {
-        loadOffer()
+        loadOffers()
     }
 
     fun onAction(action: PaywallAction) {
         when (action) {
+            is PaywallAction.OnPlanSelect -> selectPlan(action.plan)
             is PaywallAction.OnPurchaseClick -> purchase(action.activityContext)
             is PaywallAction.OnRestoreClick -> restore()
         }
     }
 
-    private fun loadOffer() {
+    private fun loadOffers() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             try {
-                val offer = billingRepository.getMonthlyOffer()
+                val offers = billingRepository.getChefOffers()
+                // Yearly is the default pitch; fall back to whatever the store does have so a
+                // missing yearly package leaves the paywall usable rather than dead.
+                val selected = offers.firstOrNull { it.plan == ChefPlan.YEARLY }?.plan
+                    ?: offers.firstOrNull()?.plan
                 _state.update {
-                    it.copy(isLoading = false, priceFormatted = offer?.priceFormatted)
+                    it.copy(isLoading = false, offers = offers, selectedPlan = selected)
                 }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                Log.e(TAG, "Failed to load offer", e)
+                Log.e(TAG, "Failed to load offers", e)
                 _state.update { it.copy(isLoading = false) }
             }
         }
     }
 
+    private fun selectPlan(plan: ChefPlan) {
+        // Switching plans mid-purchase would bill a package the user is no longer looking at.
+        if (_state.value.isPurchasing) return
+        _state.update { it.copy(selectedPlan = plan) }
+    }
+
     private fun purchase(activityContext: Context) {
         if (!_state.value.canPurchase) return
+        val plan = _state.value.selectedPlan ?: return
         viewModelScope.launch {
             _state.update { it.copy(isPurchasing = true, error = null) }
             try {
-                when (val outcome = billingRepository.purchaseChef(activityContext)) {
+                when (val outcome = billingRepository.purchaseChef(activityContext, plan)) {
                     // Success needs no handling here: the entitlement listener flips
                     // BillingRepository.isChef and the gate swaps this screen out.
                     is PurchaseOutcome.Purchased, is PurchaseOutcome.Cancelled ->

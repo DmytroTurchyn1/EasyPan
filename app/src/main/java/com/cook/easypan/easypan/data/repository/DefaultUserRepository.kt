@@ -206,6 +206,9 @@ class DefaultUserRepository(
             firestoreDataSource.deleteUserData(userId)
             when (val result = googleAuthClient.deleteAccount(activityContext)) {
                 is Result.Success -> {
+                    // Drop the personal data while RevenueCat still points at the real customer;
+                    // logOut below switches it to a fresh anonymous id.
+                    billingRepository.setUserAttributes(email = null, displayName = null)
                     billingRepository.logOut()
                     clearLocalCache()
                     Result.Success
@@ -228,7 +231,14 @@ class DefaultUserRepository(
         if (result is Result.Success) {
             // Tie billing identity to the account so purchases follow the user across devices.
             // logIn never blocks auth: DefaultBillingRepository logs failures internally.
-            googleAuthClient.getSignedInUser()?.let { billingRepository.logIn(it.userId) }
+            googleAuthClient.getSignedInUser()?.let { user ->
+                billingRepository.logIn(user.userId)
+                // After logIn: attributes bind to whichever customer is current when set.
+                billingRepository.setUserAttributes(
+                    email = user.email,
+                    displayName = user.username
+                )
+            }
         }
         return result
     }

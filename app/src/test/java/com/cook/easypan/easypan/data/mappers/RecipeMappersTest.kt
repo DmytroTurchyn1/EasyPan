@@ -9,8 +9,13 @@
 package com.cook.easypan.easypan.data.mappers
 
 import com.cook.easypan.core.domain.StepType
+import com.cook.easypan.easypan.data.dto.IngredientDto
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.StepDescriptionDto
+import com.cook.easypan.easypan.domain.model.Ingredient
+import com.google.firebase.firestore.DocumentSnapshot
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -28,7 +33,7 @@ class RecipeMappersTest {
             titleImg = "test_image_url",
             preparationMinutes = 30,
             cookMinutes = 45,
-            ingredients = listOf("Ingredient 1", "Ingredient 2"),
+            ingredients = listOf(IngredientDto("Ingredient 1"), IngredientDto("Ingredient 2")),
             instructions = listOf(
                 StepDescriptionDto(
                     step = 1,
@@ -53,7 +58,10 @@ class RecipeMappersTest {
         assertEquals("test_image_url", recipe.titleImg)
         assertEquals(30, recipe.preparationMinutes)
         assertEquals(45, recipe.cookMinutes)
-        assertEquals(listOf("Ingredient 1", "Ingredient 2"), recipe.ingredients)
+        assertEquals(
+            listOf(Ingredient("Ingredient 1"), Ingredient("Ingredient 2")),
+            recipe.ingredients
+        )
         assertEquals(listOf("Chip1", "Chip2"), recipe.chips)
         assertEquals("Medium", recipe.difficulty)
         assertEquals(1, recipe.instructions.size)
@@ -243,4 +251,81 @@ class RecipeMappersTest {
         assertNull(stepDescriptionNull.durationSec)
     }
 
+    @Test
+    fun `toRecipeDto reads the current map ingredients`() {
+        val dto = snapshot(
+            listOf(
+                mapOf("name" to "Milk", "quantity" to "1/2 cup"),
+                mapOf("name" to "Salt", "quantity" to ""),
+            )
+        ).toRecipeDto()
+
+        assertEquals(
+            listOf(IngredientDto("Milk", "1/2 cup"), IngredientDto("Salt", "")),
+            dto?.ingredients
+        )
+    }
+
+    @Test
+    fun `toRecipeDto reads pre-migration string ingredients`() {
+        val dto = snapshot(listOf("1/2 cup milk", "Salt")).toRecipeDto()
+
+        assertEquals(
+            listOf(IngredientDto("1/2 cup milk", ""), IngredientDto("Salt", "")),
+            dto?.ingredients
+        )
+    }
+
+    @Test
+    fun `toRecipeDto reads a half-migrated array`() {
+        val dto = snapshot(
+            listOf("Salt", mapOf("name" to "Milk", "quantity" to "1/2 cup"))
+        ).toRecipeDto()
+
+        assertEquals(
+            listOf(IngredientDto("Salt", ""), IngredientDto("Milk", "1/2 cup")),
+            dto?.ingredients
+        )
+    }
+
+    @Test
+    fun `toRecipeDto drops unusable ingredient entries instead of throwing`() {
+        val dto = snapshot(
+            listOf(
+                42,
+                "   ",
+                mapOf("quantity" to "1 cup"),
+                mapOf("name" to 7),
+                mapOf("name" to " Milk ", "quantity" to " 1/2 cup "),
+            )
+        ).toRecipeDto()
+
+        assertEquals(listOf(IngredientDto("Milk", "1/2 cup")), dto?.ingredients)
+    }
+
+    @Test
+    fun `toRecipeDto tolerates a missing ingredients field`() {
+        val dto = snapshot(null).toRecipeDto()
+
+        assertEquals(emptyList(), dto?.ingredients)
+    }
+
+    @Test
+    fun `toRecipeDto returns null for a document that does not exist`() {
+        val document = mockk<DocumentSnapshot>()
+        every { document.exists() } returns false
+
+        assertNull(document.toRecipeDto())
+    }
+
+    private fun snapshot(ingredients: Any?): DocumentSnapshot {
+        val document = mockk<DocumentSnapshot>()
+        every { document.exists() } returns true
+        every { document.id } returns "test_id"
+        every { document.getString(any()) } returns null
+        every { document.getLong(any()) } returns null
+        every { document.get(any<String>()) } returns null
+        every { document.get("ingredients") } returns ingredients
+        return document
+    }
 }

@@ -9,8 +9,10 @@
 package com.cook.easypan.easypan.presentation.paywall
 
 import android.content.res.Configuration
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,12 +25,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,7 +47,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,6 +61,8 @@ import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.core.presentation.snackBar.SnackBarController
 import com.cook.easypan.core.presentation.snackBar.SnackBarEvent
 import com.cook.easypan.core.presentation.toMessageRes
+import com.cook.easypan.easypan.domain.model.ChefOffer
+import com.cook.easypan.easypan.domain.model.ChefPlan
 import com.cook.easypan.ui.theme.EasyPanTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -103,7 +112,7 @@ private fun PaywallScreen(
                 .padding(horizontal = 24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ProChip()
+            PaywallChip(text = stringResource(R.string.paywall_chip))
             Spacer(modifier = Modifier.width(11.dp))
             Text(
                 text = stringResource(R.string.paywall_brand),
@@ -142,7 +151,23 @@ private fun PaywallScreen(
             FeatureRow(text = stringResource(R.string.paywall_feature_allergies))
             FeatureRow(text = stringResource(R.string.paywall_feature_swap))
         }
-        Spacer(modifier = Modifier.height(44.dp))
+        Spacer(modifier = Modifier.height(28.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .selectableGroup(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            state.offers.forEach { offer ->
+                PlanOption(
+                    offer = offer,
+                    isSelected = offer.plan == state.selectedPlan,
+                    onClick = { onAction(PaywallAction.OnPlanSelect(offer.plan)) }
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
         EasyPanButtonPrimary(
             modifier = Modifier
                 .fillMaxWidth()
@@ -151,16 +176,26 @@ private fun PaywallScreen(
             onClick = { onAction(PaywallAction.OnPurchaseClick(context)) },
             enabled = state.canPurchase
         ) {
+            val trialDays = state.selectedOffer?.freeTrialDays
             Text(
-                text = stringResource(R.string.paywall_cta),
+                text = if (trialDays != null) {
+                    pluralStringResource(R.plurals.paywall_cta_trial, trialDays, trialDays)
+                } else {
+                    stringResource(R.string.paywall_cta)
+                },
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        state.priceFormatted?.let { price ->
+        state.selectedOffer?.let { offer ->
+            val period = stringResource(offer.plan.periodRes, offer.priceFormatted)
             Text(
-                text = stringResource(R.string.paywall_price, price),
+                text = if (offer.freeTrialDays != null) {
+                    stringResource(R.string.paywall_footer_trial, period)
+                } else {
+                    stringResource(R.string.paywall_footer, period)
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
@@ -215,22 +250,98 @@ private fun HeroImage(
 }
 
 @Composable
-private fun ProChip(
+private fun PaywallChip(
+    text: String,
     modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .background(containerColor)
             .padding(horizontal = 10.dp, vertical = 2.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(R.string.paywall_chip),
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            text = text,
+            color = contentColor,
             fontSize = 10.sp,
             fontWeight = FontWeight.Bold
         )
+    }
+}
+
+@Composable
+private fun PlanOption(
+    offer: ChefOffer,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val shape = RoundedCornerShape(16.dp)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(
+                if (isSelected) {
+                    MaterialTheme.colorScheme.secondaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                }
+            )
+            .border(
+                width = if (isSelected) 2.dp else 1.dp,
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.outlineVariant
+                },
+                shape = shape
+            )
+            .selectable(
+                selected = isSelected,
+                role = Role.RadioButton,
+                onClick = onClick
+            )
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RadioButton(
+            selected = isSelected,
+            // The whole row is the click target — a second one here would be announced separately.
+            onClick = null
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(offer.plan.titleRes),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            val period = stringResource(offer.plan.periodRes, offer.priceFormatted)
+            Text(
+                text = offer.pricePerMonthFormatted?.let { perMonth ->
+                    stringResource(
+                        R.string.paywall_plan_price_combined,
+                        period,
+                        stringResource(R.string.paywall_plan_per_month, perMonth)
+                    )
+                } ?: period,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            )
+        }
+        offer.savingsPercent?.let { percent ->
+            Spacer(modifier = Modifier.width(8.dp))
+            PaywallChip(
+                text = stringResource(R.string.paywall_savings_badge, percent),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
+        }
     }
 }
 
@@ -259,13 +370,42 @@ private fun FeatureRow(
     }
 }
 
+private val ChefPlan.titleRes: Int
+    @StringRes get() = when (this) {
+        ChefPlan.MONTHLY -> R.string.paywall_plan_monthly
+        ChefPlan.YEARLY -> R.string.paywall_plan_yearly
+    }
+
+private val ChefPlan.periodRes: Int
+    @StringRes get() = when (this) {
+        ChefPlan.MONTHLY -> R.string.paywall_period_monthly
+        ChefPlan.YEARLY -> R.string.paywall_period_yearly
+    }
+
 @Preview(name = "Light")
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PaywallScreenPreview() {
     EasyPanTheme {
         PaywallScreen(
-            state = PaywallState(isLoading = false, priceFormatted = "$4.99"),
+            state = PaywallState(
+                isLoading = false,
+                offers = listOf(
+                    ChefOffer(
+                        plan = ChefPlan.YEARLY,
+                        priceFormatted = "$59.99",
+                        pricePerMonthFormatted = "$5.00",
+                        freeTrialDays = 7,
+                        savingsPercent = 50
+                    ),
+                    ChefOffer(
+                        plan = ChefPlan.MONTHLY,
+                        priceFormatted = "$9.99",
+                        freeTrialDays = 7
+                    ),
+                ),
+                selectedPlan = ChefPlan.YEARLY
+            ),
             onAction = {}
         )
     }

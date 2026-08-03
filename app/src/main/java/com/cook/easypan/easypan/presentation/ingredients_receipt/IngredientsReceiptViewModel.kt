@@ -7,8 +7,10 @@ import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import com.cook.easypan.easypan.domain.usecase.BuildGroceriesListUseCase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,6 +21,9 @@ class IngredientsReceiptViewModel(
     private val _state = MutableStateFlow(IngredientsReceiptState())
     val state = _state.asStateFlow()
 
+    private val _events = Channel<IngredientsReceiptEvent>()
+    val events = _events.receiveAsFlow()
+
     // Kept so Retry can rebuild the same list without re-plumbing the preferences.
     private var lastPreferences: MealPlanPreferences? = null
 
@@ -26,11 +31,28 @@ class IngredientsReceiptViewModel(
         when (action) {
             is IngredientsReceiptAction.OnGenerate -> generate(action.preferences)
             IngredientsReceiptAction.OnRetry -> lastPreferences?.let { generate(it) }
+            IngredientsReceiptAction.OnContinueClick ->
+                sendEvent(IngredientsReceiptEvent.NavigateToMealPlan)
 
-            // Buttons are wired to navigation/share later.
+            // Sharing the receipt is wired up later.
             IngredientsReceiptAction.OnShareButtonClick -> Unit
-            IngredientsReceiptAction.OnEditClick -> Unit
+
+            // Checked means "I already have this" — it drops off the receipt, but stays
+            // on the checklist so it can be unchecked again.
+            is IngredientsReceiptAction.OnCheckClick -> _state.update { state ->
+                state.copy(
+                    checkedIngredients = if (action.ingredient in state.checkedIngredients) {
+                        state.checkedIngredients - action.ingredient
+                    } else {
+                        state.checkedIngredients + action.ingredient
+                    }
+                )
+            }
         }
+    }
+
+    private fun sendEvent(event: IngredientsReceiptEvent) {
+        viewModelScope.launch { _events.send(event) }
     }
 
     private fun generate(preferences: MealPlanPreferences) {
@@ -47,6 +69,8 @@ class IngredientsReceiptViewModel(
                         people = groceries.people,
                         totalItems = groceries.totalItems,
                         categories = groceries.categories,
+                        ingredients = groceries.categories.flatMap { category -> category.items },
+                        checkedIngredients = emptySet(),
                     )
                 }
             } catch (e: CancellationException) {

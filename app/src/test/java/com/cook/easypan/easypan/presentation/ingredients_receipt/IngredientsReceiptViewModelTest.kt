@@ -1,6 +1,7 @@
 package com.cook.easypan.easypan.presentation.ingredients_receipt
 
 import android.util.Log
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.IngredientCategory
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import com.cook.easypan.easypan.domain.model.Recipe
@@ -12,6 +13,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -94,6 +96,71 @@ class IngredientsReceiptViewModelTest {
         assertTrue(state.categories.isNotEmpty())
     }
 
+    @Test
+    fun `OnGenerate flattens the ingredients and starts with nothing checked`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+
+        viewModel.onAction(IngredientsReceiptAction.OnGenerate(MealPlanPreferences()))
+
+        val state = viewModel.state.value
+        assertEquals(
+            listOf("Chicken", "Rice", "Spinach", "Hummus").sorted(),
+            state.ingredients.map { it.name }.sorted(),
+        )
+        assertTrue(state.checkedIngredients.isEmpty())
+    }
+
+    @Test
+    fun `OnCheckClick toggles an ingredient on and back off`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+        viewModel.onAction(IngredientsReceiptAction.OnGenerate(MealPlanPreferences()))
+
+        viewModel.onAction(IngredientsReceiptAction.OnCheckClick("Rice"))
+        assertEquals(setOf("Rice"), viewModel.state.value.checkedIngredients)
+
+        viewModel.onAction(IngredientsReceiptAction.OnCheckClick("Rice"))
+        assertTrue(viewModel.state.value.checkedIngredients.isEmpty())
+    }
+
+    @Test
+    fun `a checked ingredient drops off the receipt`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+        viewModel.onAction(IngredientsReceiptAction.OnGenerate(MealPlanPreferences()))
+
+        viewModel.onAction(IngredientsReceiptAction.OnCheckClick("Rice"))
+
+        val state = viewModel.state.value
+        val receiptNames = state.receiptCategories.flatMap { it.items }.map { it.name }
+        assertFalse(receiptNames.contains("Rice"))
+        assertEquals(3, receiptNames.size)
+        assertEquals(3, state.receiptTotalItems)
+        // Rice is only in PANTRY, so that category disappears entirely.
+        assertFalse(state.receiptCategories.any { it.category == IngredientCategory.PANTRY })
+        // The full list is untouched — the checklist still shows Rice, checked.
+        assertEquals(4, state.ingredients.size)
+        assertEquals(4, state.totalItems)
+    }
+
+    @Test
+    fun `regenerating clears the checked ingredients`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+        viewModel.onAction(IngredientsReceiptAction.OnGenerate(MealPlanPreferences()))
+        viewModel.onAction(IngredientsReceiptAction.OnCheckClick("Rice"))
+
+        viewModel.onAction(IngredientsReceiptAction.OnRetry)
+
+        assertTrue(viewModel.state.value.checkedIngredients.isEmpty())
+    }
+
+    @Test
+    fun `OnContinueClick emits NavigateToMealPlan`() = runTest {
+        val viewModel = viewModel(FakeRecipeRepository(defaultCatalog()))
+
+        viewModel.onAction(IngredientsReceiptAction.OnContinueClick)
+
+        assertEquals(IngredientsReceiptEvent.NavigateToMealPlan, viewModel.events.first())
+    }
+
     private fun viewModel(repository: RecipeRepository) = IngredientsReceiptViewModel(
         BuildGroceriesListUseCase(GenerateMealPlanUseCase(repository)),
     )
@@ -102,7 +169,12 @@ class IngredientsReceiptViewModelTest {
         Recipe(
             id = "r1",
             title = "Recipe 1",
-            ingredients = listOf("Chicken", "Rice", "Spinach", "Hummus"),
+            ingredients = listOf(
+                Ingredient("Chicken"),
+                Ingredient("Rice"),
+                Ingredient("Spinach"),
+                Ingredient("Hummus"),
+            ),
             allergies = emptyList(),
             preparationMinutes = 10,
             cookMinutes = 20,

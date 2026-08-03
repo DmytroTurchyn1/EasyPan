@@ -39,6 +39,7 @@ import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
 import com.cook.easypan.core.presentation.toMessageRes
 import com.cook.easypan.core.util.ObserveAsEvents
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.presentation.meal_plan_review.components.DayElement
 import com.cook.easypan.easypan.presentation.meal_plan_review.components.PlanPreferenceChip
@@ -241,7 +242,7 @@ private fun MealPlanReviewScreenPreview() {
     val sampleRecipe = Recipe(
         id = "1",
         title = "Spicy Chicken Stir-Fry",
-        ingredients = listOf("Chicken", "Rice"),
+        ingredients = listOf(Ingredient("Chicken"), Ingredient("Rice")),
         allergies = emptyList(),
         preparationMinutes = 10,
         cookMinutes = 30,

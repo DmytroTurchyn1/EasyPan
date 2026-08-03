@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,8 +60,8 @@ fun GroceriesReceipt(
             .fillMaxWidth()
             .clip(ReceiptShape(toothHeight = toothHeight))
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-            .padding(horizontal = 20.dp)
-            .padding(top = toothHeight + 20.dp, bottom = toothHeight + 20.dp),
+            .padding(horizontal = 10.dp)
+            .padding(top = toothHeight + 28.dp, bottom = toothHeight + 46.dp),
     ) {
         // Header — logo mark + brand name.
         Row(
@@ -79,10 +77,10 @@ fun GroceriesReceipt(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Restaurant,
+                    painter = painterResource(R.drawable.ic_frying_pan),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(width = 23.dp, height = 15.dp),
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -94,23 +92,26 @@ fun GroceriesReceipt(
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = meta,
             fontSize = 14.sp,
+            lineHeight = 20.sp,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         DashedDivider()
 
-        categories.forEach { category ->
-            Spacer(modifier = Modifier.height(14.dp))
+        categories.forEachIndexed { index, category ->
+            // The first section clears the divider; the rest sit tight against the section above.
+            Spacer(modifier = Modifier.height(if (index == 0) 18.dp else 6.dp))
             Text(
                 text = category.name,
                 fontSize = 14.sp,
+                lineHeight = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -120,31 +121,34 @@ fun GroceriesReceipt(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         DashedDivider()
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = stringResource(R.string.ingredients_list_receipt_total),
+                text = stringResource(R.string.ingredients_receipt_total),
                 fontSize = 16.sp,
+                lineHeight = 22.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = itemCount,
                 fontSize = 16.sp,
+                lineHeight = 22.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(28.dp))
         Text(
-            text = stringResource(R.string.ingredients_list_receipt_footer),
+            text = stringResource(R.string.ingredients_receipt_footer),
             fontSize = 12.sp,
+            lineHeight = 16.sp,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
@@ -158,19 +162,18 @@ private fun ReceiptItemRow(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 3.dp),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = item.name,
             fontSize = 14.sp,
+            lineHeight = 20.sp,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        // The quantity column (and its dotted leader) only renders when a quantity exists.
+        // The quantity column (and its leader line) only renders when a quantity exists.
         if (item.quantity != null) {
-            DottedLeader(
+            LeaderLine(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 6.dp),
@@ -178,6 +181,7 @@ private fun ReceiptItemRow(
             Text(
                 text = item.quantity,
                 fontSize = 14.sp,
+                lineHeight = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -203,19 +207,18 @@ private fun DashedDivider(modifier: Modifier = Modifier) {
     }
 }
 
+/** Solid hairline that fills the gap between an item name and its quantity, as in the design. */
 @Composable
-private fun DottedLeader(modifier: Modifier = Modifier) {
+private fun LeaderLine(modifier: Modifier = Modifier) {
     val color = MaterialTheme.colorScheme.outlineVariant
     Canvas(
-        modifier = modifier.height(2.dp),
+        modifier = modifier.height(1.dp),
     ) {
         drawLine(
             color = color,
             start = Offset(0f, size.height / 2f),
             end = Offset(size.width, size.height / 2f),
             strokeWidth = size.height,
-            cap = StrokeCap.Round,
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(1f, 6f)),
         )
     }
 }

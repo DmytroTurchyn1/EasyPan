@@ -45,9 +45,13 @@ class EasyPanUiTest {
         authClient = mockk(relaxed = true)
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         val firestoreDataSource = mockk<FirestoreClient>(relaxed = true)
-        userRepository =
-            DefaultUserRepository(firestoreDataSource, authClient, context = appContext)
-        viewModel = AuthenticationViewModel(userRepository)
+        userRepository = DefaultUserRepository(
+            firestoreDataSource,
+            authClient,
+            billingRepository = mockk(relaxed = true),
+            context = appContext,
+        )
+        viewModel = AuthenticationViewModel(userRepository, analytics = mockk(relaxed = true))
     }
 
     @Test

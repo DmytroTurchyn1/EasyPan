@@ -26,6 +26,8 @@ import com.cook.easypan.easypan.data.datastore.AppSettings
 import com.cook.easypan.easypan.data.datastore.AppSettingsSerializer
 import com.cook.easypan.easypan.domain.repository.BillingRepository
 import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.google.firebase.auth.auth
 import com.google.firebase.initialize
 import com.google.firebase.remoteconfig.remoteConfig
@@ -43,7 +45,7 @@ val Context.dataStore by dataStore(
     serializer = AppSettingsSerializer,
     corruptionHandler = ReplaceFileCorruptionHandler { AppSettings() }
 )
-
+private lateinit var firebaseAnalytics: FirebaseAnalytics
 class EasyPanApp : Application() {
     override fun onCreate() {
         super.onCreate()
@@ -73,6 +75,7 @@ class EasyPanApp : Application() {
                 Log.e("RemoteConfig", "fetch failed", task.exception)
             }
         }
+        firebaseAnalytics = Firebase.analytics
     }
 
     /**
@@ -96,9 +99,19 @@ class EasyPanApp : Application() {
                     .build()
             )
         }
+        val billingRepository = get<BillingRepository>()
         // Always start observing: on a blank key this unlocks premium features instead of
         // gating everyone out of a misconfigured dev build.
-        get<BillingRepository>().startObserving()
+        billingRepository.startObserving()
+        // A cold start with an existing session never runs the sign-in path, so re-assert the
+        // identifying attributes here. The SDK dedupes unchanged values against its local cache,
+        // so repeat launches cost a cache read and no network sync.
+        Firebase.auth.currentUser?.let { user ->
+            billingRepository.setUserAttributes(
+                email = user.email,
+                displayName = user.displayName
+            )
+        }
     }
 
     private fun createNotificationChannels() {

@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.domain.usecase
 
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.IngredientCategory
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import com.cook.easypan.easypan.domain.model.Recipe
@@ -8,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class BuildGroceriesListUseCaseTest {
@@ -26,9 +28,38 @@ class BuildGroceriesListUseCaseTest {
 
         val allItems = groceries.categories.flatMap { it.items }
         assertEquals(3, groceries.totalItems)
-        assertEquals(listOf("Chicken", "Rice", "Spinach"), allItems.sorted())
+        assertEquals(listOf("Chicken", "Rice", "Spinach"), allItems.map { it.name }.sorted())
         // First-seen casing is kept.
-        assertTrue("Rice" in allItems)
+        assertTrue(allItems.any { it.name == "Rice" })
+    }
+
+    @Test
+    fun `joins every quantity recorded for the same ingredient`() = runTest {
+        val useCase = useCase(
+            recipeOf("a", Ingredient("Milk", "1/2 cup"), Ingredient("Salt")),
+            recipeOf("b", Ingredient("milk", "2 cups")),
+        )
+
+        val groceries = useCase(MealPlanPreferences(mealsDay = 3), today = monday)
+
+        val items = groceries.categories.flatMap { it.items }.associateBy { it.name }
+        assertEquals(2, groceries.totalItems)
+        assertEquals("1/2 cup + 2 cups", items.getValue("Milk").quantity)
+        // Nothing to show when no recipe gave an amount.
+        assertNull(items.getValue("Salt").quantity)
+    }
+
+    @Test
+    fun `does not repeat an identical quantity`() = runTest {
+        val useCase = useCase(
+            recipeOf("a", Ingredient("Rice", "200 g")),
+            recipeOf("b", Ingredient("rice", "200 g")),
+        )
+
+        val groceries = useCase(MealPlanPreferences(mealsDay = 3), today = monday)
+
+        val rice = groceries.categories.flatMap { it.items }.single { it.name == "Rice" }
+        assertEquals("200 g", rice.quantity)
     }
 
     @Test
@@ -59,7 +90,7 @@ class BuildGroceriesListUseCaseTest {
         val groceries = useCase(MealPlanPreferences(), today = monday)
 
         val produce = groceries.categories.single { it.category == IngredientCategory.PRODUCE }
-        assertEquals(listOf("Broccoli", "Spinach", "Tomatoes"), produce.items)
+        assertEquals(listOf("Broccoli", "Spinach", "Tomatoes"), produce.items.map { it.name })
     }
 
     @Test
@@ -92,10 +123,15 @@ class BuildGroceriesListUseCaseTest {
     private fun recipe(
         id: String,
         ingredients: List<String>,
+    ) = recipeOf(id, *ingredients.map { Ingredient(it) }.toTypedArray())
+
+    private fun recipeOf(
+        id: String,
+        vararg ingredients: Ingredient,
     ) = Recipe(
         id = id,
         title = "Recipe $id",
-        ingredients = ingredients,
+        ingredients = ingredients.toList(),
         allergies = emptyList(),
         preparationMinutes = 10,
         cookMinutes = 20,

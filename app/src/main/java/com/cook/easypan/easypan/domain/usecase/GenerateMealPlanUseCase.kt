@@ -23,11 +23,11 @@ class GenerateMealPlanUseCase(
         val ranked = catalog
             .filter { recipe ->
                 recipe.allergies.none { it.lowercase() in allergies } &&
-                        recipe.ingredients.none { it.lowercase() in skip }
+                        recipe.ingredients.none { it.name.lowercase() in skip }
             }
             .ifEmpty { catalog }
             .sortedByDescending { recipe ->
-                recipe.ingredients.count { it.lowercase() in liked }
+                recipe.ingredients.count { it.name.lowercase() in liked }
             }
 
         val mealsPerDay = preferences.mealsDay.coerceAtLeast(1)

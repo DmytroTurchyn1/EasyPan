@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.core.domain.StepType
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.model.StepDescription
 import com.cook.easypan.ui.theme.EasyPanTheme
@@ -126,7 +127,7 @@ private fun RecipeItemPreview() {
                     )
                 ),
                 titleImg = "https://www.chilipeppermadness.com/wp-content/uploads/2021/12/Hunan-Chicken-Recipe6.jpg",
-                ingredients = listOf("bread"),
+                ingredients = listOf(Ingredient("bread")),
                 preparationMinutes = 10,
                 chips = listOf("Vegetarian", "Gluten-Free"),
                 allergies = listOf("none"),

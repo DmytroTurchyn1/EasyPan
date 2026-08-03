@@ -32,7 +32,7 @@ class RecipeTest {
         val recipe = Recipe(
             id = "testRecipeId",
             title = "testRecipe",
-            ingredients = listOf("ingredient1", "ingredient2"),
+            ingredients = listOf(Ingredient("ingredient1"), Ingredient("ingredient2")),
             preparationMinutes = 10,
             cookMinutes = 20,
             chips = listOf("chip1", "chip2"),
@@ -43,7 +43,10 @@ class RecipeTest {
 
         assertEquals("testRecipeId", recipe.id)
         assertEquals("testRecipe", recipe.title)
-        assertEquals(listOf("ingredient1", "ingredient2"), recipe.ingredients)
+        assertEquals(
+            listOf(Ingredient("ingredient1"), Ingredient("ingredient2")),
+            recipe.ingredients
+        )
         assertEquals(10, recipe.preparationMinutes)
         assertEquals(20, recipe.cookMinutes)
         assertEquals(listOf("chip1", "chip2"), recipe.chips)
@@ -56,7 +59,7 @@ class RecipeTest {
         val recipe = Recipe(
             id = "testRecipeId",
             title = "testRecipe",
-            ingredients = listOf("ingredient1"),
+            ingredients = listOf(Ingredient("ingredient1")),
             preparationMinutes = 10,
             cookMinutes = 20,
             difficulty = "Easy",
@@ -88,7 +91,7 @@ class RecipeTest {
 
     @Test
     fun `test recipe with large number of ingredients`() {
-        val manyIngredients = (1..100).map { "ingredient$it" }
+        val manyIngredients = (1..100).map { Ingredient("ingredient$it") }
         val recipe = Recipe(
             id = "testRecipeId",
             title = "testRecipe",
@@ -101,8 +104,8 @@ class RecipeTest {
         )
 
         assertEquals(100, recipe.ingredients.size)
-        assertEquals("ingredient1", recipe.ingredients.first())
-        assertEquals("ingredient100", recipe.ingredients.last())
+        assertEquals(Ingredient("ingredient1"), recipe.ingredients.first())
+        assertEquals(Ingredient("ingredient100"), recipe.ingredients.last())
     }
 
     @Test

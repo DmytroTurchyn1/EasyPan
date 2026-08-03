@@ -32,7 +32,8 @@ fun IngredientsItem(
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     onCheckClick: () -> Unit,
-    text: String
+    text: String,
+    quantity: String? = null
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -45,9 +46,9 @@ fun IngredientsItem(
                     role = Role.Checkbox,
                     onValueChange = { onCheckClick() }
                 )
-                .padding(horizontal = 4.dp, vertical = 12.dp),
+                .padding(horizontal = 4.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             AllergyCheckbox(checked = checked)
 
@@ -58,6 +59,14 @@ fun IngredientsItem(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium
             )
+
+            if (!quantity.isNullOrBlank()) {
+                Text(
+                    text = quantity,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
 
         HorizontalDivider(
@@ -103,7 +112,8 @@ private fun AllergyCheckbox(
 private fun IngredientsItemPreview() {
     EasyPanTheme {
         IngredientsItem(
-            text = "1 cup of flour",
+            text = "All-purpose flour",
+            quantity = "1 cup",
             onCheckClick = {}
         )
     }

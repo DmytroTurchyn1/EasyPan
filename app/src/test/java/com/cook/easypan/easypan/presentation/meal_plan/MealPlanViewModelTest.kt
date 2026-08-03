@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.domain.model.ChefOffer
+import com.cook.easypan.easypan.domain.model.ChefPlan
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import com.cook.easypan.easypan.domain.model.PurchaseOutcome
 import com.cook.easypan.easypan.domain.model.Recipe
@@ -139,12 +141,15 @@ class MealPlanViewModelTest {
     private class FakeBillingRepository : BillingRepository {
         override val isChef = MutableStateFlow(true)
         override fun startObserving() = Unit
-        override suspend fun getMonthlyOffer(): ChefOffer? = null
-        override suspend fun purchaseChef(activityContext: Context): PurchaseOutcome =
-            PurchaseOutcome.Cancelled
+        override suspend fun getChefOffers(): List<ChefOffer> = emptyList()
+        override suspend fun purchaseChef(
+            activityContext: Context,
+            plan: ChefPlan,
+        ): PurchaseOutcome = PurchaseOutcome.Cancelled
 
         override suspend fun restorePurchases(): Result = Result.Success
         override suspend fun logIn(userId: String) = Unit
+        override fun setUserAttributes(email: String?, displayName: String?) = Unit
         override suspend fun logOut() = Unit
     }
 
@@ -152,7 +157,7 @@ class MealPlanViewModelTest {
         Recipe(
             id = "r1",
             title = "Spicy Chicken Stir-Fry",
-            ingredients = listOf("Chicken", "Rice"),
+            ingredients = listOf(Ingredient("Chicken"), Ingredient("Rice")),
             allergies = emptyList(),
             preparationMinutes = 10,
             cookMinutes = 30,
@@ -164,7 +169,7 @@ class MealPlanViewModelTest {
         Recipe(
             id = "r2",
             title = "Vegetable Curry",
-            ingredients = listOf("Spinach", "Rice"),
+            ingredients = listOf(Ingredient("Spinach"), Ingredient("Rice")),
             allergies = emptyList(),
             preparationMinutes = 15,
             cookMinutes = 25,

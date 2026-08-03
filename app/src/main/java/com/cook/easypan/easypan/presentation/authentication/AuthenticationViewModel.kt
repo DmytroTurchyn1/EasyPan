@@ -14,13 +14,15 @@ import androidx.lifecycle.viewModelScope
 import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.domain.repository.UserRepository
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthenticationViewModel(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val analytics: FirebaseAnalytics
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthenticationState())

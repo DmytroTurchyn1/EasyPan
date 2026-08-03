@@ -1,5 +1,6 @@
 package com.cook.easypan.easypan.domain.usecase
 
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.repository.RecipeRepository
@@ -118,7 +119,7 @@ class GenerateMealPlanUseCaseTest {
     ) = Recipe(
         id = id,
         title = "Recipe $id",
-        ingredients = ingredients,
+        ingredients = ingredients.map { Ingredient(it) },
         allergies = allergies,
         preparationMinutes = 10,
         cookMinutes = 20,

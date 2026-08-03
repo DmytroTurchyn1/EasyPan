@@ -34,6 +34,7 @@ import com.cook.easypan.easypan.presentation.favorite.FavoriteRoot
 import com.cook.easypan.easypan.presentation.favorite.FavoriteViewModel
 import com.cook.easypan.easypan.presentation.home.HomeRoot
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
+import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsListRoot
 import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptAction
 import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptRoot
 import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptViewModel
@@ -58,6 +59,8 @@ import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepRoot
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
 import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import com.google.firebase.remoteconfig.remoteConfig
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -90,6 +93,7 @@ fun HomeNavGraph(
     navController: NavHostController,
     onSignOut: () -> Unit
 ) {
+    val analytics = koinInject<FirebaseAnalytics>()
     NavHost(
         navController = navController,
         startDestination = Route.Home,
@@ -228,8 +232,8 @@ fun HomeNavGraph(
                 PaywallRoot()
             }
         }
-        composable<Route.IngredientsReceipt> {
-            val viewModel = koinViewModel<IngredientsReceiptViewModel>()
+        composable<Route.IngredientsList> {
+            val viewModel = it.sharedKoinViewModel<IngredientsReceiptViewModel>(navController)
             val selectedPlanViewModel =
                 it.sharedKoinViewModel<SelectedPlanViewModel>(navController)
             val preferences by selectedPlanViewModel.preferences.collectAsStateWithLifecycle()
@@ -242,8 +246,31 @@ fun HomeNavGraph(
 
             val isChef by koinInject<BillingRepository>().isChef.collectAsStateWithLifecycle()
             if (isChef) {
+                IngredientsListRoot(
+                    viewModel = viewModel,
+                    onCreateShoppingList = {
+                        navController.navigate(Route.IngredientsReceipt)
+                    }
+                )
+            } else {
+                PaywallRoot()
+            }
+        }
+        composable<Route.IngredientsReceipt> {
+            // Shares the checklist's ViewModel so the checked ingredients carry over. The list
+            // was already generated there — regenerating here would wipe those checks.
+            val viewModel = it.sharedKoinViewModel<IngredientsReceiptViewModel>(navController)
+
+            val isChef by koinInject<BillingRepository>().isChef.collectAsStateWithLifecycle()
+            if (isChef) {
                 IngredientsReceiptRoot(
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    onContinue = {
+                        navController.navigate(Route.MealPlan) {
+                            popUpTo(Route.MealPlan) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
                 )
             } else {
                 PaywallRoot()
@@ -280,7 +307,7 @@ fun HomeNavGraph(
                     val showReceiptScreen: Boolean =
                         Firebase.remoteConfig.getBoolean("receipt_screen")
                     if (showReceiptScreen) {
-                        navController.navigate(Route.IngredientsReceipt) {
+                        navController.navigate(Route.IngredientsList) {
                             popUpTo(Route.MealPlanReview) { inclusive = true }
                         }
                     } else {
@@ -306,6 +333,7 @@ fun HomeNavGraph(
                 },
                 onFinish = { preferences ->
                     selectedPlanViewModel.onPlanRequested(preferences)
+                    analytics.logEvent("meal_plan_generated") {}
                     navController.navigate(Route.MealPlanReview) {
                         popUpTo(Route.MealPlanWizard) {
                             inclusive = true
@@ -327,6 +355,9 @@ fun HomeNavGraph(
                 onRecipeClick = { recipe ->
                     selectedRecipeViewModel.onSelectRecipe(recipe)
                     navController.navigate(Route.RecipeDetail(recipe.id))
+                },
+                onHomeButtonClick = {
+                    navController.navigate(Route.Home)
                 }
             )
         }

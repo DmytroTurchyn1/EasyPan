@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.presentation.recipe_finish.components.CookedRecipesBox
 import com.cook.easypan.easypan.presentation.recipe_finish.components.RecipeCompleteChip
@@ -235,7 +236,7 @@ private fun RecipeFinishScreen(
 private val previewRecipe = Recipe(
     id = "1",
     title = "Banana Bread",
-    ingredients = listOf("Banana", "Flour"),
+    ingredients = listOf(Ingredient("Banana"), Ingredient("Flour")),
     allergies = emptyList(),
     preparationMinutes = 10,
     cookMinutes = 18,
