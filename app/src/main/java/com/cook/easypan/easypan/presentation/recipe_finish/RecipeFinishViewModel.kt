@@ -112,6 +112,10 @@ class RecipeFinishViewModel(
 
             is RecipeFinishAction.OnFavoriteClick -> toggleFavorite()
 
+            is RecipeFinishAction.OnConfettiFinished -> {
+                _state.update { it.copy(showConfetti = false) }
+            }
+
             else -> Unit
         }
     }

@@ -25,8 +25,9 @@ data class GroceryCategory(
  * One line on the shopping list.
  *
  * @param name the ingredient, deduped across the whole plan.
- * @param quantity every amount the plan calls for, joined (e.g. "1/2 cup + 2 cups"),
- * or null when no recipe specified one.
+ * @param quantity the total the plan calls for, summed across every meal slot (e.g. "2 1/2 cups").
+ * Amounts in units that cannot be combined stay joined (e.g. "2 cups + 100 g"), and it is null when
+ * no recipe specified an amount.
  */
 data class GroceryItem(
     val name: String,

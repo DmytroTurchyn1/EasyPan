@@ -15,5 +15,6 @@ data class RecipeFinishState(
     val userFinishedRecipes: Int = 0,
     val isFavorite: Boolean = false,
     val isFavoriteUpdating: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showConfetti: Boolean = true
 )

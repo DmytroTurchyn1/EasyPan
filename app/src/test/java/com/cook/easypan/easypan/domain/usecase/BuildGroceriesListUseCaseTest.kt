@@ -34,32 +34,35 @@ class BuildGroceriesListUseCaseTest {
     }
 
     @Test
-    fun `joins every quantity recorded for the same ingredient`() = runTest {
+    fun `sums every quantity recorded for the same ingredient`() = runTest {
         val useCase = useCase(
             recipeOf("a", Ingredient("Milk", "1/2 cup"), Ingredient("Salt")),
             recipeOf("b", Ingredient("milk", "2 cups")),
         )
 
-        val groceries = useCase(MealPlanPreferences(mealsDay = 3), today = monday)
+        // One meal a day over seven days alternates the two recipes, so "a" fills days 0/2/4/6 and
+        // "b" days 1/3/5.
+        val groceries = useCase(MealPlanPreferences(mealsDay = 1), today = monday)
 
         val items = groceries.categories.flatMap { it.items }.associateBy { it.name }
         assertEquals(2, groceries.totalItems)
-        assertEquals("1/2 cup + 2 cups", items.getValue("Milk").quantity)
+        assertEquals("8 cups", items.getValue("Milk").quantity) // 4 × 1/2 + 3 × 2
         // Nothing to show when no recipe gave an amount.
         assertNull(items.getValue("Salt").quantity)
     }
 
     @Test
-    fun `does not repeat an identical quantity`() = runTest {
+    fun `sums repeated identical quantities across meal slots`() = runTest {
         val useCase = useCase(
             recipeOf("a", Ingredient("Rice", "200 g")),
             recipeOf("b", Ingredient("rice", "200 g")),
         )
 
-        val groceries = useCase(MealPlanPreferences(mealsDay = 3), today = monday)
+        val groceries = useCase(MealPlanPreferences(mealsDay = 1), today = monday)
 
+        // Every one of the seven slots calls for 200 g, and the total scales up to kilograms.
         val rice = groceries.categories.flatMap { it.items }.single { it.name == "Rice" }
-        assertEquals("200 g", rice.quantity)
+        assertEquals("1.4 kg", rice.quantity)
     }
 
     @Test

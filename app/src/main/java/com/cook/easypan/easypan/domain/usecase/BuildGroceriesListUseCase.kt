@@ -14,6 +14,10 @@ import java.time.LocalDate
  * ingredients, dedupes them case-insensitively, and groups them by [IngredientCategory]
  * via [IngredientCategorizer].
  *
+ * Amounts for the same ingredient are summed by [QuantityMerger]. Every meal slot counts, so a
+ * recipe that fills three slots contributes its ingredients three times — the list has to cover a
+ * whole week of cooking.
+ *
  * [today] is injectable so the result is deterministic under test.
  */
 class BuildGroceriesListUseCase(
@@ -27,7 +31,7 @@ class BuildGroceriesListUseCase(
         val slots = plan.days.flatMap { it.meals }
 
         // Unique ingredients across the whole week — first-seen casing wins, and every
-        // amount the plan calls for is collected under that one name.
+        // amount the plan calls for is collected under that one name to be summed.
         val namesByKey = LinkedHashMap<String, String>()
         val quantitiesByKey = LinkedHashMap<String, MutableList<String>>()
         slots.forEach { recipe ->
@@ -49,9 +53,7 @@ class BuildGroceriesListUseCase(
             .map { (key, name) ->
                 GroceryItem(
                     name = name,
-                    quantity = quantitiesByKey[key]
-                        ?.distinct()
-                        ?.joinToString(QUANTITY_SEPARATOR)
+                    quantity = quantitiesByKey[key]?.let(QuantityMerger::merge)
                 )
             }
             .groupBy { IngredientCategorizer.categorize(it.name) }
@@ -64,9 +66,5 @@ class BuildGroceriesListUseCase(
             mealsCount = slots.size,
             people = preferences.people,
         )
-    }
-
-    private companion object {
-        const val QUANTITY_SEPARATOR = " + "
     }
 }
