@@ -8,10 +8,13 @@
 
 package com.cook.easypan.easypan.presentation.favorite
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
+import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.core.presentation.toMessageRes
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.presentation.home.components.RecipeList
 import com.cook.easypan.ui.theme.EasyPanTheme
@@ -35,7 +40,8 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 @Composable
 fun FavoriteRoot(
     viewModel: FavoriteViewModel,
-    onRecipeClick: (Recipe) -> Unit
+    onRecipeClick: (Recipe) -> Unit,
+    onHomeButtonClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -46,6 +52,11 @@ fun FavoriteRoot(
                 is FavoriteAction.OnRecipeClick -> {
                     onRecipeClick(action.recipe)
                 }
+                is FavoriteAction.OnHomeButtonClick -> {
+                    onHomeButtonClick()
+                }
+
+                else -> Unit
             }
             viewModel.onAction(action)
         }
@@ -62,18 +73,61 @@ private fun FavoriteScreen(
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (state.favoriteRecipes.isEmpty() && !state.isLoading) {
+        if (state.error != null && !state.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = stringResource(R.string.no_favorite_recipes),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = stringResource(state.error.toMessageRes()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    EasyPanButtonPrimary(
+                        onClick = { onAction(FavoriteAction.OnRetryClick) }
+                    ) {
+                        Text(text = stringResource(R.string.retry_button))
+                    }
+                }
+            }
+        } else if (state.favoriteRecipes.isEmpty() && !state.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.no_favorite_recipes),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.no_favorite_recipes_description),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    EasyPanButtonPrimary(
+                        onClick = { onAction(FavoriteAction.OnHomeButtonClick) }
+                    ) {
+                        Text(text = stringResource(R.string.go_home_button))
+                    }
+                }
             }
         } else if (state.isLoading) {
             Box(

@@ -14,5 +14,8 @@ data class RecipeDetailState(
     val recipe: Recipe? = null,
     val isLoading: Boolean = true,
     val isFavorite: Boolean = false,
+    val isFavoriteUpdating: Boolean = false,
     val onIngredientCheckClicked: Set<Int> = emptySet(),
+    val showBottomSheet: Boolean = false,
+    val selectedIngredients: Int = 0
 )

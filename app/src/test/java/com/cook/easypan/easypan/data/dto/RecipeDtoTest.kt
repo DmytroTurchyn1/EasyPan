@@ -20,7 +20,7 @@ class RecipeDtoTest {
             titleImg = "test_image_url",
             preparationMinutes = 30,
             cookMinutes = 45,
-            ingredients = listOf("Ingredient 1", "Ingredient 2"),
+            ingredients = listOf(IngredientDto("Ingredient 1"), IngredientDto("Ingredient 2")),
             instructions = listOf(
                 StepDescriptionDto(
                     step = 1,
@@ -59,7 +59,10 @@ class RecipeDtoTest {
         assertEquals("test_image_url", recipeDto.titleImg)
         assertEquals(30, recipeDto.preparationMinutes)
         assertEquals(45, recipeDto.cookMinutes)
-        assertEquals(listOf("Ingredient 1", "Ingredient 2"), recipeDto.ingredients)
+        assertEquals(
+            listOf(IngredientDto("Ingredient 1"), IngredientDto("Ingredient 2")),
+            recipeDto.ingredients
+        )
         assertEquals(1, recipeDto.instructions.size)
         assertEquals("Test Step Title", recipeDto.instructions[0].title)
         assertEquals("Test Step Description", recipeDto.instructions[0].description)
@@ -107,7 +110,10 @@ class RecipeDtoTest {
         assertEquals("test_image_url", deserialized.titleImg)
         assertEquals(30, deserialized.preparationMinutes)
         assertEquals(45, deserialized.cookMinutes)
-        assertEquals(listOf("Ingredient 1", "Ingredient 2"), deserialized.ingredients)
+        assertEquals(
+            listOf(IngredientDto("Ingredient 1"), IngredientDto("Ingredient 2")),
+            deserialized.ingredients
+        )
         assertEquals(1, deserialized.instructions.size)
         assertEquals("Test Step Title", deserialized.instructions[0].title)
         assertEquals("Test Step Description", deserialized.instructions[0].description)

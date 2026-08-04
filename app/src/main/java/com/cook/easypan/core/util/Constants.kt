@@ -20,3 +20,8 @@ const val FAVORITE_COLLECTION = "Favorite"
 const val FAVORITES_CACHE_TIMEOUT = 60 * 60 * 1000L
 const val USER_DATA_CACHE_TIMEOUT = 20 * 60 * 1000L
 const val RECIPES_CACHE_TIMEOUT = 60 * 60 * 1000L
+
+// RevenueCat entitlement that unlocks meal planning and the groceries receipt.
+// Must match the entitlement identifier configured in the RevenueCat dashboard (case-sensitive).
+// Verified against GET /v1/subscribers on 2026-07-27 — the identifier is "EasyPan Chef".
+const val ENTITLEMENT_CHEF = "EasyPan Chef"

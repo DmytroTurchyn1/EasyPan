@@ -13,8 +13,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.cook.easypan.R
+import com.cook.easypan.core.domain.Result
+import com.cook.easypan.core.presentation.snackBar.SnackBarController
+import com.cook.easypan.core.presentation.snackBar.SnackBarEvent
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.cook.easypan.easypan.presentation.navigation.Route
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -24,7 +30,8 @@ import kotlinx.coroutines.launch
 
 class RecipeFinishViewModel(
     private val userRepository: UserRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val analytics: FirebaseAnalytics
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -46,21 +53,31 @@ class RecipeFinishViewModel(
 
 
     private val recipeId = savedStateHandle.toRoute<Route.RecipeFinish>().id
+
     private fun updateCookedRecipes() {
         viewModelScope.launch {
             try {
                 val user = userRepository.getCurrentUser()
                 val recipesCooked = user?.data?.recipesCooked ?: 0
+                if (recipesCooked == 0) {
+                    analytics.logEvent("first_recipe_finished") {
+                        param("recipe_id", recipeId)
+                        if (user != null) param("user_id", user.userId)
+                    }
+                } else {
+                    analytics.logEvent("recipe_finished") {
+                        param("recipe_id", recipeId)
+                    }
+                }
                 _state.update {
                     it.copy(
                         userFinishedRecipes = recipesCooked + 1,
                         isLoading = false
                     )
                 }
-                //launch { userRepository.updateUserData() } TODO: Check if this is needed
                 userRepository.updateUserData()
             } catch (e: Exception) {
-                Log.e("Recipe Finish Screen", "Error updating user data: ${e.message}")
+                Log.e("RecipeFinishViewModel", "Error updating user data: ${e.message}")
                 _state.update { it.copy(isLoading = false) }
             }
         }
@@ -68,11 +85,16 @@ class RecipeFinishViewModel(
 
     private fun observeFavoriteStatus(recipeId: String = this.recipeId) {
         viewModelScope.launch {
-            val isFavorite = userRepository.isRecipeFavorite(recipeId = recipeId)
-            _state.update {
-                it.copy(
-                    isFavorite = isFavorite
-                )
+            runCatching {
+                userRepository.isRecipeFavorite(recipeId = recipeId)
+            }.onSuccess { isFavorite ->
+                _state.update {
+                    it.copy(
+                        isFavorite = isFavorite
+                    )
+                }
+            }.onFailure {
+                Log.e("RecipeFinishViewModel", "Error observing favorite status: ${it.message}")
             }
         }
     }
@@ -86,33 +108,46 @@ class RecipeFinishViewModel(
                         isLoading = false
                     )
                 }
-                observeFavoriteStatus(action.recipe.id)
             }
 
-            is RecipeFinishAction.OnFavoriteClick -> {
-                viewModelScope.launch {
-                    state.value.recipe?.let { recipe ->
-                        if (state.value.isFavorite) {
-                            userRepository.deleteRecipeFromFavorites(recipeId = recipe.id)
-                            _state.update {
-                                it.copy(
-                                    isFavorite = false
-                                )
-                            }
+            is RecipeFinishAction.OnFavoriteClick -> toggleFavorite()
 
-                        } else {
-                            userRepository.addRecipeToFavorites(recipe)
-                            _state.update {
-                                it.copy(
-                                    isFavorite = true
-                                )
-                            }
-                        }
-                    }
-                }
+            is RecipeFinishAction.OnConfettiFinished -> {
+                _state.update { it.copy(showConfetti = false) }
             }
+
             else -> Unit
         }
     }
 
+    private fun toggleFavorite() {
+        if (_state.value.isFavoriteUpdating) return
+        val recipe = _state.value.recipe ?: return
+        viewModelScope.launch {
+            _state.update { it.copy(isFavoriteUpdating = true) }
+            val wasFavorite = _state.value.isFavorite
+            val result = if (wasFavorite) {
+                userRepository.deleteRecipeFromFavorites(recipeId = recipe.id)
+            } else {
+                userRepository.addRecipeToFavorites(recipe)
+            }
+            when (result) {
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            isFavorite = !wasFavorite,
+                            isFavoriteUpdating = false
+                        )
+                    }
+                }
+
+                is Result.Failure -> {
+                    _state.update { it.copy(isFavoriteUpdating = false) }
+                    SnackBarController.sendEvent(
+                        SnackBarEvent(messageRes = R.string.error_favorite_update)
+                    )
+                }
+            }
+        }
+    }
 }

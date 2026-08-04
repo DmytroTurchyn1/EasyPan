@@ -7,9 +7,15 @@
  */
 
 package com.cook.easypan.easypan.presentation.profile
+
+import android.content.Context
+
 sealed interface ProfileAction {
     data object OnSignOut : ProfileAction
     data object OnNotificationsClick : ProfileAction
     data object OnKeepScreenOnToggle : ProfileAction
     data object OnHelpClick : ProfileAction
+    data object OnDeleteAccountClick : ProfileAction
+    data object OnDeleteAccountDismiss : ProfileAction
+    data class OnDeleteAccountConfirm(val activityContext: Context) : ProfileAction
 }

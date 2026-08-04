@@ -17,33 +17,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cook.easypan.R
-import com.cook.easypan.core.CountdownTimer
 import com.cook.easypan.core.presentation.EasyPanButtonSecondary
 import com.cook.easypan.core.presentation.EasyPanText
-import com.cook.easypan.core.util.Launcher.pauseTimerService
-import com.cook.easypan.core.util.Launcher.startTimerService
-import com.cook.easypan.core.util.Launcher.stopTimerService
+import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
 import com.cook.easypan.ui.theme.EasyPanTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun TimerStepRecipe(
-    totalSeconds: Int?
+    totalSeconds: Int?,
+    stepIndex: Int,
+    remainingSeconds: Long?,
+    ownerStep: Int?,
+    isRunning: Boolean,
+    onAction: (RecipeStepAction) -> Unit
 ) {
     if (totalSeconds != null) {
         Box(
@@ -51,19 +44,13 @@ fun TimerStepRecipe(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            val scope = rememberCoroutineScope()
-            val context = LocalContext.current
+            // The global timer may belong to another step; only the owning
+            // step shows its countdown, every other step shows its own total.
+            val isMine = ownerStep == stepIndex
+            val displaySeconds = (if (isMine) remainingSeconds else null) ?: totalSeconds.toLong()
 
-            val running by CountdownTimer.isRunning.collectAsState(initial = false)
-            val remainingOrNull by CountdownTimer.remainingSeconds.collectAsState(initial = null)
-
-            var lastSeconds by remember { mutableLongStateOf(totalSeconds.toLong()) }
-            LaunchedEffect(remainingOrNull) {
-                remainingOrNull?.let { lastSeconds = it }
-            }
-
-            val mins = (lastSeconds / 60L).toInt()
-            val secs = (lastSeconds % 60L).toInt()
+            val mins = (displaySeconds / 60L).toInt()
+            val secs = (displaySeconds % 60L).toInt()
 
             Column(
                 modifier = Modifier
@@ -93,25 +80,13 @@ fun TimerStepRecipe(
                     modifier = Modifier
                         .fillMaxWidth(),
                     onClick = {
-                        scope.launch {
-                            if (!running) {
-
-                                val startFrom =
-                                    if (lastSeconds in 1 until totalSeconds.toLong()) lastSeconds else totalSeconds.toLong()
-                                startTimerService(
-                                    context,
-                                    startFrom * 1000L,
-                                )
-                            } else {
-                                pauseTimerService(context)
-                            }
-                        }
+                        onAction(RecipeStepAction.OnTimerToggleClick(stepIndex, totalSeconds))
                     },
                     enabled = true
                 ) {
                     Text(
-                        text = if (!running) stringResource(R.string.start_button_timer) else stringResource(
-                            R.string.stop_button_timer
+                        text = if (isRunning && isMine) stringResource(R.string.stop_button_timer) else stringResource(
+                            R.string.start_button_timer
                         ),
                     )
                 }
@@ -119,8 +94,7 @@ fun TimerStepRecipe(
                     modifier = Modifier
                         .fillMaxWidth(),
                     onClick = {
-                        stopTimerService(context)
-                        lastSeconds = totalSeconds.toLong()
+                        onAction(RecipeStepAction.OnTimerRestartClick(stepIndex))
                     },
                     enabled = true
                 ) {
@@ -147,7 +121,12 @@ fun TimerStepRecipe(
 private fun TimerStepRecipePreview() {
     EasyPanTheme {
         TimerStepRecipe(
-            totalSeconds = 1200
+            totalSeconds = 1200,
+            stepIndex = 0,
+            remainingSeconds = 754,
+            ownerStep = 0,
+            isRunning = true,
+            onAction = {}
         )
     }
 }

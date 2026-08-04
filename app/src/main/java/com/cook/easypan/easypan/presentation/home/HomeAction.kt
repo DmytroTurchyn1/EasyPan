@@ -13,4 +13,5 @@ import com.cook.easypan.easypan.domain.model.Recipe
 sealed interface HomeAction {
     data class OnRecipeClick(val recipe: Recipe) : HomeAction
     data class OnFilterSelected(val filter: String) : HomeAction
+    data object OnRetryClick : HomeAction
 }

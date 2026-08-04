@@ -8,6 +8,7 @@
 
 package com.cook.easypan.easypan.presentation.recipe_step
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.togetherWith
@@ -28,11 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -44,10 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
-import com.cook.easypan.core.CountdownTimer
 import com.cook.easypan.core.domain.StepType
 import com.cook.easypan.core.presentation.KeepScreenOn
+import com.cook.easypan.core.util.Launcher.pauseTimerService
+import com.cook.easypan.core.util.Launcher.startTimerService
 import com.cook.easypan.core.util.Launcher.stopTimerService
+import com.cook.easypan.core.util.ObserveAsEvents
 import com.cook.easypan.easypan.presentation.recipe_step.components.AlertCancelRecipeDialog
 import com.cook.easypan.easypan.presentation.recipe_step.components.BottomBarRecipeStep
 import com.cook.easypan.easypan.presentation.recipe_step.components.ContentStepRecipe
@@ -61,6 +60,17 @@ fun RecipeStepRoot(
     onCancelClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is RecipeStepEvent.StartTimer ->
+                startTimerService(context, event.durationMs, event.ownerStep)
+
+            is RecipeStepEvent.PauseTimer -> pauseTimerService(context)
+            is RecipeStepEvent.StopTimer -> stopTimerService(context)
+        }
+    }
 
     RecipeStepScreen(
         state = state,
@@ -80,10 +90,22 @@ private fun RecipeStepScreen(
     onAction: (RecipeStepAction) -> Unit,
 ) {
     val context = LocalContext.current
+    val timerActive = state.timerRemainingSeconds != null
+    BackHandler(enabled = state.recipe != null) {
+        onAction(
+            if (state.isDialogShowing) RecipeStepAction.OnDismissDialog
+            else RecipeStepAction.OnShowDialog
+        )
+    }
     if (state.isDialogShowing) {
         AlertCancelRecipeDialog(
             icon = Icons.Default.Info,
             onConfirmation = {
+                // The ViewModel resets the in-process timer on OnCancelClick;
+                // the service must be stopped from here, where Context lives.
+                if (timerActive) {
+                    stopTimerService(context)
+                }
                 onAction(RecipeStepAction.OnCancelClick)
             },
             onDismissRequest = { onAction(RecipeStepAction.OnDismissDialog) },
@@ -93,7 +115,6 @@ private fun RecipeStepScreen(
     }
 
     if (state.recipe != null) {
-        val runningTimer by CountdownTimer.isRunning.collectAsState(initial = false)
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -105,16 +126,16 @@ private fun RecipeStepScreen(
                 )
             },
             bottomBar = {
-                var isFinishEnabled by remember { mutableStateOf(true) }
                 BottomBarRecipeStep(
                     onNextClick = {
-                        if (runningTimer) {
-                            stopTimerService(context)
-                        }
+                        // A running timer survives step browsing; it only stops
+                        // when the cooking flow ends (finish or cancel).
                         if (state.step < state.recipe.instructions.size - 1) {
                             onAction(RecipeStepAction.OnNextClick)
                         } else {
-                            isFinishEnabled = false
+                            if (timerActive) {
+                                stopTimerService(context)
+                            }
                             onAction(RecipeStepAction.OnFinishClick)
                         }
                     },
@@ -123,7 +144,7 @@ private fun RecipeStepScreen(
                     nextButtonTitle = if (state.step < state.recipe.instructions.size - 1) stringResource(
                         R.string.next_button
                     ) else stringResource(R.string.finish_button),
-                    enabledNext = isFinishEnabled
+                    enabledNext = state.isFinishButtonEnabled
 
                 )
             }
@@ -162,7 +183,8 @@ private fun RecipeStepScreen(
                             model = state.recipe.instructions[currentStep].imageUrl,
                             contentDescription = stringResource(R.string.dish_image_description),
                             contentScale = ContentScale.FillBounds,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize(),
                             loading = {
                                 Box(
                                     contentAlignment = Alignment.Center
@@ -179,6 +201,7 @@ private fun RecipeStepScreen(
                                 )
                             }
                         )
+
                     }
                     if (state.recipe.instructions[currentStep].stepType == StepType.TEXT) {
                         Column(
@@ -208,6 +231,11 @@ private fun RecipeStepScreen(
                             )
                             TimerStepRecipe(
                                 totalSeconds = state.recipe.instructions[currentStep].durationSec,
+                                stepIndex = currentStep,
+                                remainingSeconds = state.timerRemainingSeconds,
+                                ownerStep = state.timerOwnerStep,
+                                isRunning = state.timerRunning,
+                                onAction = onAction,
                             )
                         }
                     }

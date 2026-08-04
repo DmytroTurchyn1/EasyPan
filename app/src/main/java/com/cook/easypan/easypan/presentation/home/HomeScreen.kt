@@ -36,6 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cook.easypan.R
+import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.core.presentation.toMessageRes
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.presentation.home.components.RecipeFilterBar
 import com.cook.easypan.easypan.presentation.home.components.RecipeList
@@ -114,12 +116,36 @@ private fun HomeScreen(
                     CircularProgressIndicator()
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "Loading recipes..."
+                        text = stringResource(R.string.loading_recipes)
                     )
                 }
 
             }
 
+        } else if (state.error != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = stringResource(state.error.toMessageRes()),
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    EasyPanButtonPrimary(
+                        onClick = { onAction(HomeAction.OnRetryClick) }
+                    ) {
+                        Text(text = stringResource(R.string.retry_button))
+                    }
+                }
+            }
         } else if (state.recipes.isNotEmpty()) {
             Text(
                 text = stringResource(R.string.home_title),

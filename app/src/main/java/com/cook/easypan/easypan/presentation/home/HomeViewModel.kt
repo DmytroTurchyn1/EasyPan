@@ -17,11 +17,14 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.util.NOTIFICATION_TOPIC
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.repository.RecipeRepository
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.messaging.messaging
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -53,17 +56,32 @@ class HomeViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            val recipes = recipeRepository.getRecipes()
-            allRecipes = recipes
-            val filters = recipes.map { recipe ->
-                recipe.chips
-            }.flatten().distinct().sorted()
-            _state.update {
-                it.copy(
-                    recipes = recipes,
-                    filterList = filters,
-                    isLoading = false
-                )
+            _state.update { it.copy(isLoading = true, error = null) }
+            try {
+                val recipes = recipeRepository.getRecipes()
+                allRecipes = recipes
+                val filters = recipes.map { recipe ->
+                    recipe.chips
+                }.flatten().distinct().sorted()
+                _state.update {
+                    it.copy(
+                        recipes = recipes,
+                        filterList = filters,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Failed to load recipes", e)
+                val error =
+                    if (e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.UNAVAILABLE) {
+                        AppError.NETWORK
+                    } else {
+                        AppError.UNKNOWN
+                    }
+                _state.update { it.copy(isLoading = false, error = error) }
             }
         }
     }
@@ -99,7 +117,6 @@ class HomeViewModel(
                                     hasSubscribedToTopic = true
                                 )
                             }
-                            Log.d("HomeViewModel", "Subscribed to topic successfully")
                         } else {
                             Log.e(
                                 "HomeViewModel",
@@ -119,6 +136,7 @@ class HomeViewModel(
             is HomeAction.OnRecipeClick -> {
 
             }
+
             is HomeAction.OnFilterSelected -> {
                 val newFilter =
                     if (state.value.selectedFilter == action.filter) "" else action.filter
@@ -134,6 +152,8 @@ class HomeViewModel(
                     )
                 }
             }
+
+            is HomeAction.OnRetryClick -> loadData()
         }
     }
 

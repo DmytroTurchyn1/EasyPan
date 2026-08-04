@@ -8,7 +8,17 @@
 
 package com.cook.easypan.core.domain
 
-interface Result {
+sealed interface Result {
     data object Success : Result
-    data class Failure(val error: String) : Result
+    data class Failure(val error: AppError) : Result
+}
+
+enum class AppError {
+    SIGN_IN_CANCELLED,
+    NO_GOOGLE_ACCOUNT,
+    AUTH_FAILED,
+    NOT_SIGNED_IN,
+    REAUTH_REQUIRED,
+    NETWORK,
+    UNKNOWN
 }

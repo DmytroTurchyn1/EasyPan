@@ -8,6 +8,7 @@
 
 package com.cook.easypan.easypan.data.datastore
 
+import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -19,14 +20,20 @@ object AppSettingsSerializer : Serializer<AppSettings> {
         get() = AppSettings()
 
     override suspend fun readFrom(input: InputStream): AppSettings {
+        val bytes = input.readBytes()
+        // An empty file simply means nothing has been written yet.
+        if (bytes.isEmpty()) return defaultValue
         return try {
             Json.Default.decodeFromString(
                 deserializer = AppSettings.serializer(),
-                string = input.readBytes().decodeToString()
+                string = bytes.decodeToString()
             )
         } catch (e: SerializationException) {
-            e.printStackTrace()
-            defaultValue
+            // Surfaced to the ReplaceFileCorruptionHandler configured on the
+            // DataStore, which resets the file to defaults.
+            throw CorruptionException("Cannot deserialize AppSettings", e)
+        } catch (e: IllegalArgumentException) {
+            throw CorruptionException("Cannot deserialize AppSettings", e)
         }
     }
 

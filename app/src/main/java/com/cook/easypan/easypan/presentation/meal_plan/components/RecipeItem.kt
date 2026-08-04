@@ -1,0 +1,138 @@
+package com.cook.easypan.easypan.presentation.meal_plan.components
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.NavigateNext
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil3.compose.SubcomposeAsyncImage
+import com.cook.easypan.R
+import com.cook.easypan.core.domain.StepType
+import com.cook.easypan.easypan.domain.model.Ingredient
+import com.cook.easypan.easypan.domain.model.Recipe
+import com.cook.easypan.easypan.domain.model.StepDescription
+import com.cook.easypan.ui.theme.EasyPanTheme
+
+@Composable
+fun RecipeItem(
+    recipe: Recipe,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .width(104.dp)
+                .height(72.dp)
+                .clip(RoundedCornerShape(14.dp)),
+            contentAlignment = Alignment.Center,
+        ) {
+            SubcomposeAsyncImage(
+                model = recipe.titleImg,
+                contentDescription = stringResource(R.string.dish_image_description),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                loading = {
+                    CircularProgressIndicator()
+                },
+                error = {
+                    Image(
+                        painter = painterResource(R.drawable.auth_img),
+                        contentDescription = stringResource(R.string.dish_image_description),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                },
+            )
+        }
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = recipe.title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 2,
+            )
+            Text(
+                text = stringResource(
+                    R.string.recipe_meta,
+                    recipe.cookMinutes,
+                    recipe.difficulty,
+                    recipe.instructions.size,
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+            )
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Default.NavigateNext,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun RecipeItemPreview() {
+    EasyPanTheme {
+        RecipeItem(
+            recipe = Recipe(
+                id = "1",
+                title = "Spicy Chicken Stir-Fry",
+                cookMinutes = 30,
+                difficulty = "Medium",
+                instructions = listOf(
+                    StepDescription(
+                        step = 1,
+                        imageUrl = "example",
+                        title = "title",
+                        description = "some description",
+                        stepType = StepType.TEXT,
+                        durationSec = 3000,
+                    )
+                ),
+                titleImg = "https://www.chilipeppermadness.com/wp-content/uploads/2021/12/Hunan-Chicken-Recipe6.jpg",
+                ingredients = listOf(Ingredient("bread")),
+                preparationMinutes = 10,
+                chips = listOf("Vegetarian", "Gluten-Free"),
+                allergies = listOf("none"),
+            ),
+            onClick = {},
+        )
+    }
+}

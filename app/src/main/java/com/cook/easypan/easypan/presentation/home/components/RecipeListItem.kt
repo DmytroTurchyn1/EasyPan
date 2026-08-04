@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.core.domain.StepType
+import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.model.StepDescription
 import com.cook.easypan.ui.theme.EasyPanTheme
@@ -69,7 +70,12 @@ fun RecipeListItem(
                     maxLines = 2
                 )
                 Text(
-                    text = "${recipe.cookMinutes} min · ${recipe.difficulty} · ${recipe.instructions.size} steps",
+                    text = stringResource(
+                        R.string.recipe_meta,
+                        recipe.cookMinutes,
+                        recipe.difficulty,
+                        recipe.instructions.size
+                    ),
                     fontSize = MaterialTheme.typography.labelLarge.fontSize,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2
@@ -127,9 +133,10 @@ private fun RecipeListItemPreview() {
                     )
                 ),
                 titleImg = "https://www.chilipeppermadness.com/wp-content/uploads/2021/12/Hunan-Chicken-Recipe6.jpg",
-                ingredients = listOf("bread"),
+                ingredients = listOf(Ingredient("bread")),
                 preparationMinutes = 10,
                 chips = listOf("Vegetarian", "Gluten-Free"),
+                allergies = listOf("none")
             ),
             onClick = {}
         )

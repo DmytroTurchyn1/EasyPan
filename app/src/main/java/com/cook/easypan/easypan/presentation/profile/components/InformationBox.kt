@@ -1,11 +1,9 @@
 package com.cook.easypan.easypan.presentation.profile.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,29 +20,19 @@ import com.cook.easypan.ui.theme.EasyPanTheme
 
 @Composable
 fun InformationBox(
-    content: @Composable () -> Unit
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .height(80.dp)
-            .width(150.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.tertiary,
-                shape = RoundedCornerShape(10.dp)
-            )
-            .background(MaterialTheme.colorScheme.secondaryContainer)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            content()
-        }
-    }
+    Column(
+        modifier = modifier
+            .width(141.dp)
+            .height(68.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.secondaryContainer),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        content = content
+    )
 }
 
 @Preview(backgroundColor = 0xFFFFFFFF, showBackground = true, showSystemUi = true)

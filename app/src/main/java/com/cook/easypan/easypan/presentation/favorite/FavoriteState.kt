@@ -8,9 +8,11 @@
 
 package com.cook.easypan.easypan.presentation.favorite
 
+import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.easypan.domain.model.Recipe
 
 data class FavoriteState(
     val favoriteRecipes: List<Recipe> = emptyList(),
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val error: AppError? = null
 )

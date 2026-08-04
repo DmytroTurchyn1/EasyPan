@@ -32,17 +32,22 @@ kotlin {
 }
 android {
     namespace = "com.cook.easypan"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.cook.easypan"
         minSdk = 28
-        targetSdk = 36
-        versionCode = 21
-        versionName = "v1.0.0"
+        targetSdk = 37
+        versionCode = 24
+        versionName = "v1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "CLIENT_ID", "${keystoreProperties.getProperty("clientId")}")
+        // Works whether the properties value is quoted or not; missing file yields "".
+        buildConfigField(
+            "String",
+            "CLIENT_ID",
+            "\"${keystoreProperties.getProperty("clientId")?.trim('"') ?: ""}\""
+        )
     }
     signingConfigs {
         if (keystorePropertiesFile?.exists() == true && keystoreProperties.getProperty("storeFile") != null) {
@@ -62,12 +67,21 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField(
+                "String",
+                "REVENUECAT_API_KEY",
+                "\"${keystoreProperties.getProperty("revenueCatApiKeyRelease")?.trim('"') ?: ""}\""
+            )
             signingConfigs.findByName("release")?.let { signingConfig = it }
                 ?: logger.warn("Release signingConfig not configured; skipping assignment. Configure keystore.properties to enable signed release builds.")
         }
         getByName("debug") {
             isMinifyEnabled = false
-            isShrinkResources = false
+            buildConfigField(
+                "String",
+                "REVENUECAT_API_KEY",
+                "\"${keystoreProperties.getProperty("revenueCatApiKeyTest")?.trim('"') ?: ""}\""
+            )
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -77,6 +91,14 @@ android {
             initWith(buildTypes.getByName("release"))
             matchingFallbacks += listOf("release")
             isDebuggable = false
+        }
+    }
+    sourceSets {
+        // The benchmark build type mimics release; reuse its variant sources
+        // (e.g. AppCheckInstaller with the Play Integrity provider).
+        getByName("benchmark") {
+            java.srcDirs("src/release/java")
+            kotlin.srcDirs("src/release/java")
         }
     }
     compileOptions {
@@ -113,12 +135,10 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coil)
+    implementation(libs.bundles.revenueCat)
 
     debugImplementation(libs.bundles.compose.debug)
-
-    implementation(libs.firebase.appdistribution.api.ktx)
-    implementation(libs.firebase.appdistribution)
-
+    debugImplementation(libs.firebase.appcheck.debug)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.android.test)
     testImplementation(libs.bundles.test)

@@ -7,11 +7,12 @@ import kotlinx.serialization.Serializable
 data class RecipeDto(
     val id: String = "",
     @PropertyName("title") val title: String = "",
-    @PropertyName("ingredients") val ingredients: List<String> = emptyList(),
+    @PropertyName("ingredients") val ingredients: List<IngredientDto> = emptyList(),
     @PropertyName("preparationMinutes") val preparationMinutes: Int = 0,
     @PropertyName("cookMinutes") val cookMinutes: Int = 0,
     @PropertyName("chips") val chips: List<String> = emptyList(),
     @PropertyName("difficulty") val difficulty: Int = 1,
     @PropertyName("instructions") val instructions: List<StepDescriptionDto> = emptyList(),
+    @PropertyName("allergies") val allergies: List<String> = emptyList(),
     @PropertyName("titleImg") val titleImg: String = ""
 )

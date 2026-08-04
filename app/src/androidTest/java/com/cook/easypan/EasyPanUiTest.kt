@@ -13,14 +13,17 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.cook.easypan.core.domain.AppError
+import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.repository.DefaultUserRepository
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationRoot
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewModel
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -42,9 +45,13 @@ class EasyPanUiTest {
         authClient = mockk(relaxed = true)
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         val firestoreDataSource = mockk<FirestoreClient>(relaxed = true)
-        userRepository =
-            DefaultUserRepository(firestoreDataSource, authClient, context = appContext)
-        viewModel = AuthenticationViewModel(userRepository)
+        userRepository = DefaultUserRepository(
+            firestoreDataSource,
+            authClient,
+            billingRepository = mockk(relaxed = true),
+            context = appContext,
+        )
+        viewModel = AuthenticationViewModel(userRepository, analytics = mockk(relaxed = true))
     }
 
     @Test
@@ -53,9 +60,9 @@ class EasyPanUiTest {
         assertEquals("com.cook.easypan", appContext.packageName)
     }
 
-    @Suppress("UnusedFlow")
     @Test
     fun testAuthenticationScreen() {
+        coEvery { authClient.signInWithGoogle(any()) } returns Result.Failure(AppError.SIGN_IN_CANCELLED)
         rule.setContent {
             AuthenticationRoot(
                 viewModel = viewModel,
@@ -63,7 +70,7 @@ class EasyPanUiTest {
         }
         rule.onNodeWithText("Continue with Google").performClick()
         rule.waitForIdle()
-        verify(timeout = 2000) {
+        coVerify(timeout = 2000) {
             authClient.signInWithGoogle(any())
         }
     }

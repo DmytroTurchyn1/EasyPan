@@ -19,3 +19,6 @@ app/google-services.json
 /.idea/appInsightsSettings.xml
 /.idea/copilotDiffState.xml
 keystore.properties
+app/release/
+/.idea/inspectionProfiles/
+/EasyPan

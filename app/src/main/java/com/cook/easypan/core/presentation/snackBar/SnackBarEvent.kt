@@ -8,7 +8,10 @@
 
 package com.cook.easypan.core.presentation.snackBar
 
+import androidx.annotation.StringRes
+
 data class SnackBarEvent(
-    val message: String,
+    val message: String? = null,
+    @param:StringRes val messageRes: Int? = null,
     val action: SnackBarAction? = null
 )

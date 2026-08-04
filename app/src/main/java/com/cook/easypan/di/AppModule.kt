@@ -11,19 +11,31 @@ package com.cook.easypan.di
 
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
+import com.cook.easypan.easypan.data.repository.DefaultBillingRepository
 import com.cook.easypan.easypan.data.repository.DefaultRecipeRepository
 import com.cook.easypan.easypan.data.repository.DefaultUserRepository
+import com.cook.easypan.easypan.domain.repository.BillingRepository
 import com.cook.easypan.easypan.domain.repository.RecipeRepository
 import com.cook.easypan.easypan.domain.repository.UserRepository
+import com.cook.easypan.easypan.domain.usecase.BuildGroceriesListUseCase
+import com.cook.easypan.easypan.domain.usecase.GenerateMealPlanUseCase
+import com.cook.easypan.easypan.presentation.SelectedPlanViewModel
 import com.cook.easypan.easypan.presentation.SelectedRecipeViewModel
 import com.cook.easypan.easypan.presentation.authentication.AuthenticationViewModel
 import com.cook.easypan.easypan.presentation.favorite.FavoriteViewModel
 import com.cook.easypan.easypan.presentation.home.HomeViewModel
+import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsReceiptViewModel
+import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
+import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewViewModel
+import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardViewModel
+import com.cook.easypan.easypan.presentation.paywall.PaywallViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
 import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishViewModel
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
 import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -37,17 +49,26 @@ val appModule = module {
 
     single<FirebaseAuth> { Firebase.auth }
     single<FirebaseFirestore> { Firebase.firestore }
-
+    single<FirebaseAnalytics> { Firebase.analytics }
 
     singleOf(::FirestoreClient)
     singleOf(::AuthClient)
     singleOf(::DefaultRecipeRepository).bind<RecipeRepository>()
+    singleOf(::DefaultBillingRepository).bind<BillingRepository>()
     singleOf(::DefaultUserRepository).bind<UserRepository>()
+    singleOf(::GenerateMealPlanUseCase)
+    singleOf(::BuildGroceriesListUseCase)
 
     viewModelOf(::AuthenticationViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::MealPlanViewModel)
+    viewModelOf(::PaywallViewModel)
+    viewModelOf(::MealPlanWizardViewModel)
+    viewModelOf(::MealPlanReviewViewModel)
+    viewModelOf(::IngredientsReceiptViewModel)
     viewModelOf(::RecipeDetailViewModel)
     viewModelOf(::SelectedRecipeViewModel)
+    viewModelOf(::SelectedPlanViewModel)
     viewModelOf(::RecipeStepViewModel)
     viewModelOf(::ProfileViewModel)
     viewModelOf(::RecipeFinishViewModel)

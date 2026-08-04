@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -42,6 +43,11 @@ sealed class BottomBarScreen(
         title = R.string.favorite_bar_title,
         icon = Icons.Default.Favorite
     )
+    object MealPlan : BottomBarScreen(
+        route = Route.MealPlan,
+        title = R.string.meal_plan_bar_title,
+        icon = Icons.Default.RestaurantMenu
+    )
 
     object Profile : BottomBarScreen(
         route = Route.Profile,
@@ -59,6 +65,7 @@ fun BottomNavigationBar(
 
     val screens = listOf(
         BottomBarScreen.Home,
+        BottomBarScreen.MealPlan,
         BottomBarScreen.Favorite,
         BottomBarScreen.Profile
     )
@@ -115,7 +122,7 @@ fun RowScope.AddItem(
         icon = {
             Icon(
                 imageVector = screen.icon,
-                contentDescription = "${screen.title} icon",
+                contentDescription = null,
                 modifier = Modifier.size(24.dp)
             )
         }
