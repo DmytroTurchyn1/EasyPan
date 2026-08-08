@@ -42,11 +42,16 @@ android {
         versionName = "v1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // Works whether the properties value is quoted or not; missing file yields "".
+
         buildConfigField(
             "String",
             "CLIENT_ID",
             "\"${keystoreProperties.getProperty("clientId")?.trim('"') ?: ""}\""
+        )
+        buildConfigField(
+            "String",
+            "AMPLITUDE_API_KEY",
+            "\"${keystoreProperties.getProperty("amplitude")?.trim('"') ?: ""}\""
         )
     }
     signingConfigs {
@@ -136,6 +141,7 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coil)
     implementation(libs.bundles.revenueCat)
+    implementation(libs.bundles.amplitude)
 
     debugImplementation(libs.bundles.compose.debug)
     debugImplementation(libs.firebase.appcheck.debug)

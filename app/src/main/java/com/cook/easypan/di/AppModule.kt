@@ -9,6 +9,8 @@
 package com.cook.easypan.di
 
 
+import com.cook.easypan.BuildConfig
+import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.repository.DefaultBillingRepository
@@ -34,12 +36,11 @@ import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
 import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishViewModel
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
 import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -49,7 +50,11 @@ val appModule = module {
 
     single<FirebaseAuth> { Firebase.auth }
     single<FirebaseFirestore> { Firebase.firestore }
-    single<FirebaseAnalytics> { Firebase.analytics }
+
+
+    single(createdAtStart = true) {
+        AnalyticsClient(androidContext(), BuildConfig.AMPLITUDE_API_KEY)
+    }
 
     singleOf(::FirestoreClient)
     singleOf(::AuthClient)

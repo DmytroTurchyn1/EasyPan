@@ -17,10 +17,11 @@ import com.cook.easypan.R
 import com.cook.easypan.core.domain.Result
 import com.cook.easypan.core.presentation.snackBar.SnackBarController
 import com.cook.easypan.core.presentation.snackBar.SnackBarEvent
+import com.cook.easypan.core.util.AnalyticsEvent
+import com.cook.easypan.core.util.AnalyticsParam
+import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.cook.easypan.easypan.presentation.navigation.Route
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.logEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -31,7 +32,7 @@ import kotlinx.coroutines.launch
 class RecipeFinishViewModel(
     private val userRepository: UserRepository,
     private val savedStateHandle: SavedStateHandle,
-    private val analytics: FirebaseAnalytics
+    private val analytics: AnalyticsClient
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -60,14 +61,18 @@ class RecipeFinishViewModel(
                 val user = userRepository.getCurrentUser()
                 val recipesCooked = user?.data?.recipesCooked ?: 0
                 if (recipesCooked == 0) {
-                    analytics.logEvent("first_recipe_finished") {
-                        param("recipe_id", recipeId)
-                        if (user != null) param("user_id", user.userId)
-                    }
+                    analytics.track(
+                        AnalyticsEvent.FIRST_RECIPE_FINISHED,
+                        mapOf(
+                            AnalyticsParam.RECIPE_ID to recipeId,
+                            AnalyticsParam.USER_ID to user?.userId,
+                        )
+                    )
                 } else {
-                    analytics.logEvent("recipe_finished") {
-                        param("recipe_id", recipeId)
-                    }
+                    analytics.track(
+                        AnalyticsEvent.RECIPE_FINISHED,
+                        mapOf(AnalyticsParam.RECIPE_ID to recipeId)
+                    )
                 }
                 _state.update {
                     it.copy(

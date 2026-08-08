@@ -13,13 +13,14 @@ import android.content.Context
 import android.util.Log
 import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.domain.Result
+import com.cook.easypan.core.util.AnalyticsEvent
+import com.cook.easypan.core.util.AnalyticsParam
 import com.cook.easypan.core.util.ENTITLEMENT_CHEF
+import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.domain.model.ChefOffer
 import com.cook.easypan.easypan.domain.model.ChefPlan
 import com.cook.easypan.easypan.domain.model.PurchaseOutcome
 import com.cook.easypan.easypan.domain.repository.BillingRepository
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.logEvent
 import com.revenuecat.purchases.CustomerInfo
 import com.revenuecat.purchases.Offering
 import com.revenuecat.purchases.Package
@@ -45,7 +46,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class DefaultBillingRepository(
-    private val analytics: FirebaseAnalytics
+    private val analytics: AnalyticsClient
 ) : BillingRepository {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -112,11 +113,14 @@ class DefaultBillingRepository(
             val result = Purchases.sharedInstance.awaitPurchase(
                 PurchaseParams.Builder(activity, pkg).build()
             )
-            analytics.logEvent(FirebaseAnalytics.Event.PURCHASE) {
-                param(FirebaseAnalytics.Param.VALUE, pkg.product.price.amountMicros / 1_000_000.0)
-                param(FirebaseAnalytics.Param.CURRENCY, pkg.product.price.currencyCode)
-                param(FirebaseAnalytics.Param.TRANSACTION_ID, result.storeTransaction.orderId ?: "")
-            }
+            analytics.track(
+                AnalyticsEvent.PURCHASE,
+                mapOf(
+                    AnalyticsParam.VALUE to pkg.product.price.amountMicros / 1_000_000.0,
+                    AnalyticsParam.CURRENCY to pkg.product.price.currencyCode,
+                    AnalyticsParam.TRANSACTION_ID to result.storeTransaction.orderId,
+                )
+            )
             // Content is not unlocked here — updatedCustomerInfoListener flips isChef.
             PurchaseOutcome.Purchased
         } catch (e: CancellationException) {
@@ -138,9 +142,10 @@ class DefaultBillingRepository(
         return try {
             val info = Purchases.sharedInstance.awaitRestore()
             _isChef.value = info.isChefActive()
-            analytics.logEvent("purchases_restored") {
-                param("purchases_restored", info.entitlements.active.toString())
-            }
+            analytics.track(
+                AnalyticsEvent.PURCHASES_RESTORED,
+                mapOf(AnalyticsParam.ENTITLEMENTS to info.entitlements.active.keys.toList())
+            )
             Result.Success
         } catch (e: CancellationException) {
             throw e

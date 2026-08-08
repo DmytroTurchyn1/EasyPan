@@ -17,7 +17,6 @@ import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.domain.model.ChefPlan
 import com.cook.easypan.easypan.domain.model.PurchaseOutcome
 import com.cook.easypan.easypan.domain.repository.BillingRepository
-import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,8 +24,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PaywallViewModel(
-    private val billingRepository: BillingRepository,
-    private val analytics: FirebaseAnalytics
+    private val billingRepository: BillingRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PaywallState())

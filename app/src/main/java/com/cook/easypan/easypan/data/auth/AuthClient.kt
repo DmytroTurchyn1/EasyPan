@@ -21,6 +21,7 @@ import androidx.credentials.exceptions.NoCredentialException
 import com.cook.easypan.BuildConfig
 import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.domain.Result
+import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.domain.model.User
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -38,7 +39,8 @@ import java.util.UUID
 
 class AuthClient(
     private val applicationContext: Context,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val analytics: AnalyticsClient
 ) {
 
     companion object {
@@ -63,6 +65,7 @@ class AuthClient(
             val credential = getGoogleCredential(activityContext)
                 ?: return Result.Failure(AppError.AUTH_FAILED)
             auth.signInWithCredential(credential).await()
+            analytics.setUserId(auth.currentUser?.uid)
             Result.Success
         } catch (e: GetCredentialCancellationException) {
             Result.Failure(AppError.SIGN_IN_CANCELLED)
@@ -99,6 +102,7 @@ class AuthClient(
                 user.delete().await()
             }
             clearCredentialState()
+            analytics.reset()
             Result.Success
         } catch (e: GetCredentialCancellationException) {
             Result.Failure(AppError.SIGN_IN_CANCELLED)
@@ -118,6 +122,7 @@ class AuthClient(
     suspend fun signOut() {
         auth.signOut()
         clearCredentialState()
+        analytics.reset()
     }
 
     fun getSignedInUser(): User? = auth.currentUser?.run {

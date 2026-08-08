@@ -10,10 +10,10 @@ package com.cook.easypan.easypan.data.database
 
 import android.util.Log
 import com.cook.easypan.core.util.USER_DATA_COLLECTION
+import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.data.dto.IngredientDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import com.google.android.gms.tasks.Task
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -51,7 +51,7 @@ class FirestoreClientTest {
     private lateinit var mockCollectionRef: CollectionReference
 
     @RelaxedMockK
-    private lateinit var analytics: FirebaseAnalytics
+    private lateinit var analytics: AnalyticsClient
 
     @Before
     fun setUp() {

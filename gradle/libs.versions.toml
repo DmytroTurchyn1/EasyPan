@@ -1,6 +1,6 @@
 [versions]
 agp = "9.3.1"
-kotlin = "2.4.0"
+kotlin = "2.4.10"
 coreKtx = "1.19.0"
 junit = "4.13.2"
 gms = "4.5.0"
@@ -16,7 +16,7 @@ compose-material-icons-extended = "1.7.8"
 nav_version = "2.9.8"
 koin = "4.2.2"
 coil3 = "3.5.0"
-ktor = "3.5.1"
+ktor = "3.5.2"
 credentials = "1.6.0"
 googleid = "1.2.0"
 crashlytics = "3.0.7"
@@ -31,7 +31,8 @@ benchmarkMacroJunit4 = "1.4.1"
 profileinstaller = "1.4.1"
 datastore = "1.2.1"
 testManifest = "1.11.4"
-revenueCat = "10.15.1"
+revenueCat = "10.16.0"
+amplitude = "1.30.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,7 +64,6 @@ firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appc
 firebase-crashlytics-ndk = { group = "com.google.firebase", name = "firebase-crashlytics-ndk" }
 firebase-perf = { group = "com.google.firebase", name = "firebase-perf" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
-firebase-remote-config = { group = "com.google.firebase", name = "firebase-config" }
 
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
@@ -100,6 +100,8 @@ androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchm
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
 revenue-cat = { group = "com.revenuecat.purchases", name = "purchases", version.ref = "revenueCat" }
+amplitude = { group = "com.amplitude", name = "analytics-android", version.ref = "amplitude" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -159,7 +161,6 @@ firebase = [
     "firebase-perf",
     "play-integrity",
     "firebase-messaging",
-    "firebase-remote-config"
 ]
 
 koin = [
@@ -183,4 +184,8 @@ ktor = [
 ]
 revenueCat = [
     "revenue-cat"
+]
+
+amplitude = [
+    "amplitude"
 ]

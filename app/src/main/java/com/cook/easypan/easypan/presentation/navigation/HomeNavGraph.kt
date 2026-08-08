@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,6 +28,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.cook.easypan.core.util.AnalyticsEvent
+import com.cook.easypan.core.util.AnalyticsParam
+import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.domain.repository.BillingRepository
 import com.cook.easypan.easypan.presentation.SelectedPlanViewModel
 import com.cook.easypan.easypan.presentation.SelectedRecipeViewModel
@@ -58,10 +62,6 @@ import com.cook.easypan.easypan.presentation.recipe_finish.RecipeFinishViewModel
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepAction
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepRoot
 import com.cook.easypan.easypan.presentation.recipe_step.RecipeStepViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.logEvent
-import com.google.firebase.remoteconfig.remoteConfig
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -93,7 +93,25 @@ fun HomeNavGraph(
     navController: NavHostController,
     onSignOut: () -> Unit
 ) {
-    val analytics = koinInject<FirebaseAnalytics>()
+    val analytics = koinInject<AnalyticsClient>()
+
+    // Amplitude's SCREEN_VIEWS autocapture is Activity-based, and this is a single-Activity app —
+    // it would report one screen per session. Track nav destinations instead.
+    DisposableEffect(navController, analytics) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            val screen = destination.route
+                ?.substringBefore('/')
+                ?.substringAfterLast('.')
+                ?: return@OnDestinationChangedListener
+            analytics.track(
+                AnalyticsEvent.SCREEN_VIEW,
+                mapOf(AnalyticsParam.SCREEN to screen)
+            )
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose { navController.removeOnDestinationChangedListener(listener) }
+    }
+
     NavHost(
         navController = navController,
         startDestination = Route.Home,
@@ -304,16 +322,8 @@ fun HomeNavGraph(
                     }
                 },
                 onContinue = {
-                    val showReceiptScreen: Boolean =
-                        Firebase.remoteConfig.getBoolean("receipt_screen")
-                    if (showReceiptScreen) {
-                        navController.navigate(Route.IngredientsList) {
-                            popUpTo(Route.MealPlanReview) { inclusive = true }
-                        }
-                    } else {
-                        navController.navigate(Route.MealPlan) {
-                            popUpTo(Route.MealPlanReview) { inclusive = true }
-                        }
+                    navController.navigate(Route.IngredientsList) {
+                        popUpTo(Route.MealPlanReview) { inclusive = true }
                     }
                 },
                 onRecipeClick = { recipe ->
@@ -333,7 +343,7 @@ fun HomeNavGraph(
                 },
                 onFinish = { preferences ->
                     selectedPlanViewModel.onPlanRequested(preferences)
-                    analytics.logEvent("meal_plan_generated") {}
+                    analytics.track(AnalyticsEvent.MEAL_PLAN_GENERATED)
                     navController.navigate(Route.MealPlanReview) {
                         popUpTo(Route.MealPlanWizard) {
                             inclusive = true

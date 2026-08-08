@@ -12,7 +12,6 @@ import android.content.Context
 import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.core.domain.Result
 import com.cook.easypan.easypan.domain.repository.UserRepository
-import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -39,16 +38,13 @@ class AuthenticationViewModelTest {
     @RelaxedMockK
     private lateinit var userRepository: UserRepository
 
-    @RelaxedMockK
-    private lateinit var analytics: FirebaseAnalytics
-
     private lateinit var viewModel: AuthenticationViewModel
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = AuthenticationViewModel(userRepository, analytics)
+        viewModel = AuthenticationViewModel(userRepository)
     }
 
     @After

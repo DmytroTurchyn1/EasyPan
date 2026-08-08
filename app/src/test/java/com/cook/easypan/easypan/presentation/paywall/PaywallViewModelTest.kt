@@ -16,7 +16,6 @@ import com.cook.easypan.easypan.domain.model.ChefOffer
 import com.cook.easypan.easypan.domain.model.ChefPlan
 import com.cook.easypan.easypan.domain.model.PurchaseOutcome
 import com.cook.easypan.easypan.domain.repository.BillingRepository
-import com.google.firebase.analytics.FirebaseAnalytics
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -70,7 +69,6 @@ class PaywallViewModelTest {
 
     private lateinit var billing: FakeBillingRepository
     private val context = mockk<Context>(relaxed = true)
-    private val analytics = mockk<FirebaseAnalytics>(relaxed = true)
 
     @Before
     fun setUp() {
@@ -89,7 +87,7 @@ class PaywallViewModelTest {
 
     @Test
     fun `offers load into state on init`() = runTest {
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         assertFalse(viewModel.state.value.isLoading)
         assertEquals(listOf(YEARLY_OFFER, MONTHLY_OFFER), viewModel.state.value.offers)
@@ -98,7 +96,7 @@ class PaywallViewModelTest {
 
     @Test
     fun `yearly is preselected when both plans are offered`() = runTest {
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         assertEquals(ChefPlan.YEARLY, viewModel.state.value.selectedPlan)
         assertEquals(YEARLY_OFFER, viewModel.state.value.selectedOffer)
@@ -107,7 +105,7 @@ class PaywallViewModelTest {
     @Test
     fun `monthly is selected when the yearly plan is missing`() = runTest {
         billing.offers = listOf(MONTHLY_OFFER)
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         assertEquals(ChefPlan.MONTHLY, viewModel.state.value.selectedPlan)
         assertTrue(viewModel.state.value.canPurchase)
@@ -116,7 +114,7 @@ class PaywallViewModelTest {
     @Test
     fun `missing offers disables purchase`() = runTest {
         billing.offers = emptyList()
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         assertNull(viewModel.state.value.selectedPlan)
         assertNull(viewModel.state.value.selectedOffer)
@@ -125,7 +123,7 @@ class PaywallViewModelTest {
 
     @Test
     fun `selecting monthly purchases the monthly plan`() = runTest {
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnPlanSelect(ChefPlan.MONTHLY))
         assertEquals(ChefPlan.MONTHLY, viewModel.state.value.selectedPlan)
@@ -137,7 +135,7 @@ class PaywallViewModelTest {
 
     @Test
     fun `default purchase bills the yearly plan`() = runTest {
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnPurchaseClick(context))
 
@@ -147,7 +145,7 @@ class PaywallViewModelTest {
     @Test
     fun `plan selection is ignored while a purchase is in flight`() = runTest {
         billing.purchaseGate = CompletableDeferred()
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnPurchaseClick(context))
         assertTrue(viewModel.state.value.isPurchasing)
@@ -159,7 +157,7 @@ class PaywallViewModelTest {
 
     @Test
     fun `successful purchase clears purchasing flag without error`() = runTest {
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnPurchaseClick(context))
 
@@ -170,7 +168,7 @@ class PaywallViewModelTest {
     @Test
     fun `cancelled purchase is silent`() = runTest {
         billing.purchaseOutcome = PurchaseOutcome.Cancelled
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnPurchaseClick(context))
 
@@ -181,7 +179,7 @@ class PaywallViewModelTest {
     @Test
     fun `failed purchase sets error`() = runTest {
         billing.purchaseOutcome = PurchaseOutcome.Failed(AppError.NETWORK)
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnPurchaseClick(context))
 
@@ -192,7 +190,7 @@ class PaywallViewModelTest {
     @Test
     fun `second purchase click while in flight is ignored`() = runTest {
         billing.purchaseGate = CompletableDeferred()
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnPurchaseClick(context))
         assertTrue(viewModel.state.value.isPurchasing)
@@ -205,7 +203,7 @@ class PaywallViewModelTest {
 
     @Test
     fun `restore success sets isRestored`() = runTest {
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnRestoreClick)
 
@@ -216,7 +214,7 @@ class PaywallViewModelTest {
     @Test
     fun `restore failure sets error`() = runTest {
         billing.restoreResult = Result.Failure(AppError.NETWORK)
-        val viewModel = PaywallViewModel(billing, analytics)
+        val viewModel = PaywallViewModel(billing)
 
         viewModel.onAction(PaywallAction.OnRestoreClick)
 

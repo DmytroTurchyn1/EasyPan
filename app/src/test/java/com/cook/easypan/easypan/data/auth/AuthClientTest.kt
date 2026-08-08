@@ -9,6 +9,7 @@
 package com.cook.easypan.easypan.data.auth
 
 import android.content.Context
+import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
@@ -48,12 +49,15 @@ class AuthClientTest {
     @RelaxedMockK
     private lateinit var mockTask: Task<AuthResult>
 
+    @RelaxedMockK
+    private lateinit var analytics: AnalyticsClient
+
     private lateinit var authClient: AuthClient
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        authClient = AuthClient(applicationContext, firebaseAuth)
+        authClient = AuthClient(applicationContext, firebaseAuth, analytics)
     }
 
     @Test

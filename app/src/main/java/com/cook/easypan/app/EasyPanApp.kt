@@ -16,22 +16,18 @@ import android.util.Log
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStore
 import com.cook.easypan.BuildConfig
-import com.cook.easypan.R
 import com.cook.easypan.core.util.CHANNEL_ID_FIREBASE
 import com.cook.easypan.core.util.CHANNEL_ID_TIMER_SERVICE
 import com.cook.easypan.core.util.CHANNEL_NAME_FIREBASE
 import com.cook.easypan.core.util.CHANNEL_NAME_TIMER_SERVICE
 import com.cook.easypan.di.appModule
+import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.data.datastore.AppSettings
 import com.cook.easypan.easypan.data.datastore.AppSettingsSerializer
 import com.cook.easypan.easypan.domain.repository.BillingRepository
 import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.analytics
 import com.google.firebase.auth.auth
 import com.google.firebase.initialize
-import com.google.firebase.remoteconfig.remoteConfig
-import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.revenuecat.purchases.LogLevel
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesConfiguration
@@ -45,7 +41,6 @@ val Context.dataStore by dataStore(
     serializer = AppSettingsSerializer,
     corruptionHandler = ReplaceFileCorruptionHandler { AppSettings() }
 )
-private lateinit var firebaseAnalytics: FirebaseAnalytics
 class EasyPanApp : Application() {
     override fun onCreate() {
         super.onCreate()
@@ -59,30 +54,17 @@ class EasyPanApp : Application() {
         AppCheckInstaller.install()
         configureRevenueCat()
         createNotificationChannels()
-        val remoteConfig = Firebase.remoteConfig
-        val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 0 else 3600
-        }
-        remoteConfig.setConfigSettingsAsync(configSettings)
-        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
-        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Log.d(
-                    "RemoteConfig",
-                    "activated=${task.result}, receipt_screen=${remoteConfig.getBoolean("receipt_screen")}"
-                )
-            } else {
-                Log.e("RemoteConfig", "fetch failed", task.exception)
-            }
-        }
-        firebaseAnalytics = Firebase.analytics
+        configureAnalytics()
     }
 
-    /**
-     * RevenueCat must be configured once per process, before any paywall or entitlement check runs.
-     * Doing it here rather than in [MainActivity] avoids re-configuring on every activity
-     * recreation (rotation, theme change).
-     */
+    private fun configureAnalytics() {
+        // A cold start with an existing session never runs the sign-in path, so re-assert identity
+        // here — same reason configureRevenueCat() passes appUserID.
+        Firebase.auth.currentUser?.uid?.let { uid ->
+            get<AnalyticsClient>().setUserId(uid)
+        }
+    }
+
     private fun configureRevenueCat() {
         if (BuildConfig.REVENUECAT_API_KEY.isBlank()) {
             Log.e(
