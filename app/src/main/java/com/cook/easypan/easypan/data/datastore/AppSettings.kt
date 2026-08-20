@@ -8,6 +8,7 @@
 
 package com.cook.easypan.easypan.data.datastore
 
+import com.cook.easypan.easypan.data.dto.MealPlanDto
 import com.cook.easypan.easypan.data.dto.RecipeDto
 import com.cook.easypan.easypan.data.dto.UserDto
 import kotlinx.serialization.Serializable
@@ -15,12 +16,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AppSettings(
     val keepScreenOn: Boolean = true,
+    val hasCompletedOnboarding: Boolean = false,
     val userId: String? = null,
     val userName: String? = null,
     val userPhotoUrl: String? = null,
     val cachedUserData: UserDto? = null,
     val cacheFavoriteRecipes: List<RecipeDto> = emptyList(),
     val cachedRecipes: List<RecipeDto> = emptyList(),
+    val savedMealPlan: MealPlanDto? = null,
     val lastCacheTimeRecipes: Long = 0L,
     val lastCacheTimeFavorites: Long = 0L,
     val lastCacheTimeUserData: Long = 0L

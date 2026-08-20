@@ -178,4 +178,18 @@
     <string name="ingredients_list_title">What do you have?</string>
     <string name="ingredients_list_subtitle">We\'ll build a shopping list from what\'s missing</string>
     <string name="ingredients_list_continue_button">Create Shopping List</string>
+    <string name="onboarding_screen_1_title">Cook Easy, Eat Well</string>
+    <string name="onboarding_screen_1_description">No wall of text. Just the step you\'re on, with a photo, until the plate is full.</string>
+    <string name="onboarding_screen_2_title">One Step at a Time</string>
+    <string name="onboarding_screen_2_description">No wall of text. Just the step you\'re on, with a photo, until the plate is full.</string>
+    <string name="onboarding_screen_3_title">Timers That\nDon\'t Quit</string>
+    <string name="onboarding_screen_3_description">Start a step timer and it keeps counting in the background. Your screen stays awake while your hands are busy.</string>
+    <string name="onboarding_screen_4_title">Your Whole\nWeek, Sorted</string>
+    <string name="onboarding_screen_4_description">Tell EasyPan what you love, who you\'re cooking for, and what to avoid — get a 7-day plan and a grocery list sorted by aisle.</string>
+    <string name="onboarding_screen_5_title">Ready When\nYou Are</string>
+    <string name="onboarding_screen_5_description">Pick a recipe, hit start, and cook something you\'re proud of tonight.</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_image_description">Chef cooking in a kitchen</string>
+    <string name="onboarding_page_indicator">Page %1$d of %2$d</string>
 </resources>

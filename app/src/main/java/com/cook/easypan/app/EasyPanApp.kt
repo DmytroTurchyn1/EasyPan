@@ -41,6 +41,7 @@ val Context.dataStore by dataStore(
     serializer = AppSettingsSerializer,
     corruptionHandler = ReplaceFileCorruptionHandler { AppSettings() }
 )
+
 class EasyPanApp : Application() {
     override fun onCreate() {
         super.onCreate()
@@ -58,8 +59,6 @@ class EasyPanApp : Application() {
     }
 
     private fun configureAnalytics() {
-        // A cold start with an existing session never runs the sign-in path, so re-assert identity
-        // here — same reason configureRevenueCat() passes appUserID.
         Firebase.auth.currentUser?.uid?.let { uid ->
             get<AnalyticsClient>().setUserId(uid)
         }
@@ -76,18 +75,14 @@ class EasyPanApp : Application() {
             Purchases.logLevel = if (BuildConfig.DEBUG) LogLevel.DEBUG else LogLevel.ERROR
             Purchases.configure(
                 PurchasesConfiguration.Builder(this, BuildConfig.REVENUECAT_API_KEY)
-                    // Cold start with an existing session: bill as the signed-in user, not anonymous.
                     .appUserID(Firebase.auth.currentUser?.uid)
                     .build()
             )
         }
         val billingRepository = get<BillingRepository>()
-        // Always start observing: on a blank key this unlocks premium features instead of
-        // gating everyone out of a misconfigured dev build.
+
         billingRepository.startObserving()
-        // A cold start with an existing session never runs the sign-in path, so re-assert the
-        // identifying attributes here. The SDK dedupes unchanged values against its local cache,
-        // so repeat launches cost a cache read and no network sync.
+
         Firebase.auth.currentUser?.let { user ->
             billingRepository.setUserAttributes(
                 email = user.email,

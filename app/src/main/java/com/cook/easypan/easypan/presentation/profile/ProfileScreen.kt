@@ -91,6 +91,7 @@ fun ProfileRoot(
                         url = GITHUB_REPOSITORY_URL
                     )
                 }
+
                 else -> Unit
             }
             viewModel.onAction(action)

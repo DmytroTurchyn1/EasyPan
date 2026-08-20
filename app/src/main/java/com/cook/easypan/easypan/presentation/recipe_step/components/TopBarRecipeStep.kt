@@ -48,7 +48,7 @@ fun TopBarRecipeStep(
                 .padding(6.dp),
             contentAlignment = Alignment.Center
 
-            ) {
+        ) {
             IconButton(
                 onClick = { onCancelClick() },
                 modifier = Modifier

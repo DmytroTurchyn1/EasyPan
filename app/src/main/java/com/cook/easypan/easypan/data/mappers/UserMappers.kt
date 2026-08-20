@@ -18,6 +18,7 @@ fun UserDto.toUserData(): UserData {
         recipesCooked = recipesCooked
     )
 }
+
 fun UserData.toUserDto(): UserDto {
     return UserDto(
         recipesCooked = recipesCooked

@@ -202,10 +202,11 @@ fun HomeNavGraph(
             RecipeFinishRoot(
                 viewModel = viewModel,
                 onFinishClick = {
+                    // Not inclusive: the Home entry owns the ViewModelStore that sharedKoinViewModel
+                    // scopes SelectedPlanViewModel to, so popping it would drop the user's meal plan
+                    // preferences.
                     navController.navigate(Route.Home) {
-                        popUpTo(Route.Home) {
-                            inclusive = true
-                        }
+                        popUpTo<Route.Home>()
                         launchSingleTop = true
                     }
                 }

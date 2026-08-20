@@ -52,6 +52,7 @@ fun FavoriteRoot(
                 is FavoriteAction.OnRecipeClick -> {
                     onRecipeClick(action.recipe)
                 }
+
                 is FavoriteAction.OnHomeButtonClick -> {
                     onHomeButtonClick()
                 }

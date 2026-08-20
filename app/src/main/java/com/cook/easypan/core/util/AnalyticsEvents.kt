@@ -16,6 +16,7 @@ object AnalyticsEvent {
     const val RECIPE_FINISHED = "recipe_finished"
     const val MEAL_PLAN_GENERATED = "meal_plan_generated"
     const val SCREEN_VIEW = "screen_view"
+    const val ONBOARDING_COMPLETED = "onboarding_completed"
 }
 
 object AnalyticsParam {
@@ -26,4 +27,10 @@ object AnalyticsParam {
     const val TRANSACTION_ID = "transaction_id"
     const val ENTITLEMENTS = "entitlements"
     const val SCREEN = "screen"
+    const val METHOD = "method"
+}
+
+object AnalyticsValue {
+    const val ONBOARDING_FINISHED = "finished"
+    const val ONBOARDING_SKIPPED = "skipped"
 }

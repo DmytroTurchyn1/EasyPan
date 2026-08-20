@@ -43,6 +43,7 @@ sealed class BottomBarScreen(
         title = R.string.favorite_bar_title,
         icon = Icons.Default.Favorite
     )
+
     object MealPlan : BottomBarScreen(
         route = Route.MealPlan,
         title = R.string.meal_plan_bar_title,

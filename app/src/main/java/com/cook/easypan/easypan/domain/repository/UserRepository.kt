@@ -25,6 +25,8 @@ interface UserRepository {
     suspend fun updateKeepScreenOnDataStore(value: Boolean): Boolean
     suspend fun getCurrentUser(): User?
     fun getKeepScreenOnDataStore(): Flow<Boolean>
+    fun hasCompletedOnboarding(): Flow<Boolean>
+    suspend fun setOnboardingCompleted()
     suspend fun signInWithGoogle(activityContext: Context): Result
     fun isUserSignedIn(): Boolean
     suspend fun signOut()

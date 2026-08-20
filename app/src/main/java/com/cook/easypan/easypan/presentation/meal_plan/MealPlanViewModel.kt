@@ -7,8 +7,10 @@ import com.cook.easypan.core.domain.AppError
 import com.cook.easypan.easypan.domain.model.MealPlan
 import com.cook.easypan.easypan.domain.model.MealPlanPreferences
 import com.cook.easypan.easypan.domain.repository.BillingRepository
+import com.cook.easypan.easypan.domain.repository.MealPlanRepository
 import com.cook.easypan.easypan.domain.usecase.GenerateMealPlanUseCase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,15 +26,24 @@ import java.util.Locale
 class MealPlanViewModel(
     private val generateMealPlan: GenerateMealPlanUseCase,
     private val billingRepository: BillingRepository,
+    private val mealPlanRepository: MealPlanRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MealPlanState())
     val state = _state.asStateFlow()
 
+    // The screen restores the saved plan on init while the nav layer fires OnGenerate at almost the
+    // same moment. Holding one job means the later request always wins instead of racing.
+    private var planJob: Job? = null
+
     init {
         billingRepository.isChef
             .onEach { isChef -> _state.update { it.copy(isProUser = isChef) } }
             .launchIn(viewModelScope)
+
+        // This ViewModel is scoped to the MealPlan back stack entry, so it is rebuilt on every tab
+        // switch. The plan is read back from disk rather than regenerated.
+        planJob = viewModelScope.launch { showSavedPlan() }
     }
 
     private val _events = Channel<MealPlanEvent>()
@@ -40,6 +51,7 @@ class MealPlanViewModel(
 
     // Kept so Retry can rebuild the same plan without re-plumbing the preferences.
     private var lastPreferences: MealPlanPreferences? = null
+
 
     fun onAction(action: MealPlanAction) {
         when (action) {
@@ -58,12 +70,19 @@ class MealPlanViewModel(
 
     private fun generate(preferences: MealPlanPreferences) {
         lastPreferences = preferences
-        viewModelScope.launch {
+        planJob?.cancel()
+        planJob = viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
             try {
-                val plan = generateMealPlan(preferences)
-                // toState() builds a fresh state — re-apply the entitlement flag.
-                _state.update { plan.toState().copy(isProUser = billingRepository.isChef.value) }
+                // Returning to this screen re-runs OnGenerate with the same preferences. Reuse the
+                // stored plan instead of building a different one behind the user's back.
+                val saved = mealPlanRepository.getSavedPlan()
+                val plan = if (saved != null && saved.preferences == preferences) {
+                    saved
+                } else {
+                    generateMealPlan(preferences).also { mealPlanRepository.savePlan(it) }
+                }
+                show(plan)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -71,6 +90,23 @@ class MealPlanViewModel(
                 _state.update { it.copy(isLoading = false, error = AppError.UNKNOWN) }
             }
         }
+    }
+
+    private suspend fun showSavedPlan() {
+        try {
+            val saved = mealPlanRepository.getSavedPlan() ?: return
+            lastPreferences = saved.preferences
+            show(saved)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to read the saved meal plan", e)
+        }
+    }
+
+    private fun show(plan: MealPlan) {
+        // toState() builds a fresh state — re-apply the entitlement flag.
+        _state.update { plan.toState().copy(isProUser = billingRepository.isChef.value) }
     }
 
     private fun MealPlan.toState(): MealPlanState {

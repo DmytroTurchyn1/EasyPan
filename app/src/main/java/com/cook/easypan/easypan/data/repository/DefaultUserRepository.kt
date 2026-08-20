@@ -160,6 +160,17 @@ class DefaultUserRepository(
     override fun getKeepScreenOnDataStore(): Flow<Boolean> =
         context.dataStore.data.map { it.keepScreenOn }
 
+    override fun hasCompletedOnboarding(): Flow<Boolean> =
+        context.dataStore.data.map { it.hasCompletedOnboarding }
+
+    override suspend fun setOnboardingCompleted() {
+        context.dataStore.updateData { settings ->
+            settings.copy(
+                hasCompletedOnboarding = true
+            )
+        }
+    }
+
     override suspend fun getCurrentUser(): User? {
         val baseUser = googleAuthClient.getSignedInUser() ?: return null
         val settings = context.dataStore.data.first()
@@ -244,6 +255,8 @@ class DefaultUserRepository(
     }
 
     private suspend fun clearLocalCache() {
-        context.dataStore.updateData { AppSettings() }
+        context.dataStore.updateData { settings ->
+            AppSettings(hasCompletedOnboarding = settings.hasCompletedOnboarding)
+        }
     }
 }

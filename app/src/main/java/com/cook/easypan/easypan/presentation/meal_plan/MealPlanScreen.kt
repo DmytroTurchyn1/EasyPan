@@ -321,6 +321,7 @@ private fun ProIncludedRow(
         )
     }
 }
+
 @Composable
 private fun MealPlanPlaceHolderScreen(
     state: MealPlanState,
@@ -392,7 +393,7 @@ private fun MealPlanPlaceHolderScreen(
                 onClick = { onAction(MealPlanAction.OnCreatePlanClick) },
             ) {
 
-            Text(
+                Text(
                     text = stringResource(R.string.meal_plan_create_button),
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,

@@ -78,6 +78,7 @@ class RecipeDetailViewModel(
                     )
                 }
             }
+
             is RecipeDetailAction.OnBottomSheetDismiss -> {
                 _state.update {
                     it.copy(

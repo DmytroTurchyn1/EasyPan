@@ -6,6 +6,7 @@
  * See LICENSE file in the project root for details.
  */
 package com.cook.easypan.easypan.presentation.profile
+
 import com.cook.easypan.easypan.domain.model.User
 
 data class ProfileState(

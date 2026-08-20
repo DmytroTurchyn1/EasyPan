@@ -14,9 +14,12 @@ import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
 import com.cook.easypan.easypan.data.repository.DefaultBillingRepository
+import com.cook.easypan.easypan.data.repository.DefaultMealPlanRepository
 import com.cook.easypan.easypan.data.repository.DefaultRecipeRepository
 import com.cook.easypan.easypan.data.repository.DefaultUserRepository
+import com.cook.easypan.easypan.data.reviews.ReviewClient
 import com.cook.easypan.easypan.domain.repository.BillingRepository
+import com.cook.easypan.easypan.domain.repository.MealPlanRepository
 import com.cook.easypan.easypan.domain.repository.RecipeRepository
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.cook.easypan.easypan.domain.usecase.BuildGroceriesListUseCase
@@ -30,6 +33,7 @@ import com.cook.easypan.easypan.presentation.ingredients_receipt.IngredientsRece
 import com.cook.easypan.easypan.presentation.meal_plan.MealPlanViewModel
 import com.cook.easypan.easypan.presentation.meal_plan_review.MealPlanReviewViewModel
 import com.cook.easypan.easypan.presentation.meal_plan_wizard.MealPlanWizardViewModel
+import com.cook.easypan.easypan.presentation.onboarding.OnboardingViewModel
 import com.cook.easypan.easypan.presentation.paywall.PaywallViewModel
 import com.cook.easypan.easypan.presentation.profile.ProfileViewModel
 import com.cook.easypan.easypan.presentation.recipe_detail.RecipeDetailViewModel
@@ -55,15 +59,18 @@ val appModule = module {
     single(createdAtStart = true) {
         AnalyticsClient(androidContext(), BuildConfig.AMPLITUDE_API_KEY)
     }
+    single { ReviewClient(androidContext()) }
 
     singleOf(::FirestoreClient)
     singleOf(::AuthClient)
     singleOf(::DefaultRecipeRepository).bind<RecipeRepository>()
     singleOf(::DefaultBillingRepository).bind<BillingRepository>()
     singleOf(::DefaultUserRepository).bind<UserRepository>()
+    singleOf(::DefaultMealPlanRepository).bind<MealPlanRepository>()
     singleOf(::GenerateMealPlanUseCase)
     singleOf(::BuildGroceriesListUseCase)
 
+    viewModelOf(::OnboardingViewModel)
     viewModelOf(::AuthenticationViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::MealPlanViewModel)

@@ -2,6 +2,7 @@ package com.cook.easypan.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.cook.easypan.R
@@ -12,19 +13,26 @@ val provider = GoogleFont.Provider(
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-val bodyFontFamily = FontFamily(
-    Font(
-        googleFont = GoogleFont("Manrope"),
-        fontProvider = provider,
-    )
-)
+private val manrope = GoogleFont("Manrope")
 
-val displayFontFamily = FontFamily(
+private val manropeWeights = listOf(
+    FontWeight.Light,
+    FontWeight.Normal,
+    FontWeight.Medium,
+    FontWeight.SemiBold,
+    FontWeight.Bold,
+    FontWeight.ExtraBold,
+).map { weight ->
     Font(
-        googleFont = GoogleFont("Manrope"),
+        googleFont = manrope,
         fontProvider = provider,
+        weight = weight,
     )
-)
+}
+
+val bodyFontFamily = FontFamily(manropeWeights)
+
+val displayFontFamily = FontFamily(manropeWeights)
 
 // Default Material 3 typography values
 val baseline = Typography()

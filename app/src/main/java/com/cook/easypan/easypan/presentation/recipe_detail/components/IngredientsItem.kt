@@ -107,6 +107,7 @@ private fun AllergyCheckbox(
         }
     }
 }
+
 @Preview
 @Composable
 private fun IngredientsItemPreview() {

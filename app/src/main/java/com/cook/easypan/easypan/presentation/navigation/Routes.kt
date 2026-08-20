@@ -6,6 +6,9 @@ import kotlinx.serialization.Serializable
 sealed class Route {
 
     @Serializable
+    data object Onboarding : Route()
+
+    @Serializable
     data object AuthGraph : Route()
 
     @Serializable

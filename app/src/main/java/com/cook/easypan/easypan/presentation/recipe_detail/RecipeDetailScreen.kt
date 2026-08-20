@@ -286,7 +286,7 @@ private fun RecipeDetailScreen(
                                 }
                             }
                         }
-                        }
+                    }
 
                 }
             }
@@ -304,7 +304,7 @@ private fun RecipeDetailScreen(
         }
 
     }
-    }
+}
 
 
 @Preview(showSystemUi = true)

@@ -124,8 +124,6 @@ private fun MealPlanWizardScreen(
 }
 
 
-
-
 @Preview
 @Composable
 private fun MealPlanWizardStep1Preview() {

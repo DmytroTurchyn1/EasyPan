@@ -16,4 +16,5 @@ sealed interface RecipeFinishAction {
     data class OnFavoriteClick(val recipe: Recipe) : RecipeFinishAction
     data object OnConfettiFinished : RecipeFinishAction
 
+
 }

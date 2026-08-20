@@ -8,6 +8,7 @@
 
 package com.cook.easypan.easypan.presentation.recipe_finish
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -43,12 +45,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.SubcomposeAsyncImage
 import com.cook.easypan.R
 import com.cook.easypan.core.presentation.EasyPanButtonPrimary
+import com.cook.easypan.core.util.ObserveAsEvents
+import com.cook.easypan.easypan.data.reviews.ReviewClient
 import com.cook.easypan.easypan.domain.model.Ingredient
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.presentation.recipe_finish.components.Confetti
 import com.cook.easypan.easypan.presentation.recipe_finish.components.CookedRecipesBox
 import com.cook.easypan.easypan.presentation.recipe_finish.components.RecipeCompleteChip
 import com.cook.easypan.ui.theme.EasyPanTheme
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 private const val HERO_ASPECT_RATIO = 412f / 254f
 
@@ -58,7 +64,18 @@ fun RecipeFinishRoot(
     onFinishClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val reviewClient: ReviewClient = koinInject()
+    val activity = LocalActivity.current
+    val scope = rememberCoroutineScope()
 
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            RecipeFinishEvent.RequestReview ->
+                activity?.let {
+                    scope.launch { reviewClient.requestReview(it) }
+                }
+        }
+    }
     RecipeFinishScreen(
         state = state,
         onAction = { action ->

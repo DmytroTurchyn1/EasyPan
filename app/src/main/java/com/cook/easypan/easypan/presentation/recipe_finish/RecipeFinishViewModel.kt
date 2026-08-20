@@ -22,9 +22,11 @@ import com.cook.easypan.core.util.AnalyticsParam
 import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.domain.repository.UserRepository
 import com.cook.easypan.easypan.presentation.navigation.Route
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -51,7 +53,8 @@ class RecipeFinishViewModel(
             started = SharingStarted.WhileSubscribed(5_000L),
             initialValue = RecipeFinishState()
         )
-
+    private val _events = Channel<RecipeFinishEvent>()
+    val events = _events.receiveAsFlow()
 
     private val recipeId = savedStateHandle.toRoute<Route.RecipeFinish>().id
 
@@ -59,15 +62,17 @@ class RecipeFinishViewModel(
         viewModelScope.launch {
             try {
                 val user = userRepository.getCurrentUser()
-                val recipesCooked = user?.data?.recipesCooked ?: 0
-                if (recipesCooked == 0) {
+                val userData = user?.data
+                val recipesCooked = userData?.recipesCooked ?: 0
+                if (userData != null && recipesCooked == 0) {
                     analytics.track(
                         AnalyticsEvent.FIRST_RECIPE_FINISHED,
                         mapOf(
                             AnalyticsParam.RECIPE_ID to recipeId,
-                            AnalyticsParam.USER_ID to user?.userId,
+                            AnalyticsParam.USER_ID to user.userId,
                         )
                     )
+                    viewModelScope.launch { _events.send(RecipeFinishEvent.RequestReview) }
                 } else {
                     analytics.track(
                         AnalyticsEvent.RECIPE_FINISHED,
