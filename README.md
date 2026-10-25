@@ -31,9 +31,6 @@ with the grocery list already sorted.
   with content
 - 🔔 **Push Notifications** — new-recipe announcements via Firebase Cloud Messaging
 
-> The grocery receipt flow ships behind the `receipt_screen` Firebase Remote Config flag
-> (see `app/src/main/res/xml/remote_config_defaults.xml`), so it can be rolled out independently of
-> a store release.
 
 ## 🛠️ Tech Stack
 
