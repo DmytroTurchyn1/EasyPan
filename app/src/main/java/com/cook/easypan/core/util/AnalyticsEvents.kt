@@ -17,6 +17,7 @@ object AnalyticsEvent {
     const val MEAL_PLAN_GENERATED = "meal_plan_generated"
     const val SCREEN_VIEW = "screen_view"
     const val ONBOARDING_COMPLETED = "onboarding_completed"
+    const val NOTIFICATION_PERMISSION = "notification_permission"
 }
 
 object AnalyticsParam {
@@ -33,4 +34,7 @@ object AnalyticsParam {
 object AnalyticsValue {
     const val ONBOARDING_FINISHED = "finished"
     const val ONBOARDING_SKIPPED = "skipped"
+    const val PERMISSION_GRANTED = "granted"
+    const val PERMISSION_DENIED = "denied"
+    const val PERMISSION_DISMISSED = "dismissed"
 }

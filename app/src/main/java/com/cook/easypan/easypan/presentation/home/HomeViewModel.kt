@@ -8,22 +8,13 @@
 
 package com.cook.easypan.easypan.presentation.home
 
-import android.Manifest.permission.POST_NOTIFICATIONS
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cook.easypan.core.domain.AppError
-import com.cook.easypan.core.util.NOTIFICATION_TOPIC
 import com.cook.easypan.easypan.domain.model.Recipe
 import com.cook.easypan.easypan.domain.repository.RecipeRepository
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.messaging.messaging
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -83,50 +74,6 @@ class HomeViewModel(
                     }
                 _state.update { it.copy(isLoading = false, error = error) }
             }
-        }
-    }
-
-
-    fun checkNotificationPermission(context: Context): Boolean {
-        return when {
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                checkSelfPermission(
-                    context,
-                    POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            }
-
-            else -> {
-                NotificationManagerCompat.from(context).areNotificationsEnabled()
-            }
-        }
-    }
-
-
-    fun onPermissionResult(
-        isGranted: Boolean
-    ) {
-        if (isGranted) {
-            if (!_state.value.hasSubscribedToTopic) {
-                Firebase.messaging.subscribeToTopic(NOTIFICATION_TOPIC)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            _state.update { currentState ->
-                                currentState.copy(
-                                    hasSubscribedToTopic = true
-                                )
-                            }
-                        } else {
-                            Log.e(
-                                "HomeViewModel",
-                                "Failed to subscribe to topic: ${task.exception?.message}"
-                            )
-                        }
-                    }
-            }
-        } else {
-            Log.e("HomeViewModel", "Notification permission denied")
         }
     }
 

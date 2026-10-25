@@ -1,6 +1,14 @@
 package com.cook.easypan.easypan.presentation.onboarding
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 private val CONTENT_HORIZONTAL_PADDING = 24.dp
 private val BUTTON_HEIGHT = 48.dp
 private val TOP_BAR_HEIGHT = 48.dp
+private val SECONDARY_ACTION_HEIGHT = 40.dp
 
 @Composable
 fun OnboardingRoot(
@@ -51,9 +60,18 @@ fun OnboardingRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            viewModel.onAction(OnboardingAction.OnNotificationPermissionResult(isGranted))
+        }
+    )
+
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             OnboardingEvent.Finish -> onFinished()
+            OnboardingEvent.RequestNotificationPermission ->
+                notificationPermissionLauncher.launch(POST_NOTIFICATIONS)
         }
     }
 
@@ -86,6 +104,14 @@ private fun OnboardingScreen(
 
     BackHandler(enabled = state.currentPage > 0) {
         onAction(OnboardingAction.OnBackClick)
+    }
+
+    val settledPage = state.pages.getOrNull(pagerState.settledPage)
+    val isNotificationPage = settledPage?.isNotificationPrompt == true
+    val ctaLabel = when {
+        isNotificationPage -> R.string.onboarding_notifications_cta
+        pagerState.settledPage == state.pageCount - 1 -> R.string.onboarding_start
+        else -> R.string.onboarding_continue
     }
 
     Scaffold(
@@ -122,21 +148,52 @@ private fun OnboardingScreen(
             ) {
                 OnboardingPageIndicator(
                     pageCount = state.pageCount,
-                    currentPage = state.currentPage
+                    currentPage = state.currentPage,
+                    position = { pagerState.currentPage + pagerState.currentPageOffsetFraction }
                 )
-                EasyPanButtonPrimary(
-                    onClick = { onAction(OnboardingAction.OnContinueClick) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(BUTTON_HEIGHT)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    EasyPanText(
-                        text = stringResource(R.string.onboarding_continue),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    EasyPanButtonPrimary(
+                        onClick = { onAction(OnboardingAction.OnContinueClick) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(BUTTON_HEIGHT)
+                    ) {
+                        AnimatedContent(
+                            targetState = ctaLabel,
+                            transitionSpec = {
+                                fadeIn(tween(180)) togetherWith fadeOut(tween(120))
+                            },
+                            label = "onboardingCta"
+                        ) { label ->
+                            EasyPanText(
+                                text = stringResource(label),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier.height(SECONDARY_ACTION_HEIGHT),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (isNotificationPage) {
+                            TextButton(onClick = { onAction(OnboardingAction.OnNotNowClick) }) {
+                                EasyPanText(
+                                    text = stringResource(R.string.onboarding_notifications_dismiss),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -153,7 +210,13 @@ private fun OnboardingScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                OnboardingPageContent(page = state.pages[page])
+                OnboardingPageContent(
+                    page = state.pages[page],
+                    isActive = pagerState.settledPage == page,
+                    pageOffset = {
+                        (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+                    }
+                )
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
@@ -173,10 +236,23 @@ private fun OnboardingScreenFirstPagePreview() {
 
 @PreviewLightDark
 @Composable
+private fun OnboardingScreenNotificationPagePreview() {
+    EasyPanTheme {
+        OnboardingScreen(
+            state = OnboardingState(
+                currentPage = OnboardingPage.entries.indexOf(OnboardingPage.NOTIFICATIONS)
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
 private fun OnboardingScreenLastPagePreview() {
     EasyPanTheme {
         OnboardingScreen(
-            state = OnboardingState(currentPage = 4),
+            state = OnboardingState(currentPage = OnboardingPage.entries.lastIndex),
             onAction = {}
         )
     }

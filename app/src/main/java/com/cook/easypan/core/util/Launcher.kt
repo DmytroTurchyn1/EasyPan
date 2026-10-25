@@ -9,6 +9,7 @@
 package com.cook.easypan.core.util
 
 import android.content.ActivityNotFoundException
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -49,13 +50,18 @@ object Launcher {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "image/png"
             putExtra(Intent.EXTRA_STREAM, uri)
+            // Carries the read grant explicitly instead of relying on the system migrating
+            // EXTRA_STREAM into ClipData, which not every receiver honours.
+            clipData = ClipData.newRawUri(null, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         return try {
             context.startActivity(Intent.createChooser(intent, chooserTitle))
             true
-        } catch (e: ActivityNotFoundException) {
-            Log.e(TAG, "No activity found to share an image", e)
+        } catch (e: Exception) {
+            // The chooser can also refuse with SecurityException or, off an Activity context, an
+            // AndroidRuntimeException. None of those are worth crashing the app over.
+            Log.e(TAG, "Failed to open the share sheet", e)
             false
         }
     }

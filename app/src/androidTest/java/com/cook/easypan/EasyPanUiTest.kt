@@ -51,7 +51,7 @@ class EasyPanUiTest {
             billingRepository = mockk(relaxed = true),
             context = appContext,
         )
-        viewModel = AuthenticationViewModel(userRepository, analytics = mockk(relaxed = true))
+        viewModel = AuthenticationViewModel(userRepository)
     }
 
     @Test

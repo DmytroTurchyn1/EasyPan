@@ -216,6 +216,10 @@ private fun rememberShareBitmapHandler(
 
     return remember(context, chooserTitle) {
         { bitmap ->
+            // Reported before the file write so the flag can never outlive this composition. The
+            // ViewModel is scoped to the nav graph, so a cancelled scope here would otherwise leave
+            // the screen stuck on a disabled, spinning Share button.
+            currentOnAction(IngredientsReceiptAction.OnShareFinished)
             scope.launch {
                 val uri = bitmap?.let {
                     saveBitmapToCache(
@@ -230,7 +234,6 @@ private fun rememberShareBitmapHandler(
                         SnackBarEvent(messageRes = R.string.ingredients_receipt_share_error)
                     )
                 }
-                currentOnAction(IngredientsReceiptAction.OnShareFinished)
             }
         }
     }

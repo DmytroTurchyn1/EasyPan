@@ -24,7 +24,7 @@ object AppSettingsSerializer : Serializer<AppSettings> {
         // An empty file simply means nothing has been written yet.
         if (bytes.isEmpty()) return defaultValue
         return try {
-            Json.Default.decodeFromString(
+            Json.decodeFromString(
                 deserializer = AppSettings.serializer(),
                 string = bytes.decodeToString()
             )
@@ -42,7 +42,7 @@ object AppSettingsSerializer : Serializer<AppSettings> {
         output: OutputStream
     ) {
         output.write(
-            Json.Default.encodeToString(
+            Json.encodeToString(
                 serializer = AppSettings.serializer(),
                 value = t
             ).encodeToByteArray()

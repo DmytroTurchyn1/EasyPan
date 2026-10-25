@@ -48,11 +48,6 @@ android {
             "CLIENT_ID",
             "\"${keystoreProperties.getProperty("clientId")?.trim('"') ?: ""}\""
         )
-        buildConfigField(
-            "String",
-            "AMPLITUDE_API_KEY",
-            "\"${keystoreProperties.getProperty("amplitude")?.trim('"') ?: ""}\""
-        )
     }
     signingConfigs {
         if (keystorePropertiesFile?.exists() == true && keystoreProperties.getProperty("storeFile") != null) {
@@ -74,6 +69,11 @@ android {
             )
             buildConfigField(
                 "String",
+                "AMPLITUDE_API_KEY",
+                "\"${keystoreProperties.getProperty("amplitude_prod")?.trim('"') ?: ""}\""
+            )
+            buildConfigField(
+                "String",
                 "REVENUECAT_API_KEY",
                 "\"${keystoreProperties.getProperty("revenueCatApiKeyRelease")?.trim('"') ?: ""}\""
             )
@@ -86,6 +86,11 @@ android {
                 "String",
                 "REVENUECAT_API_KEY",
                 "\"${keystoreProperties.getProperty("revenueCatApiKeyTest")?.trim('"') ?: ""}\""
+            )
+            buildConfigField(
+                "String",
+                "AMPLITUDE_API_KEY",
+                "\"${keystoreProperties.getProperty("amplitude_test")?.trim('"') ?: ""}\""
             )
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

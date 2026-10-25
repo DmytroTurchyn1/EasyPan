@@ -21,7 +21,7 @@ fun DayChip(
     dayAbbrev: String,
     dayOfMonth: Int,
     isSelected: Boolean,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val contentColor = if (isSelected) {
@@ -40,7 +40,7 @@ fun DayChip(
                     MaterialTheme.colorScheme.surfaceContainerHigh
                 }
             )
-            .clickable(onClick = onClick)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(horizontal = 8.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp),

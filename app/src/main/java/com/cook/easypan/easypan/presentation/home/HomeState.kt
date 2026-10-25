@@ -17,7 +17,6 @@ data class HomeState(
     val isLoading: Boolean = true,
     val error: AppError? = null,
     val recipeListState: LazyListState = LazyListState(),
-    val hasSubscribedToTopic: Boolean = false,
     val filterList: List<String> = emptyList(),
     val selectedFilter: String = "",
 )

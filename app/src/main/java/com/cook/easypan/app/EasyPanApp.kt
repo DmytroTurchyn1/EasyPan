@@ -16,6 +16,7 @@ import android.util.Log
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.dataStore
 import com.cook.easypan.BuildConfig
+import com.cook.easypan.core.domain.NotificationPermissionChecker
 import com.cook.easypan.core.util.CHANNEL_ID_FIREBASE
 import com.cook.easypan.core.util.CHANNEL_ID_TIMER_SERVICE
 import com.cook.easypan.core.util.CHANNEL_NAME_FIREBASE
@@ -55,6 +56,7 @@ class EasyPanApp : Application() {
         AppCheckInstaller.install()
         configureRevenueCat()
         createNotificationChannels()
+        get<NotificationPermissionChecker>().subscribeToTopicIfGranted()
         configureAnalytics()
     }
 

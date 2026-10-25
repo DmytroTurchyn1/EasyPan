@@ -8,10 +8,6 @@
 
 package com.cook.easypan.easypan.presentation.home
 
-import android.Manifest.permission.POST_NOTIFICATIONS
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,41 +44,13 @@ fun HomeRoot(
     viewModel: HomeViewModel,
     onRecipeClick: (Recipe) -> Unit
 ) {
-    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            viewModel.onPermissionResult(
-                isGranted = isGranted
-            )
-        }
-    )
 
     HomeScreen(
         state = state,
         onAction = { action ->
             when (action) {
-                is HomeAction.OnRecipeClick -> {
-
-                    if (!viewModel.checkNotificationPermission(context)) {
-                        when {
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                                notificationPermissionLauncher.launch(POST_NOTIFICATIONS)
-                            }
-
-                            else -> {
-
-                                viewModel.onPermissionResult(isGranted = false)
-                            }
-                        }
-                    } else {
-                        viewModel.onPermissionResult(isGranted = true)
-                    }
-
-                    onRecipeClick(action.recipe)
-                }
-
+                is HomeAction.OnRecipeClick -> onRecipeClick(action.recipe)
                 else -> Unit
             }
             viewModel.onAction(action)

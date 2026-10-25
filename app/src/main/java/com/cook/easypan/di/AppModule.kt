@@ -10,9 +10,11 @@ package com.cook.easypan.di
 
 
 import com.cook.easypan.BuildConfig
+import com.cook.easypan.core.domain.NotificationPermissionChecker
 import com.cook.easypan.easypan.data.analytics.AnalyticsClient
 import com.cook.easypan.easypan.data.auth.AuthClient
 import com.cook.easypan.easypan.data.database.FirestoreClient
+import com.cook.easypan.easypan.data.notification.AndroidNotificationPermissionChecker
 import com.cook.easypan.easypan.data.repository.DefaultBillingRepository
 import com.cook.easypan.easypan.data.repository.DefaultMealPlanRepository
 import com.cook.easypan.easypan.data.repository.DefaultRecipeRepository
@@ -60,6 +62,7 @@ val appModule = module {
         AnalyticsClient(androidContext(), BuildConfig.AMPLITUDE_API_KEY)
     }
     single { ReviewClient(androidContext()) }
+    single<NotificationPermissionChecker> { AndroidNotificationPermissionChecker(androidContext()) }
 
     singleOf(::FirestoreClient)
     singleOf(::AuthClient)

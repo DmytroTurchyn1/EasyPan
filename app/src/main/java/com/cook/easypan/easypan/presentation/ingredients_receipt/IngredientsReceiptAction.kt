@@ -8,7 +8,7 @@ sealed interface IngredientsReceiptAction {
     data object OnRetry : IngredientsReceiptAction
     data object OnShareButtonClick : IngredientsReceiptAction
 
-    /** The share sheet has been opened, or the attempt failed — either way the render is over. */
+    /** The off-screen render is over, whatever it produced. Sent before the file write. */
     data object OnShareFinished : IngredientsReceiptAction
     data object OnContinueClick : IngredientsReceiptAction
 }

@@ -1,6 +1,5 @@
 package com.cook.easypan.easypan.presentation.recipe_finish.components
 
-import android.provider.Settings
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -18,10 +17,10 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cook.easypan.core.presentation.rememberAnimationsEnabled
 import com.cook.easypan.ui.theme.EasyPanTheme
 import kotlin.math.PI
 import kotlin.math.abs
@@ -61,16 +60,7 @@ fun Confetti(
     durationMillis: Int = DEFAULT_DURATION_MILLIS,
     onFinished: () -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val animationsDisabled = remember(context) {
-        Settings.Global.getFloat(
-            context.contentResolver,
-            Settings.Global.ANIMATOR_DURATION_SCALE,
-            1f
-        ) == 0f
-    }
-
-    if (animationsDisabled) {
+    if (!rememberAnimationsEnabled()) {
         LaunchedEffect(Unit) { onFinished() }
         return
     }

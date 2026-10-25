@@ -39,7 +39,7 @@ fun InformationBox(
 @Composable
 private fun InformationBoxPreview() {
     EasyPanTheme {
-        InformationBox() {
+        InformationBox {
             Text(
                 text = "Information",
                 color = Color.White,

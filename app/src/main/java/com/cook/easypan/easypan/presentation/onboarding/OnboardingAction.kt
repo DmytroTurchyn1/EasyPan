@@ -5,4 +5,6 @@ sealed interface OnboardingAction {
     data object OnContinueClick : OnboardingAction
     data object OnSkipClick : OnboardingAction
     data object OnBackClick : OnboardingAction
+    data object OnNotNowClick : OnboardingAction
+    data class OnNotificationPermissionResult(val isGranted: Boolean) : OnboardingAction
 }
